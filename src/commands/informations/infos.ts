@@ -9,7 +9,7 @@ export default class EmbedCommand extends BaseCommand {
         super("infos", "informations", [], []);
     }
 
-    public async exec(client: DiscordClient, message: Message, args: any[]) {
+    public async exec(client: DiscordClient, message: Message, args: any[]) : Promise<void> {
         console.log("a");
        const embed = new MessageEmbed();
        embed.setAuthor("RedBot", client.user.avatar);
