@@ -21,7 +21,7 @@ export default class InteractionCreateEvent extends BaseEvent {
                     embeds: [
                         new MessageEmbed()
                             .setAuthor("Error !", client.user.avatarURL())
-                            .setDescription(err)
+                            .setDescription(err !== undefined ? err : "Unknown Error")
                             .setColor("#FF0000")
                     ]
                  });
