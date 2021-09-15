@@ -33,11 +33,11 @@ export default class GuildMember extends Model implements IGuildMember {
 
     @AllowNull(false)
     @NotEmpty
-    @Column(DataType.INTEGER)
+    @Column(DataType.BIGINT)
     last_experience_increase: number;
 
     @AllowNull(false)
     @NotEmpty
-    @Column(DataType.INTEGER)
+    @Column(DataType.BIGINT)
     join_date: number;
 }
