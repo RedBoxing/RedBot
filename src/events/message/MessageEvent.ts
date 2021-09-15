@@ -48,6 +48,7 @@ export default class MessageEvent extends BaseEvent {
         const cmd = args[0].substring(1);
         args.shift();
 
+        console.log(client.getCommands().size)
         if(client.getCommands().has(cmd)) {
             const command = client.getCommands().get(cmd);
 
