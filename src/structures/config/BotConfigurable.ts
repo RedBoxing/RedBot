@@ -60,51 +60,64 @@ export default class BotConfigurable {
     }
 
     public async setConfig(guildId: string, name: string, value: any) : Promise<void> {
-        try {
-        let config = await GuildConfig.findOne({
+        return new Promise<void>((resolve, reject) => {
+            GuildConfig.findOne({
                 where: {
                     guildId: guildId
                 }
-            });
+            }).then(config => {
+                if(!config) {
+                    GuildConfig.create({
+                        guildId: guildId
+                    }).then(_config => {
+                        if(name in _config) {
+                            _config[name] = value;
+                            _config.save();
+                        } else {
+                            logger.error(`unknown property ${name} guild config for guild : ${guildId}`);
+                        }
+                    });
 
-            if(!config) {
-                config = await GuildConfig.create({
-                    guildId: guildId
-                });
-            }
+                    return;
+                }
 
-            if(name in config) {
-                config[name] = value;
-                await config.save();
-            } else {
-                logger.error(`unknown property ${name} guild config for guild : ${guildId}`);
-            }
-        } catch(err) {
-            logger.error(`Failed to set config for guild ${guildId} : ${err}`);
-        }
+                if(name in config) {
+                    config[name] = value;
+                    config.save();
+                } else {
+                    logger.error(`unknown property ${name} guild config for guild : ${guildId}`);
+                }
+            })    
+        });
     }
 
-    public async getConfig(guildId: string, name: string) : Promise<any> {
-        try {
-            let config = await GuildConfig.findOne({
+    public getConfig(guildId: string, name: string) : Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            GuildConfig.findOne({
                 where: {
                     guildId: guildId
                 }
-            });
+            }).then(config => {
+                if(!config) {
+                    const _config = GuildConfig.create({
+                        guildId: guildId
+                    });
 
-            if(!config) {
-                config = await GuildConfig.create({
-                    guildId: guildId
-                });
-            }
+                    if(name in _config) {
+                        resolve(_config[name]);
+                    } else {
+                        logger.error(`unknown property ${name} guild config for guild : ${guildId}`);
+                    }
 
-            if(name in config) {
-                return config[name];
-            } else {
-                logger.error(`unknown property ${name} guild config for guild : ${guildId}`);
-            }
-        } catch(err) {
-            logger.error(`Failed to get config for guild ${guildId} : ${err}`);
-        }
+                    return;
+                }
+
+                if(name in config) {
+                    resolve(config[name]);
+                } else {
+                    logger.error(`unknown property ${name} guild config for guild : ${guildId}`);
+                }
+            })    
+        });
     }
 }
