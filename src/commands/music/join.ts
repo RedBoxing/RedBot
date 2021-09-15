@@ -1,32 +1,43 @@
-import { Message, MessageEmbed } from "discord.js";
+import { SlashCommandBuilder } from "@discordjs/builders";
+import { CommandInteraction, Message, MessageEmbed } from "discord.js";
 import { SearchResult } from "erela.js";
 import client from "../../client/client";
 import BaseCommand from "../../structures/base/BaseCommand";
 
 export default class JoinCommand extends BaseCommand {
     constructor() {
-        super("join", "music", [], []);
+        super("join", "Make the bot join your voice channel", "music", [], []);
     }
 
-    public async exec(client: client, message: Message, args: any[]): Promise<void> {
-        if(!message.member.voice.channel) {
-            message.channel.send(new MessageEmbed()
+    public async exec(client: client, interaction: CommandInteraction): Promise<void> {
+        const member = await interaction.guild.members.fetch(interaction.user.id);
+
+        if(!member.voice.channel) {
+            interaction.reply({
+                embeds: [
+                    new MessageEmbed()
                 .setDescription("You need to be in a voice channel to play music !")
                 .setColor("#FF0000")
                 .setAuthor("You are not in a voice channel !", client.user.avatarURL())
-                .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL()));
+                .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                ]
+            });
             return;
         }
         
-        let player = client.manager.get(message.guild.id);
+        let player = client.manager.get(interaction.guildId);
         if(!player) {
             player = client.manager.create({
-                guild: message.guild.id,
-                voiceChannel: message.member.voice.channel.id,
-                textChannel: message.channel.id,
+                guild: interaction.guildId,
+                voiceChannel: member.voice.channel.id,
+                textChannel: interaction.channelId,
             });
         }
 
         if(player.state !== 'CONNECTED') player.connect();
+    }
+
+    public build(builder: SlashCommandBuilder): SlashCommandBuilder {
+        return builder;
     }
 }

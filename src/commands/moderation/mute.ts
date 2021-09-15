@@ -1,62 +1,73 @@
-import { Message, MessageEmbed } from "discord.js";
+import { SlashCommandBuilder } from "@discordjs/builders";
+import { CommandInteraction, GuildManager, MessageEmbed } from "discord.js";
 import client from "../../client/client";
 import BaseCommand from "../../structures/base/BaseCommand";
 
 export default class MuteCommand extends BaseCommand {
     constructor() {
-        super("mute", "moderation", [], []);
+        super("mute", "Mute a member", "moderation", [], []);
     }
 
-    public async exec(client: client, message: Message, args: any[]): Promise<void> {
-        if(!message.member.hasPermission("ADMINISTRATOR")) {
-            message.channel.send(new MessageEmbed()
+    public async exec(client: client, interaction: CommandInteraction): Promise<void> {
+        const member = await interaction.guild.members.fetch(interaction.user.id);
+
+        if(!member.permissions.has("ADMINISTRATOR")) {
+            interaction.reply({
+                embeds: [
+                    new MessageEmbed()
                 .setDescription("You do not have the permission to do this !")
                 .setColor("#FF0000")
                 .setAuthor("You need to be administrator to do this !", client.user.avatarURL())
-                .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL()));
+                .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                ]
+            });
             return;
         }
 
-        if(!args.length) {
-            message.channel.send(new MessageEmbed()
-                .setDescription("No user specified ! ")
-                .setColor("#FF0000")
-                .setAuthor("Syntax: `.mute <user>`", client.user.avatarURL())
-                .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL()));
-            return;
-        }
-
-        const target = message.mentions.members.first();
+        const target = await interaction.guild.members.fetch(interaction.options.getUser("member").id);
         if(!target) {
-            message.channel.send(new MessageEmbed()
+            interaction.reply({
+                embeds: [
+                    new MessageEmbed()
                 .setDescription("User not found ! ")
                 .setColor("#FF0000")
-                .setAuthor(`User \`${args[0]}\` not found !`, client.user.avatarURL())
-                .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL()));
+                .setAuthor(`User not found !`, client.user.avatarURL())
+                .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                ]
+            });
             return;
         }
         
         
-        let role = await message.guild.roles.resolve(await client.getConfig().getMutedRole(message.guild.id));
+        let role = await interaction.guild.roles.resolve(await client.getConfig().getMutedRole(interaction.guildId));
         if(!role) { 
-            role = await message.guild.roles.create({
-                data: {
-                    name: "Muted",
-                    permissions: []
-                }
+            role = await interaction.guild.roles.create({
+                name: "Muted",
+                permissions: []
             })
 
-            await client.getConfig().setMutedRole(message.guild.id, role.id);
+            await client.getConfig().setMutedRole(interaction.guildId, role.id);
 
-            message.guild.channels.cache.forEach(ch => {
-                ch.updateOverwrite(role, { SEND_MESSAGES: false });
+            interaction.guild.channels.cache.forEach(ch => {
+                if(!ch.isThread()) {
+                    ch.permissionOverwrites.edit(role, { SEND_MESSAGES: false });
+                }
             })
         }
 
         target.roles.add(role);
-        message.channel.send(new MessageEmbed()
+        interaction.reply({
+            embeds: [
+                new MessageEmbed()
             .setAuthor(target.user.username + " was muted", target.user.avatarURL())
-            .setDescription(target.user.tag + " was muted by " + message.author.tag)
-            .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL()));
+            .setDescription(target.user.tag + " was muted by " + interaction.user.tag)
+            .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+            ]
+        });
+    }
+
+    public build(builder: SlashCommandBuilder): SlashCommandBuilder {
+        builder.addMentionableOption(option => option.setName("member").setDescription("The guild member to mute").setRequired(true));
+        return builder;
     }
 }

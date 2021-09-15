@@ -13,12 +13,16 @@ export default class TrackStartEvent extends BaseEvent {
         const channel = client.channels.cache.get(player.textChannel) as TextChannel;
         const author = track.requester as User;
 
-        channel.send(new MessageEmbed()
+        channel.send({
+            embeds: [
+                new MessageEmbed()
             .setTitle(track.title)
             .setColor("#04D3FF")
             .setAuthor("Now playing: ")
             .setFooter(`Added by ${author.tag}`, author.avatarURL())
             .setThumbnail(track.displayThumbnail())
-            .setURL(track.uri));
+            .setURL(track.uri)
+            ]
+        });
     }
 }

@@ -12,7 +12,7 @@ export default class MessageEvent extends BaseEvent {
     }
 
     public async exec(client: client, message: Message): Promise<void> {
-        if(message.author.bot || message.channel.type === 'dm') return;
+        if(message.author.bot || message.channel.type === 'DM') return;
         const prefix = await client.getConfig().getPrefix(message.guild.id);
         const content = message.content;
 
@@ -46,7 +46,7 @@ export default class MessageEvent extends BaseEvent {
             }
         })
 
-        const args = message.content.split(' ');
+   /*     const args = message.content.split(' ');
         const cmd = args[0].substring(1);
         args.shift();
 
@@ -67,6 +67,6 @@ export default class MessageEvent extends BaseEvent {
                     .setColor("#FF0000"));
                 })
             }
-        }
+        }*/
     }
 }

@@ -1,5 +1,6 @@
 import * as Discord from 'discord.js'
 import { Manager, NodeOptions } from 'erela.js';
+import { Client as Joker } from 'blague.xyz'
 
 import BaseCommand from '../structures/base/BaseCommand';
 import BaseEvent from '../structures/base/BaseEvent';
@@ -12,6 +13,7 @@ export default class DiscordClient extends Discord.Client {
     private events : EventHandler;
     private config : BotConfigurable;
     private nodes : NodeOptions[];
+    private joker : Joker;
 
     constructor(options?: Discord.ClientOptions) {
         super(options);
@@ -33,6 +35,11 @@ export default class DiscordClient extends Discord.Client {
                 const guild = this.guilds.cache.get(id);
                 if(guild) guild.shard.send(payload);
             }
+        });
+
+        this.joker = new Joker("aaz", {
+            defaultLang: "fr",
+            baseURL: "https://blague.xyz/api"
         })
     }
 
@@ -75,5 +82,9 @@ export default class DiscordClient extends Discord.Client {
 
     public getConfig() : BotConfigurable {
         return this.config;
+    }
+
+    public getJoker() : Joker {
+        return this.joker;
     }
 }

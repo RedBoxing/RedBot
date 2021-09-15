@@ -110,7 +110,9 @@ export class Menu extends EventEmitter {
   start () {
     // TODO: Sort out documenting this as a TSDoc event.
     this.emit('pageChange', this.currentPage)
-    this.channel.send(this.currentPage.content).then(menu => {
+    this.channel.send({
+      embeds: [this.currentPage.content]
+    }).then(menu => {
       this.menu = menu
       this.addReactions()
       this.awaitReactions()
@@ -170,7 +172,9 @@ export class Menu extends EventEmitter {
 
     this.pageIndex = page
     this.currentPage = this.pages[this.pageIndex]
-    this.menu.edit(this.currentPage.content)
+    this.menu.edit({
+      embeds: [this.currentPage.content]
+    })
 
     this.reactionCollector.stop()
     this.clearReactions();
@@ -197,13 +201,13 @@ export class Menu extends EventEmitter {
    * Start a reaction collector and switch pages where required.
    */
   awaitReactions () {
-    this.reactionCollector = this.menu.createReactionCollector((reaction, user) => user.id !== this.menu.client.user.id, { idle: this.ms })
+    this.reactionCollector = this.menu.createReactionCollector({ filter: (reaction, user) => user.id !== this.menu.client.user.id, idle: this.ms })
 
     let sameReactions
     this.reactionCollector.on('end', (reactions) => {
       // Whether the end was triggered by pressing a reaction or the menu just ended.
       if (reactions) {
-        return !sameReactions ? this.clearReactions() : reactions.array()[0].users.remove(this.menu.client.users.cache.get(this.userID))
+        return !sameReactions ? this.clearReactions() : reactions.values()[0].users.remove(this.menu.client.users.cache.get(this.userID))
       } else {
         return this.clearReactions()
       }
@@ -227,22 +231,22 @@ export class Menu extends EventEmitter {
 
         switch (this.currentPage.reactions[reactionName]) {
           case 'first':
-            sameReactions = JSON.stringify(this.menu.reactions.cache.keyArray()) === JSON.stringify(Object.keys(this.pages[0].reactions))
+            sameReactions = JSON.stringify(this.menu.reactions.cache.keys()) === JSON.stringify(Object.keys(this.pages[0].reactions))
             this.setPage(0)
             break
           case 'last':
-            sameReactions = JSON.stringify(this.menu.reactions.cache.keyArray()) === JSON.stringify(Object.keys(this.pages[this.pages.length - 1].reactions))
+            sameReactions = JSON.stringify(this.menu.reactions.cache.keys()) === JSON.stringify(Object.keys(this.pages[this.pages.length - 1].reactions))
             this.setPage(this.pages.length - 1)
             break
           case 'previous':
             if (this.pageIndex > 0) {
-              sameReactions = JSON.stringify(this.menu.reactions.cache.keyArray()) === JSON.stringify(Object.keys(this.pages[this.pageIndex - 1].reactions))
+              sameReactions = JSON.stringify(this.menu.reactions.cache.keys()) === JSON.stringify(Object.keys(this.pages[this.pageIndex - 1].reactions))
               this.setPage(this.pageIndex - 1)
             }
             break
           case 'next':
             if (this.pageIndex < this.pages.length - 1) {
-              sameReactions = JSON.stringify(this.menu.reactions.cache.keyArray()) === JSON.stringify(Object.keys(this.pages[this.pageIndex + 1].reactions))
+              sameReactions = JSON.stringify(this.menu.reactions.cache.keys()) === JSON.stringify(Object.keys(this.pages[this.pageIndex + 1].reactions))
               this.setPage(this.pageIndex + 1)
             }
             break
@@ -253,7 +257,7 @@ export class Menu extends EventEmitter {
             this.delete()
             break
           default:
-            sameReactions = JSON.stringify(this.menu.reactions.cache.keyArray()) === JSON.stringify(Object.keys(this.pages.find(p => p.name === this.currentPage.reactions[reactionName]).reactions))
+            sameReactions = JSON.stringify(this.menu.reactions.cache.keys()) === JSON.stringify(Object.keys(this.pages.find(p => p.name === this.currentPage.reactions[reactionName]).reactions))
             this.setPage(this.pages.findIndex(p => p.name === this.currentPage.reactions[reactionName]))
             break
         }

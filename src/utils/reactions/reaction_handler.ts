@@ -5,7 +5,7 @@ export class ReactionHandler {
 
     addReactionListener(guild: Guild, msg: Message, handler: ReactionListener<any>) {
         if(!handler) return;
-        if(msg.channel.isText() && !msg.guild.me.hasPermission('ADD_REACTIONS')) return;
+        if(msg.channel.isText() && !msg.guild.me.permissions.has('ADD_REACTIONS')) return;
 
         if(!this.listeners.has(guild.id)) {
             this.listeners.set(guild.id, new Map<string, ReactionListener<any>>());

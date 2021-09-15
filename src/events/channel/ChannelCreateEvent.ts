@@ -8,20 +8,20 @@ export default class ChannelCreateEvent extends BaseEvent {
     }
 
     public async exec(client: DiscordClient, ch: Channel): Promise<void> {
+        if(ch.isThread()) return;
+
         const channel = ch as GuildChannel;
         const guild = channel.guild;
 
         let role = await guild.roles.resolve(await client.getConfig().getMutedRole(guild.id));
         if(!role) { 
             role = await guild.roles.create({
-                data: {
-                    name: "Muted",
-                    permissions: []
-                }
+                name: "Muted",
+                permissions: []
             })
 
             client.getConfig().setMutedRole(guild.id, role.id);
-            channel.updateOverwrite(role, { SEND_MESSAGES: false });   
+            channel.permissionOverwrites.edit(role, { SEND_MESSAGES: false });   
         }
     }
 }

@@ -3,6 +3,9 @@ import BaseEvent from "../structures/base/BaseEvent";
 import * as logger from '../utils/logger'
 
 import { sequelize } from "../database";
+import { REST } from '@discordjs/rest'
+import { Routes } from 'discord-api-types/v9'
+import { SlashCommandBuilder } from '@discordjs/builders'
 
 export default class ReadyEvent extends BaseEvent {
     constructor() {
@@ -25,6 +28,18 @@ export default class ReadyEvent extends BaseEvent {
 
             client.manager.init(client.user.id);
             logger.success("Bot Connected to " + client.guilds.cache.size + " guilds !");
+            logger.info("Initializing slashes commandes...");
+
+            const rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN);
+
+            await rest.put(
+                Routes.applicationCommands(client.user.id),
+                {
+                    body: Array.from(client.getCommands()).map(([key, value]) => (value.build(new SlashCommandBuilder().setName(value.getName()).setDescription(value.getDescription())).toJSON()))
+                }
+            );
+
+            logger.success("Loaded slashes commandes !");
         }).catch(err => {
             logger.error("Failed to connect to database : " + err);
         })

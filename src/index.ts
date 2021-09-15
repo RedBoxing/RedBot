@@ -9,8 +9,11 @@ import TrackEndEvent from './events/music/TrackEndEvent';
 import RawEvent from './events/music/RawEvent';
 
 import * as logger from './utils/logger'
+import { Intents } from 'discord.js';
 
-const client = new DiscordClient();
+const client = new DiscordClient({
+    intents: [ Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES ]
+});
 
 (async () => {
     await registerCommands(client, '../commands');
