@@ -25,7 +25,7 @@ export default class EmbedCommand extends BaseCommand {
         embed.addField("Stats", "Utilisateurs : `" + client.users.cache.size + "`\n Commandes: `" + client.getCommands().size + "`\n Ping: `" + Math.round(client.ws.ping) + "ms`", true);
 
         const { totalMemMb, usedMemMb } = await mem.info();
-        embed.addField("Serveur", "CPU: `" + cpu.model() + "`\n Utilisation de la mémoire: `" + usedMemMb + "/" + totalMemMb + "`\n OS: `" + await os.oos() + "`", false);
+        embed.addField("Serveur", "CPU: `" + cpu.model() + "`\n Utilisation de la mémoire du VPS: `" + usedMemMb + "mb / " + totalMemMb + "mb`\n OS: `" + await os.oos() + "`", false);
 
         interaction.reply({
             embeds: [embed]

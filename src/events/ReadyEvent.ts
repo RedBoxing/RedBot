@@ -33,7 +33,7 @@ export default class ReadyEvent extends BaseEvent {
             const rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN);
 
             await rest.put(
-                Routes.applicationCommands(client.user.id),
+                Routes.applicationGuildCommands(client.user.id, "777281629407805520"),
                 {
                     body: Array.from(client.getCommands()).map(([key, value]) => (value.build(new SlashCommandBuilder().setName(value.getName()).setDescription(value.getDescription())).toJSON()))
                 }
