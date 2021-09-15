@@ -12,8 +12,8 @@ export default class EmbedCommand extends BaseCommand {
     public async exec(client: DiscordClient, message: Message, args: any[]) : Promise<void> {
         console.log("a");
        const embed = new MessageEmbed();
-       embed.setAuthor("RedBot", client.user.avatar);
-       embed.setThumbnail(client.user.avatar);
+       embed.setAuthor("RedBot", client.user.avatarURL());
+       embed.setThumbnail(client.user.avatarURL());
        embed.setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL());
 
        embed.addField("Version", "Node.js : `16.6.1`\n Discord.js: 13.1.0\n RedBot: 1.0.1", true);
