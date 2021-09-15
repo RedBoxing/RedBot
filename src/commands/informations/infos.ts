@@ -19,6 +19,7 @@ export default class EmbedCommand extends BaseCommand {
        embed.addField("Version", "Node.js : `" + process.versions.node + "`\n Discord.js: `13.1.0`\n RedBot: `1.0.1`", true);
        embed.addField("Stats", "Utilisateurs : `" + client.users.cache.size + "`\n Commandes: `3`", true);
        
+       console.log(process.memoryUsage().rss)
        const total = process.memoryUsage().heapTotal;
        const used = process.memoryUsage().heapUsed;
        embed.addField("Serveur", "CPU: `" + os.cpus()[0].model + "`\n Utilisation de la mémoire: `" + humanFileSize(used) + "/" + humanFileSize(total) + "`\n OS: `" + os.platform() + "`", false);
