@@ -5,7 +5,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build": "npm run clean && tsc",
-    "start": "npm run build && node dist/",
+    "start": "npm run build && node build/",
     "dev": "nodemon",
     "lavalink": "java -jar Lavalink.jar"
   },
