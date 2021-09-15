@@ -10,6 +10,7 @@ export default class EmbedCommand extends BaseCommand {
     }
 
     public async exec(client: DiscordClient, message: Message, args: any[]) {
+        console.log("a");
        const embed = new MessageEmbed();
        embed.setAuthor("RedBot", client.user.avatar);
        embed.setThumbnail(client.user.avatar);
