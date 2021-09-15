@@ -14,6 +14,7 @@ export default class EmbedCommand extends BaseCommand {
 
     public async exec(client: DiscordClient, message: Message, args: any[]): Promise < void > {
         const packageJson = fs.readFileSync('./package.json', 'utf-8');
+        console.log(packageJson)
 
         const embed = new MessageEmbed();
         embed.setAuthor("RedBot", client.user.avatarURL());
