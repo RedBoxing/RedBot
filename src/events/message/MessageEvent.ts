@@ -27,6 +27,9 @@ export default class MessageEvent extends BaseEvent {
             member = await GuildMember.create({
                 guildId: message.guild.id,
                 userId: message.author.id,
+                experience: 0,
+                last_experience_increase: 0,
+                join_date: Date.now()
             });
         }
 
