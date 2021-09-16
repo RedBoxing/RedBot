@@ -8,7 +8,7 @@ import GuildMember from "../../database/models/GuildMember";
 
 export default class MessageEvent extends BaseEvent {
     constructor() {
-        super("message");
+        super("messageCreate");
     }
 
     public async exec(client: client, message: Message): Promise<void> {
