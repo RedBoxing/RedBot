@@ -9,16 +9,16 @@ export default class GuildCreateEvent extends BaseEvent {
     }
 
     public async exec(client: client, guild: Guild): Promise<void> {
-        let config = await GuildConfig.findOne({
+        let config = (await GuildConfig.findOne({
             where: {
                 guildId: guild.id
             }
-        });
+        })).get();
 
         if(!config) {
-            config = await GuildConfig.create({
+            config = (await GuildConfig.create({
                 guildId: guild.id
-            });
+            })).get();
         }
     }
 }

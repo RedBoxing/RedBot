@@ -47,7 +47,7 @@ export default class BotConfigurable {
         return [
             "Bot par RedBoxing",
             "https://redboxing.fr",
-            ".help | Bot par RedBoxing",
+            "/help | Bot par RedBoxing",
             "RedBoxing = 👑",
             "Azes = 🧊",
             "Zephyr = 🎄",

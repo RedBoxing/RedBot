@@ -1,4 +1,6 @@
 import * as Discord from 'discord.js'
+import * as logger from '../utils/logger'
+
 import { Manager, NodeOptions } from 'erela.js';
 import { Client as Joker } from 'blague.xyz'
 
@@ -44,6 +46,7 @@ export default class DiscordClient extends Discord.Client {
     }
 
     public addCommand(command: BaseCommand): DiscordClient {
+        logger.info(`Loaded command '${command.getName()}'`)
         this.commands.set(command.getName(), command);
         return this;
     }
@@ -62,8 +65,9 @@ export default class DiscordClient extends Discord.Client {
     }
 
     public addEvent(event: BaseEvent): void {
-        this.events.set(event.getName(), event);
         const name = event.getName();
+        this.events.set(name, event);
+        logger.info(`Loaded event '${event.getName()}'`);
         this.on(name, event.exec.bind(null, this));
     }
 

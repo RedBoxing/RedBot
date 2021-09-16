@@ -13,7 +13,7 @@ export default class PatCommand extends BaseCommand {
     public async exec(client: client, interaction: CommandInteraction): Promise<void> {
         const friend = interaction.options.getUser("friend");
 
-        const res = await axios('https://nekos.life/api/pat');
+        const res = await axios('https://nekos.life/api/v2/img/pat');
         const img = res.data.url;
 
         interaction.reply({

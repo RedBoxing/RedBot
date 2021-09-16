@@ -13,7 +13,7 @@ export default class HugCommand extends BaseCommand {
     public async exec(client: client, interaction: CommandInteraction): Promise<void> {
         const friend = interaction.options.getUser("friend");
 
-        const res = await axios('https://nekos.life/api/hug');
+        const res = await axios('https://nekos.life/api/v2/img/hug');
         const img = res.data.url;
 
         interaction.reply({
