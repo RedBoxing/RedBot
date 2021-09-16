@@ -1,6 +1,4 @@
 import { Message, MessageEmbed } from "discord.js";
-import { checkPermission } from "../../utils/permissionsUtils";
-import { reactor } from "../../utils/reactions/reactor";
 
 import client from "../../client/client";
 import BaseEvent from "../../structures/base/BaseEvent";
@@ -16,7 +14,7 @@ export default class MessageEvent extends BaseEvent {
         const prefix = await client.getConfig().getPrefix(message.guild.id);
         const content = message.content;
 
-        let member = (await GuildMember.findOne({
+        let member : GuildMember = (await GuildMember.findOne({
             where: {
                 guildId: message.guild.id,
                 userId: message.author.id
