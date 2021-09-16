@@ -16,20 +16,20 @@ export default class InteractionCreateEvent extends BaseEvent {
 
         if(client.getCommands().has(interaction.commandName)) {
             const command = client.getCommands().get(interaction.commandName);
-            command.exec(client, interaction).catch(err => {
-                try {
-                    interaction.reply({
-                        embeds: [
-                            new MessageEmbed()
-                                .setAuthor("Error !", client.user.avatarURL())
-                                .setDescription(err)
-                                .setColor("#FF0000")
-                        ]
-                     });
-                } catch(error) {
-                    console.log(error);
-                }
-            })
+
+            try {
+                command.exec(client, interaction);
+            } catch(err) {
+                interaction.reply({
+                    embeds: [
+                        new MessageEmbed()
+                            .setAuthor("Error !", client.user.avatarURL())
+                            .setDescription(err)
+                            .setColor("RED")
+                            .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                    ]
+                });
+            }
         }
     }
 }

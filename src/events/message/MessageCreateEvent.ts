@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from "discord.js";
+import { Message } from "discord.js";
 
 import client from "../../client/client";
 import BaseEvent from "../../structures/base/BaseEvent";
@@ -36,7 +36,16 @@ export default class MessageEvent extends BaseEvent {
             if(content.length > 4 && (Date.now() > (member.last_experience_increase + cooldown))) {
                 member.experience = member.experience + (Math.floor(Math.random() * 5));
                 member.last_experience_increase = Date.now();
-                member.save();
+                
+                GuildMember.update({
+                    experience: member.experience + (Math.floor(Math.random() * 5)),
+                    last_experience_increase: Date.now()
+                }, {
+                    where: {
+                        guildId: message.guild.id,
+                        userId: message.author.id
+                    }
+                });
             }
         }
     }
