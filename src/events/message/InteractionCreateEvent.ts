@@ -27,7 +27,7 @@ export default class InteractionCreateEvent extends BaseEvent {
                         ]
                      });
                 } catch(error) {
-                    
+                    console.log(error);
                 }
             })
         }
