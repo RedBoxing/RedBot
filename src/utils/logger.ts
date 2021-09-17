@@ -38,7 +38,7 @@ interface CustomLevels extends winston.Logger {
     success: winston.LeveledLogMethod
 }
 
-const winstonLogger : CustomLevels = <CustomLevels>winston.createLogger({
+const logger : CustomLevels = <CustomLevels>winston.createLogger({
     level: 'info',
     levels,
     format: winstonFormat,
@@ -54,4 +54,4 @@ const winstonLogger : CustomLevels = <CustomLevels>winston.createLogger({
     ]
 });
 
-export default winstonLogger;
+export default logger;
