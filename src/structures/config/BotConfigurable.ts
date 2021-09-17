@@ -1,6 +1,7 @@
 import DiscordClient from '../../client/client';
 import GuildConfig from '../../database/models/GuildConfig';
 import GuildMember from '../../database/models/GuildMember';
+import { humanFileSize } from '../../utils/utils';
 
 export const availableOptions = {
     "mutedRole": "Muted Role",
@@ -57,7 +58,7 @@ export default class BotConfigurable {
             "Bot par RedBoxing",
             "https://redboxing.fr",
             "/help | Bot par RedBoxing",
-            `${process.memoryUsage().heapUsed} mb / ${process.memoryUsage().heapTotal}`,
+            `${humanFileSize(process.memoryUsage().heapUsed)} / ${humanFileSize(process.memoryUsage().heapTotal)}`,
             `${client.guilds.cache.size} guilds !`,
             `${client.ws.ping} ms`,
             `${(await GuildMember.findAndCountAll()).count} users !`,
