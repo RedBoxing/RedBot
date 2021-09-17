@@ -45,7 +45,8 @@ export default class DiscordClient extends Discord.Client {
                     clientID: process.env.SPOTIFY_CLIENT_ID,
                     clientSecret: process.env.SPOTIFY_CLIENT_SECRET
                 })
-            ]
+            ],
+            autoPlay: true
         });
 
         this.joker = new Joker("aaz", {
