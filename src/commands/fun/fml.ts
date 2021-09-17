@@ -1,4 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
+import axios from "axios";
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import client from "../../client/client";
 import BaseCommand from "../../structures/base/BaseCommand";
@@ -9,7 +10,7 @@ export default class FMLCommand extends BaseCommand {
     }
 
     public async exec(client: client, interaction: CommandInteraction): Promise<void> {
-        const fml = await client.getJoker().randomVDM();
+        const fml = (await axios("https://blague.xyz/api/vdm/random")).data.vdm.content;
 
         interaction.reply({
             embeds: [

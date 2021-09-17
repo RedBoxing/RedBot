@@ -2,7 +2,6 @@ import * as Discord from 'discord.js'
 import * as logger from '../utils/logger'
 
 import { Manager, NodeOptions } from 'erela.js';
-import { Client as Joker } from 'blague.xyz'
 
 import Spotify from 'erela.js-spotify'
 import BaseCommand from '../structures/base/BaseCommand';
@@ -92,10 +91,6 @@ export default class DiscordClient extends Discord.Client {
 
     public getConfig() : BotConfigurable {
         return this.config;
-    }
-
-    public getJoker() : Joker {
-        return this.joker;
     }
 
     public getTranslator() : Translator {
