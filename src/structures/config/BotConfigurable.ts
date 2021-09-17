@@ -72,7 +72,7 @@ export default class BotConfigurable {
                 guildId,
                 name
             }
-        })).get();
+        }));
 
         if(!config) {
             await GuildConfig.create({
@@ -100,16 +100,16 @@ export default class BotConfigurable {
                 guildId,
                 name
             }
-        })).get();
+        }))
 
         if(!config) {
             config = (await GuildConfig.create({
                 guildId,
                 name,
                 _default
-            })).get();
+            }));
         }
 
-        return config.value;
+        return config.get().value;
     }
 }
