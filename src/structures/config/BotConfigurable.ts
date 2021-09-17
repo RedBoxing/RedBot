@@ -106,7 +106,7 @@ export default class BotConfigurable {
             config = (await GuildConfig.create({
                 guildId,
                 name,
-                _default
+                value: _default
             }));
         }
 
