@@ -4,6 +4,7 @@ import client from "../../client/client";
 import BaseEvent from "../../structures/base/BaseEvent";
 import GuildMember from "../../database/models/GuildMember";
 import { reactor } from "../../utils/reactions/reactor";
+import { config } from "dotenv";
 
 export default class MessageEvent extends BaseEvent {
     constructor() {
@@ -16,12 +17,27 @@ export default class MessageEvent extends BaseEvent {
 
         const countingChannelId = await client.getConfig().getConfig(message.guildId, 'countingChannel');
         if(countingChannelId !== undefined && message.channelId === countingChannelId) {
-            const currentCount = await client.getConfig().getConfig(message.guildId, 'counting', 0);
+            const currentCount : number = parseInt(await client.getConfig().getConfig(message.guildId, 'counting', 0));
+            const lastCounter = await client.getConfig().getConfig(message.guildId, 'lastCounter');
 
             try {
-                const count = parseInt(content);
+                const count : number = parseInt(content);
                 if(count === currentCount + 1) {
-                    reactor.success(message);
+                    if(lastCounter !== undefined && message.author.id === lastCounter) {
+                        reactor.failure(message);
+                        message.reply({
+                            embeds: [
+                                new MessageEmbed()
+                                    .setAuthor(`You can't count do that !`, client.user.avatarURL())
+                                    .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                                    .setDescription(`You can't count 2 time in a row !`)
+                                    .setColor('RED')
+                            ]
+                        })
+                    } else {
+                        reactor.success(message);
+                        client.getConfig().setConfig(message.guildId, 'counting', currentCount + 1)
+                    }
                 } else {
                     reactor.failure(message);
                     message.reply({

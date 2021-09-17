@@ -12,29 +12,19 @@ const getRandom = (array: string[]) =>
 export class Reactor {
   /** Indicates to the user that the command was executed successfully. */
   async success(message: Message) : Promise<void> {
-    if (!(await this.isReactionEnabled(message))) return;
-
     await message.react(getRandom(ACK_REACTIONS));
   }
 
   /** Indicates to the user that the command failed for some reason. */
   async failure(message: Message) : Promise<void> {
-    if (!(await this.isReactionEnabled(message))) return;
-
     await message.reactions.removeAll();
     await message.react(getRandom(FAILURE_REACTIONS));
   }
 
   /** Indicates to the user that the command is no longer active, as intended. */
   async expired(message: Message) : Promise<void> {
-    if (!(await this.isReactionEnabled(message))) return;
-
     await message.reactions.removeAll();
     await message.react(getRandom(EXPIRED_REACTIONS));
-  }
-
-  private async isReactionEnabled(message: Message) : Promise<boolean> {
-      return (await (message.client as DiscordClient).getConfig().getCommandReaction(message.guild.id));
   }
 }
 
