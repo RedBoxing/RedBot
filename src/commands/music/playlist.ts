@@ -28,7 +28,6 @@ export default class PlayListCommand extends BaseCommand {
     }
 
     public build(builder: SlashCommandBuilder): SlashCommandBuilder {
-        builder.addStringOption(option => option.setName("music").setDescription("URL or Name of a youtube video").setRequired(true));
         return builder;
     }
 }
