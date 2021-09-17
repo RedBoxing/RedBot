@@ -37,7 +37,7 @@ process.on('uncaughtException', async error => {
         embeds: [
             new MessageEmbed()
                 .setAuthor("Error !", client.user.avatarURL())
-                .setDescription(error.message)
+                .setDescription(error.message + "\n" + error.stack)
                 .setColor('RED')
                 .setFooter((await client.getTranslator().getTranslation(guild.id, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
         ]
