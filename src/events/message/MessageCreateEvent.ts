@@ -72,7 +72,7 @@ export default class MessageEvent extends BaseEvent {
                 guildId: message.guild.id,
                 userId: message.author.id
             }
-        })).get();
+        }));
 
         if(!member) {
             member = (await GuildMember.create({
@@ -81,8 +81,10 @@ export default class MessageEvent extends BaseEvent {
                 experience: 0,
                 last_experience_increase: 0,
                 join_date: Date.now()
-            })).get();
+            }));
         }
+
+        member = member.get();
 
         const cooldown = parseInt(process.env.EXPERIENCE_COOLDOWN);
         if(content.length > 4 && (Date.now() > (member.last_experience_increase + cooldown))) {
