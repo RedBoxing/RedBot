@@ -22,9 +22,8 @@ export default class MessageEvent extends BaseEvent {
 
             try {
                 const count : number = parseInt(content);
-                if(count === currentCount + 1) {
-                    if(lastCounter !== undefined && message.author.id === lastCounter) {
-                        reactor.failure(message);
+                if(lastCounter !== undefined && message.author.id === lastCounter) {
+                    reactor.failure(message);
                         message.reply({
                             embeds: [
                                 new MessageEmbed()
@@ -34,10 +33,10 @@ export default class MessageEvent extends BaseEvent {
                                     .setColor('RED')
                             ]
                         })
-                    } else {
-                        reactor.success(message);
-                        client.getConfig().setConfig(message.guildId, 'counting', currentCount + 1)
-                    }
+                } else if(count === currentCount + 1) {
+                    reactor.success(message);
+                    client.getConfig().setConfig(message.guildId, 'counting', currentCount + 1)
+                    client.getConfig().setConfig(message.guildId, 'lastCounter', message.author.id);
                 } else {
                     reactor.failure(message);
                     message.reply({
@@ -50,7 +49,18 @@ export default class MessageEvent extends BaseEvent {
                         ]
                     })
                 }
-            } catch(ignored) {}
+            } catch(err) {
+                reactor.failure(message);
+                    message.reply({
+                        embeds: [
+                            new MessageEmbed()
+                                .setAuthor(`Invalid Number !`, client.user.avatarURL())
+                                .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                                .setDescription(`\`${content}\` isn't a valid number !`)
+                                .setColor('RED')
+                        ]
+                    })
+            }
 
             return;
         }
