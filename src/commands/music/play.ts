@@ -53,7 +53,7 @@ export default class PlayCommand extends BaseCommand {
                 .setDescription("Sorry, I was unnable to find that song !")
                 .setColor("#FF0000")
                 .setAuthor("Music not found !", client.user.avatarURL())
-                .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                .setFooter((await client.getTranslator().getTranslation(interaction.guildId, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
                 ]
             });
             return;
@@ -68,7 +68,7 @@ export default class PlayCommand extends BaseCommand {
                     .setDescription("Sorry, I was unnable to find that song !")
                     .setColor("#FF0000")
                     .setAuthor("Music not found !", client.user.avatarURL())
-                    .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                    .setFooter((await client.getTranslator().getTranslation(interaction.guildId, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
                     ]
                 });
                 break;

@@ -22,7 +22,7 @@ export default class InteractionCreateEvent extends BaseEvent {
                             .setAuthor("Error !", client.user.avatarURL())
                             .setDescription(err)
                             .setColor("RED")
-                            .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                            .setFooter((await client.getTranslator().getTranslation(interaction.guildId, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
                     ]
                 });
             }

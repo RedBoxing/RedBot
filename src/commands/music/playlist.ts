@@ -13,7 +13,7 @@ export default class PlayListCommand extends BaseCommand {
         if(player) {
             const embed = new MessageEmbed();
             embed.setTitle("Playlist of : " + interaction.guild.name);
-            embed.setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL());
+            embed.setFooter((await client.getTranslator().getTranslation(interaction.guildId, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL());
 
             let str = "Current: " + player.queue.current.title + "\n\n";
             player.queue.forEach((track, index) =>  {

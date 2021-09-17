@@ -19,7 +19,7 @@ export default class WarsCommand extends BaseCommand {
                 .setDescription("You do not have the permission to do this !")
                 .setColor("#FF0000")
                 .setAuthor("You need to be administrator to do this !", client.user.avatarURL())
-                .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                .setFooter((await client.getTranslator().getTranslation(interaction.guildId, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
                 ]
             });
             return;
@@ -33,7 +33,7 @@ export default class WarsCommand extends BaseCommand {
                 .setDescription("User not found ! ")
                 .setColor("#FF0000")
                 .setAuthor(`User not found !`, client.user.avatarURL())
-                .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                .setFooter((await client.getTranslator().getTranslation(interaction.guildId, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
                 ]
             });
             return;
@@ -63,7 +63,7 @@ export default class WarsCommand extends BaseCommand {
                 .addField("Issued", mod.sanctionDate.toLocaleDateString(), true)
                 .addField("Reason", reason, true)
                 .setColor('YELLOW')
-                .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                .setFooter((await client.getTranslator().getTranslation(interaction.guildId, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
                 ]
             });
         }

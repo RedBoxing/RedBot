@@ -1,4 +1,6 @@
+import DiscordClient from '../../client/client';
 import GuildConfig from '../../database/models/GuildConfig';
+import GuildMember from '../../database/models/GuildMember';
 
 export const availableOptions = {
     "mutedRole": "Muted Role",
@@ -50,19 +52,16 @@ export default class BotConfigurable {
         return await this.getConfig(guildId, 'countingChannel');
     }
 
-    public getBotStatus() : Array<string> {
+    public async getBotStatus(client: DiscordClient) : Promise<Array<string>> {
         return [
             "Bot par RedBoxing",
             "https://redboxing.fr",
             "/help | Bot par RedBoxing",
-            "RedBoxing = 👑",
-            "Azes = 🧊",
-            "Zephyr = 🎄",
-            "Quentin = ❤️",
-            "Yoshi = 🌴",
-            "Naruki = 🍟",
-            "Les frites c'est Zephyr",
-            "Acheter RedBot Premium",
+            `${process.memoryUsage().heapUsed} mb / ${process.memoryUsage().heapTotal}`,
+            `${client.guilds.cache.size} guilds !`,
+            `${client.ws.ping} ms`,
+            `${(await GuildMember.findAndCountAll()).count} users !`,
+            `Current version: 1.0.2`
         ]
     }
 

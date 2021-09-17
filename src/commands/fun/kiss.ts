@@ -23,7 +23,7 @@ export default class KissCommand extends BaseCommand {
                     .setAuthor(`Owo, ${interaction.user.username} just kissed ${friend.username} !`, client.user.avatarURL())
                     .setImage(img)
                     .setColor('RANDOM')
-                    .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                    .setFooter((await client.getTranslator().getTranslation(interaction.guildId, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
             ]
         });
     }

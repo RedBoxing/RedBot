@@ -13,15 +13,15 @@ export default class ConfigCommand extends BaseCommand {
         const option = interaction.options.getString("option");
         const value = interaction.options.getString("value");
 
-        const before = client.getConfig().getConfig(interaction.guildId, option);
+        const before = await client.getConfig().getConfig(interaction.guildId, option);
         client.getConfig().setConfig(interaction.guildId, option, value);
 
         interaction.reply({
             embeds: [
                 new MessageEmbed()
-                .setAuthor(`Configured ${option} !`, client.user.avatarURL())
-                .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
-                .setDescription(`Changed option \`${option}\` from \`${before}\` to \`${value}\``)
+                .setAuthor((await client.getTranslator().getTranslation(interaction.guildId, 'CONFIGURED_OPTION')).replaceAll("${option}", option), client.user.avatarURL())
+                .setFooter((await client.getTranslator().getTranslation(interaction.guildId, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                .setDescription((await client.getTranslator().getTranslation(interaction.guildId, 'CONFIGURED_OPTION2')).replaceAll("${option}", option).replaceAll("{before}", before).replaceAll("${value}", value))
                 .setColor('GREEN')
             ]
         })

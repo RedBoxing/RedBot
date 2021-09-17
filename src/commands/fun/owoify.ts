@@ -22,7 +22,7 @@ export default class OwoifyCommand extends BaseCommand {
                     .setAuthor(`Your message have been Owo-ified !`, client.user.avatarURL())
                     .setDescription(msg)
                     .setColor('RANDOM')
-                    .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                    .setFooter((await client.getTranslator().getTranslation(interaction.guildId, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
             ]
         });
     }

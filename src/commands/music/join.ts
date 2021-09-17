@@ -19,7 +19,7 @@ export default class JoinCommand extends BaseCommand {
                 .setDescription("You need to be in a voice channel to play music !")
                 .setColor("#FF0000")
                 .setAuthor("You are not in a voice channel !", client.user.avatarURL())
-                .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                .setFooter((await client.getTranslator().getTranslation(interaction.guildId, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
                 ]
             });
             return;

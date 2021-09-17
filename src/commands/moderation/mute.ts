@@ -18,7 +18,7 @@ export default class MuteCommand extends BaseCommand {
                 .setDescription("You do not have the permission to do this !")
                 .setColor("#FF0000")
                 .setAuthor("You need to be administrator to do this !", client.user.avatarURL())
-                .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                .setFooter((await client.getTranslator().getTranslation(interaction.guildId, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
                 ]
             });
             return;
@@ -32,7 +32,7 @@ export default class MuteCommand extends BaseCommand {
                 .setDescription("User not found ! ")
                 .setColor("#FF0000")
                 .setAuthor(`User not found !`, client.user.avatarURL())
-                .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                .setFooter((await client.getTranslator().getTranslation(interaction.guildId, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
                 ]
             });
             return;
@@ -61,7 +61,7 @@ export default class MuteCommand extends BaseCommand {
                 new MessageEmbed()
             .setAuthor(target.user.username + " was muted", target.user.avatarURL())
             .setDescription(target.user.tag + " was muted by " + interaction.user.tag)
-            .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+            .setFooter((await client.getTranslator().getTranslation(interaction.guildId, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
             ]
         });
     }

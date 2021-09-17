@@ -9,6 +9,7 @@ import BaseEvent from '../structures/base/BaseEvent';
 import CommandHandler from '../structures/CommandHandler';
 import BotConfigurable from '../structures/config/BotConfigurable';
 import EventHandler from '../structures/EventHandler';
+import Translator from '../utils/translator';
 
 export default class DiscordClient extends Discord.Client {
     private commands : CommandHandler;
@@ -16,6 +17,7 @@ export default class DiscordClient extends Discord.Client {
     private config : BotConfigurable;
     private nodes : NodeOptions[];
     private joker : Joker;
+    private translator : Translator;
 
     constructor(options?: Discord.ClientOptions) {
         super(options);
@@ -43,6 +45,8 @@ export default class DiscordClient extends Discord.Client {
             defaultLang: "fr",
             baseURL: "https://blague.xyz/api"
         })
+
+        this.translator = new Translator(this);
     }
 
     public addCommand(command: BaseCommand): DiscordClient {
@@ -90,5 +94,9 @@ export default class DiscordClient extends Discord.Client {
 
     public getJoker() : Joker {
         return this.joker;
+    }
+
+    public getTranslator() : Translator {
+        return this.translator;
     }
 }

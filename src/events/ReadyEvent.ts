@@ -44,7 +44,7 @@ export default class ReadyEvent extends BaseEvent {
             logger.error("Failed to connect to database : " + err);
         })
             
-        const status = client.getConfig().getBotStatus();
+        const status = await client.getConfig().getBotStatus(client);
 
         client.user.setActivity(status[Math.floor(Math.random() * (status.length - 1) + 1)], { type: 'WATCHING' });
         setInterval(() => {

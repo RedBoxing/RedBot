@@ -4,7 +4,6 @@ import client from "../../client/client";
 import BaseEvent from "../../structures/base/BaseEvent";
 import GuildMember from "../../database/models/GuildMember";
 import { reactor } from "../../utils/reactions/reactor";
-import { config } from "dotenv";
 
 export default class MessageEvent extends BaseEvent {
     constructor() {
@@ -26,9 +25,9 @@ export default class MessageEvent extends BaseEvent {
                 message.reply({
                     embeds: [
                         new MessageEmbed()
-                            .setAuthor(`Invalid Number !`, client.user.avatarURL())
-                            .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
-                            .setDescription(`\`${content}\` isn't a valid number !`)
+                            .setAuthor((await client.getTranslator().getTranslation(message.guildId, 'INVALID_NUMBER')), client.user.avatarURL())
+                            .setFooter((await client.getTranslator().getTranslation(message.guildId, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                            .setDescription((await client.getTranslator().getTranslation(message.guildId, 'INVALID_NUMBER2')).replaceAll("${content}", content))
                             .setColor('RED')
                     ]
                 })
@@ -43,7 +42,7 @@ export default class MessageEvent extends BaseEvent {
                         embeds: [
                             new MessageEmbed()
                                 .setAuthor(`You can't count do that !`, client.user.avatarURL())
-                                .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                                .setFooter((await client.getTranslator().getTranslation(message.guildId, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
                                 .setDescription(`You can't count 2 time in a row !`)
                                 .setColor('RED')
                         ]
@@ -58,7 +57,7 @@ export default class MessageEvent extends BaseEvent {
                     embeds: [
                         new MessageEmbed()
                             .setAuthor(`Wrong Number !`, client.user.avatarURL())
-                            .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                            .setFooter((await client.getTranslator().getTranslation(message.guildId, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
                             .setDescription(`Number \`${count}\` isn't the correct number !`)
                             .setColor('RED')
                     ]

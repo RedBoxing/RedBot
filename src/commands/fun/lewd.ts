@@ -18,7 +18,7 @@ export default class NekoCommand extends BaseCommand {
                     .setAuthor("Error !")
                     .setColor("RED")
                     .setDescription("This command is not allowed here !")
-                    .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                    .setFooter((await client.getTranslator().getTranslation(interaction.guildId, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
                 ]
             });
 
