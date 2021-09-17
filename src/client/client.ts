@@ -4,6 +4,7 @@ import * as logger from '../utils/logger'
 import { Manager, NodeOptions } from 'erela.js';
 import { Client as Joker } from 'blague.xyz'
 
+import Spotify from 'erela.js-spotify'
 import BaseCommand from '../structures/base/BaseCommand';
 import BaseEvent from '../structures/base/BaseEvent';
 import CommandHandler from '../structures/CommandHandler';
@@ -38,7 +39,13 @@ export default class DiscordClient extends Discord.Client {
             send: (id, payload) => {    
                 const guild = this.guilds.cache.get(id);
                 if(guild) guild.shard.send(payload);
-            }
+            },
+            plugins: [
+                new Spotify({
+                    clientID: process.env.SPOTIFY_CLIENT_ID,
+                    clientSecret: process.env.SPOTIFY_CLIENT_SECRET
+                })
+            ]
         });
 
         this.joker = new Joker("aaz", {
