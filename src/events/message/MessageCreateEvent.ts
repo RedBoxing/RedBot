@@ -20,51 +20,54 @@ export default class MessageEvent extends BaseEvent {
             const currentCount : number = parseInt(await client.getConfig().getConfig(message.guildId, 'counting', 0));
             const lastCounter = await client.getConfig().getConfig(message.guildId, 'lastCounter');
 
-            try {
-                const count : number = parseInt(content);
-                if(lastCounter !== undefined && message.author.id === lastCounter) {
-                    reactor.failure(message);
-                        message.reply({
-                            embeds: [
-                                new MessageEmbed()
-                                    .setAuthor(`You can't count do that !`, client.user.avatarURL())
-                                    .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
-                                    .setDescription(`You can't count 2 time in a row !`)
-                                    .setColor('RED')
-                            ]
-                        })
-                } else if(count === currentCount + 1) {
-                    reactor.success(message);
-                    client.getConfig().setConfig(message.guildId, 'counting', currentCount + 1)
-                    client.getConfig().setConfig(message.guildId, 'lastCounter', message.author.id);
-                } else {
-                    reactor.failure(message);
-                    message.reply({
-                        embeds: [
-                            new MessageEmbed()
-                                .setAuthor(`Wrong Number !`, client.user.avatarURL())
-                                .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
-                                .setDescription(`Number \`${count}\` isn't the correct number !`)
-                                .setColor('RED')
-                        ]
-                    })
-                }
-            } catch(err) {
+            const count : number = parseInt(content);
+            if(count === undefined) {
+                reactor.failure(message);
+                message.reply({
+                    embeds: [
+                        new MessageEmbed()
+                            .setAuthor(`Invalid Number !`, client.user.avatarURL())
+                            .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                            .setDescription(`\`${content}\` isn't a valid number !`)
+                            .setColor('RED')
+                    ]
+                })
+
+                return;
+            }
+
+
+            if(lastCounter !== undefined && message.author.id === lastCounter) {
                 reactor.failure(message);
                     message.reply({
                         embeds: [
                             new MessageEmbed()
-                                .setAuthor(`Invalid Number !`, client.user.avatarURL())
+                                .setAuthor(`You can't count do that !`, client.user.avatarURL())
                                 .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
-                                .setDescription(`\`${content}\` isn't a valid number !`)
+                                .setDescription(`You can't count 2 time in a row !`)
                                 .setColor('RED')
                         ]
                     })
+            } else if(count === currentCount + 1) {
+                reactor.success(message);
+                client.getConfig().setConfig(message.guildId, 'counting', currentCount + 1)
+                client.getConfig().setConfig(message.guildId, 'lastCounter', message.author.id);
+            } else {
+                reactor.failure(message);
+                message.reply({
+                    embeds: [
+                        new MessageEmbed()
+                            .setAuthor(`Wrong Number !`, client.user.avatarURL())
+                            .setFooter("RedBot by RedBoxing", (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                            .setDescription(`Number \`${count}\` isn't the correct number !`)
+                            .setColor('RED')
+                    ]
+                })
             }
 
             return;
         }
-
+    
         let member : GuildMember = (await GuildMember.findOne({
             where: {
                 guildId: message.guild.id,
