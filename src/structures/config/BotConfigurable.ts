@@ -1,12 +1,14 @@
 import GuildConfig from '../../database/models/GuildConfig';
 
-import * as logger from '../../utils/logger'
+export const availableOptions = {
+    "mutedRole": "Muted Role",
+    "announcementChannel" : "Announcement Channel",
+    "commandReaction" : "Command Reaction",
+    "moderationChannel" : "Moderation Channel",
+    "countingChannel" : "Counting Channel"
+}
 
 export default class BotConfigurable {
-    public async setPrefix(guildId: string, value: string) : Promise<void> {
-        await this.setConfig(guildId, 'prefix', value);
-    }
-
     public async setMutedRole(guildId: string, value: string) : Promise<void> {
         await this.setConfig(guildId, 'mutedRole', value);
     }
@@ -23,9 +25,10 @@ export default class BotConfigurable {
         await this.setConfig(guildId, 'moderationChannel', value);
     }
 
-    public async getPrefix(guildId: string) : Promise<string> {
-        return await this.getConfig(guildId, 'prefix');
+    public async setCountingChannel(guildId: string, value: string) : Promise<void> {
+        await this.setConfig(guildId, 'countingChannel', value);
     }
+
 
     public async getMutedRole(guildId: string) : Promise<string> {
         return await this.getConfig(guildId, 'mutedRole');
@@ -41,6 +44,10 @@ export default class BotConfigurable {
 
     public async getModerationChannel(guildId: string) : Promise<string> {
         return await this.getConfig(guildId, 'moderationChannel');
+    }
+
+    public async getCountingChannel(guildId: string) : Promise<string> {
+        return await this.getConfig(guildId, 'countingChannel');
     }
 
     public getBotStatus() : Array<string> {
@@ -60,64 +67,49 @@ export default class BotConfigurable {
     }
 
     public async setConfig(guildId: string, name: string, value: any) : Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            GuildConfig.findOne({
-                where: {
-                    guildId: guildId
-                }
-            }).then(config => {
-                if(!config) {
-                    GuildConfig.create({
-                        guildId: guildId
-                    }).then(_config => {
-                        if(name in _config) {
-                            _config[name] = value;
-                            _config.save();
-                        } else {
-                            logger.error(`unknown property ${name} guild config for guild : ${guildId}`);
-                        }
-                    });
+        const config = (await GuildConfig.findOne({
+            where: {
+                guildId,
+                name
+            }
+        })).get();
 
-                    return;
-                }
+        if(!config) {
+            await GuildConfig.create({
+                guildId: guildId,
+                name,
+                value
+            })
 
-                if(name in config) {
-                    config[name] = value;
-                    config.save();
-                } else {
-                    logger.error(`unknown property ${name} guild config for guild : ${guildId}`);
-                }
-            })    
-        });
+            return;
+        }
+
+        await GuildConfig.update({
+            value
+        }, {
+            where: {
+                guildId,
+                name
+            }
+        });  
     }
 
-    public getConfig(guildId: string, name: string) : Promise<any> {
-        return new Promise<any>((resolve, reject) => {
-            GuildConfig.findOne({
-                where: {
-                    guildId: guildId
-                }
-            }).then(config => {
-                if(!config) {
-                    const _config = GuildConfig.create({
-                        guildId: guildId
-                    });
+    public async getConfig(guildId: string, name: string, _default : any = undefined) : Promise<any> {
+        let config : GuildConfig = (await GuildConfig.findOne({
+            where: {
+                guildId,
+                name
+            }
+        })).get();
 
-                    if(name in _config) {
-                        resolve(_config[name]);
-                    } else {
-                        logger.error(`unknown property ${name} guild config for guild : ${guildId}`);
-                    }
+        if(!config) {
+            config = (await GuildConfig.create({
+                guildId,
+                name,
+                _default
+            })).get();
+        }
 
-                    return;
-                }
-
-                if(name in config) {
-                    resolve(config[name]);
-                } else {
-                    logger.error(`unknown property ${name} guild config for guild : ${guildId}`);
-                }
-            })    
-        });
+        return config.value;
     }
 }

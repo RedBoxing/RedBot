@@ -2,11 +2,13 @@ import { Model, Table, AutoIncrement, PrimaryKey, Column, AllowNull, NotEmpty, D
 
 export interface IGuildConfig {
     guildId: string,
-    prefix: string,
+    name: string,
+    value: string
+    /*prefix: string,
     mutedRole: string,
     announcementChannel: string,
     commandReaction: boolean,
-    moderationChannel: string
+    moderationChannel: string*/
 }
 
 @Table(
@@ -21,7 +23,17 @@ export default class GuildConfig extends Model implements IGuildConfig {
     @Column(DataType.STRING)
     guildId: string;
 
+    @AllowNull(false)
+    @NotEmpty
+    @Column(DataType.STRING)
+    name: string;
+
     @AllowNull(true)
+    @NotEmpty
+    @Column(DataType.STRING)
+    value: string;
+
+ /*   @AllowNull(true)
     @NotEmpty
     @Column(DataType.STRING)
     prefix: string;
@@ -44,5 +56,5 @@ export default class GuildConfig extends Model implements IGuildConfig {
     @AllowNull(true)
     @NotEmpty
     @Column(DataType.STRING)
-    moderationChannel: string;
+    moderationChannel: string;*/
 }

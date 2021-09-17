@@ -1,10 +1,6 @@
-import { Message, MessageEmbed, Interaction, BaseCommandInteraction, CommandInteraction } from "discord.js";
-import { checkPermission } from "../../utils/permissionsUtils";
-import { reactor } from "../../utils/reactions/reactor";
-
+import { MessageEmbed, CommandInteraction } from "discord.js";
 import client from "../../client/client";
 import BaseEvent from "../../structures/base/BaseEvent";
-import GuildMember from "../../database/models/GuildMember";
 
 export default class InteractionCreateEvent extends BaseEvent {
     constructor() {
