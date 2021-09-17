@@ -2,14 +2,13 @@ import { config } from 'dotenv'
 config();
 
 import { registerCommands, registerEvents } from './utils/registry'
+import { Intents, MessageEmbed, TextChannel } from 'discord.js';
 
 import DiscordClient from './client/client'
 import TrackStartEvent from './events/music/TrackStartEvent';
 import TrackEndEvent from './events/music/TrackEndEvent';
 import RawEvent from './events/music/RawEvent';
-
-import * as logger from './utils/logger'
-import { Intents } from 'discord.js';
+import logger from './utils/logger'
 
 const client = new DiscordClient({
     intents: [ Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES ]
@@ -31,3 +30,18 @@ process.on('SIGINT', () => {
     client.destroy();
     process.exit(0);
 });
+
+process.on('uncaughtException', async error => {
+    const guild = await client.guilds.fetch(process.env.BOT_GUILD);
+    const channel = await guild.channels.fetch(process.env.BOT_ERROR_CHANNEL) as TextChannel;
+
+    channel.send({
+        embeds: [
+            new MessageEmbed()
+                .setAuthor("Error !", client.user.avatarURL())
+                .setDescription(error.message)
+                .setColor('RED')
+                .setFooter((await client.getTranslator().getTranslation(guild.id, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+        ]
+    })
+})

@@ -1,6 +1,6 @@
 import DiscordClient from "../client/client";
 import BaseEvent from "../structures/base/BaseEvent";
-import * as logger from '../utils/logger'
+import logger from '../utils/logger'
 
 import { sequelize } from "../database";
 import { REST } from '@discordjs/rest'
@@ -27,7 +27,6 @@ export default class ReadyEvent extends BaseEvent {
             }
 
             client.manager.init(client.user.id);
-            logger.success("Bot Connected to " + client.guilds.cache.size + " guilds !");
             logger.info("Initializing slashes commandes...");
 
             const rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN);
@@ -40,6 +39,7 @@ export default class ReadyEvent extends BaseEvent {
             );
 
             logger.success("Loaded slashes commandes !");
+            logger.success("RedBot successfully loaded and connected to " + client.guilds.cache.size + " guilds !");
         }).catch(err => {
             logger.error("Failed to connect to database : " + err);
         })

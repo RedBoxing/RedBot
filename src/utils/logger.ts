@@ -1,17 +1,57 @@
-import colors from 'colors'
+import * as winston from 'winston'
 
-export function info(message) {
-    console.log(colors.cyan('[INFO]'), message);
+const levels : winston.config.AbstractConfigSetLevels = {
+    error: 0,
+    warn: 1,
+    info: 2,
+    success: 3
+};
+
+const colors : winston.config.AbstractConfigSetColors = {
+    "error": "red",
+    "warn": "yellow",
+    "info": "cyan",
+    "verbose": "gray",
+    "success": "green"
 }
 
-export function error(message) {
-    console.log(colors.red('[ERROR]'), message);
+winston.addColors(colors);
+
+const winstonFormat : winston.Logform.Format = winston.format.combine(
+    winston.format(info => {
+        info.level = info.level.toUpperCase()
+        return info;
+    })(),
+    winston.format.colorize({
+        all: true
+    }),
+    winston.format.label({
+        label: '[LOGGER]'
+    }),
+    //winston.format.align(),
+    winston.format.printf(
+        (info) => `[${info.level}] ${info.message}`,
+    )
+);
+
+interface CustomLevels extends winston.Logger {
+    success: winston.LeveledLogMethod
 }
 
-export function success(message) {
-    console.log(colors.green('[SUCCESS]'), message);
-}
+const winstonLogger : CustomLevels = <CustomLevels>winston.createLogger({
+    level: 'info',
+    levels,
+    format: winstonFormat,
+    transports: [
+        new winston.transports.Console({
+            level: 'success'
+        }),
+        new winston.transports.File({
+            filename: 'logs/error.log',
+            level: 'error',
+        }),
+        new winston.transports.File({ filename: 'logs/all.log' }),
+    ]
+});
 
-export function auth(message) {
-    console.log(colors.yellow('[AUTH]'), message);
-}
+export default winstonLogger;

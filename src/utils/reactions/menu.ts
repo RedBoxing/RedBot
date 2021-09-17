@@ -1,7 +1,7 @@
-import { Channel, GuildChannel, Message, MessageEmbed, PermissionString, ReactionCollector, TextChannel } from "discord.js"
+import { Message, MessageEmbed, PermissionString, ReactionCollector, TextChannel } from "discord.js"
 import EventEmitter from "events"
 
-import * as logger from '../logger'
+import logger from '../logger'
 
 const requiredPerms : PermissionString[] = ['SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS', 'MANAGE_MESSAGES']
 

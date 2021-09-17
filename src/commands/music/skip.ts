@@ -9,7 +9,7 @@ export default class SkipCommand extends BaseCommand {
     }
 
     public async exec(client: client, interaction: CommandInteraction): Promise<void> {
-        const player = client.manager.get(interaction.guild.id);
+        const player = client.manager.get(interaction.guildId);
         if(player) {
             if (!player.queue.current) {
                 interaction.reply({

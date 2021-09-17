@@ -31,7 +31,7 @@ export default class PlayCommand extends BaseCommand {
             player = client.manager.create({
                 guild: interaction.guildId,
                 voiceChannel: member.voice.channel.id,
-                textChannel: interaction.channelId,
+                textChannel: interaction.channelId
             });
         }
 

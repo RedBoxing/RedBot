@@ -1,9 +1,10 @@
 import * as Discord from 'discord.js'
-import * as logger from '../utils/logger'
+import logger from '../utils/logger'
 
 import { Manager, NodeOptions } from 'erela.js';
 
 import Spotify from 'erela.js-spotify'
+
 import BaseCommand from '../structures/base/BaseCommand';
 import BaseEvent from '../structures/base/BaseEvent';
 import CommandHandler from '../structures/CommandHandler';
