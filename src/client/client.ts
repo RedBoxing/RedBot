@@ -17,7 +17,6 @@ export default class DiscordClient extends Discord.Client {
     private events : EventHandler;
     private config : BotConfigurable;
     private nodes : NodeOptions[];
-    private joker : Joker;
     private translator : Translator;
 
     constructor(options?: Discord.ClientOptions) {
@@ -48,11 +47,6 @@ export default class DiscordClient extends Discord.Client {
             ],
             autoPlay: true
         });
-
-        this.joker = new Joker("aaz", {
-            defaultLang: "fr",
-            baseURL: "https://blague.xyz/api"
-        })
 
         this.translator = new Translator(this);
     }
