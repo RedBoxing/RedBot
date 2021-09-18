@@ -2,7 +2,7 @@ import client from "../../client/client";
 import BaseEvent from "../../structures/base/BaseEvent";
 
 import { Player, Track } from "erela.js";
-import { GuildMember, MessageEmbed, TextChannel, User } from "discord.js";
+import { GuildMember, MessageEmbed, Snowflake, TextChannel } from "discord.js";
 
 export default class TrackStartEvent extends BaseEvent {
     constructor() {
@@ -13,16 +13,26 @@ export default class TrackStartEvent extends BaseEvent {
         const channel = client.channels.cache.get(player.textChannel) as TextChannel;
         const author = track.requester as GuildMember;
 
-        channel.send({
-            embeds: [
-                new MessageEmbed()
+        const embed = new MessageEmbed()
             .setTitle(track.title)
             .setColor("#04D3FF")
             .setAuthor("Now playing: ")
             .setFooter(`Added by ${author.user.tag}`, author.user.avatarURL())
             .setThumbnail(track.displayThumbnail())
-            .setURL(track.uri)
-            ]
-        });
+            .setURL(track.uri);
+
+        const message : Snowflake = player.get('message');
+        if(message === undefined) {
+            const msg = await channel.send({
+                embeds: [ embed ]
+            });
+
+            player.set('message', msg.id);
+        } else {
+            const msg = await channel.messages.fetch(message);
+            msg.edit({
+                embeds: [ embed ]
+            });
+        }
     }
 }
