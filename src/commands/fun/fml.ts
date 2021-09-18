@@ -3,6 +3,7 @@ import axios from "axios";
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import client from "../../client/client";
 import BaseCommand from "../../structures/base/BaseCommand";
+import logger from "../../utils/logger";
 
 export default class FMLCommand extends BaseCommand {
     constructor() {
@@ -16,7 +17,7 @@ export default class FMLCommand extends BaseCommand {
             embeds: [
                 new MessageEmbed()
                     .setAuthor("FML", client.user.avatarURL())
-                    .setDescription(fml.content)
+                    .setDescription(fml)
                     .setColor('RANDOM')
                     .setFooter((await client.getTranslator().getTranslation(interaction.guildId, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
             ]
