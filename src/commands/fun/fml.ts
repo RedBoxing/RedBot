@@ -3,7 +3,6 @@ import axios from "axios";
 import { CommandInteraction, MessageEmbed } from "discord.js";
 import client from "../../client/client";
 import BaseCommand from "../../structures/base/BaseCommand";
-import logger from "../../utils/logger";
 
 export default class FMLCommand extends BaseCommand {
     constructor() {
