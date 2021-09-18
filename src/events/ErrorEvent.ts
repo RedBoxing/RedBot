@@ -14,8 +14,8 @@ export default class ReadyEvent extends BaseEvent {
         channel.send({
             embeds: [
                 new MessageEmbed()
-                    .setAuthor("Error !", client.user.avatarURL())
-                    .setDescription(error.message + "\n" + error.stack)
+                    .setAuthor("Error : " + error.message, client.user.avatarURL())
+                    .setDescription("```" + error.stack + "```")
                     .setColor('RED')
                     .setFooter((await client.getTranslator().getTranslation(guild.id, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
             ]
