@@ -31,12 +31,14 @@ export default class ReadyEvent extends BaseEvent {
 
             const rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN);
 
-            await rest.put(
-                Routes.applicationCommands(client.user.id),
-                {
-                    body: Array.from(client.getCommands()).map(([key, value]) => (value.build(new SlashCommandBuilder().setName(value.getName()).setDescription(value.getDescription())).toJSON()))
-                }
-            );
+            client.guilds.cache.forEach(async guild => {
+                await rest.put(
+                    Routes.applicationGuildCommands(client.user.id, guild.id),
+                    {
+                        body: Array.from(client.getCommands()).map(([key, value]) => (value.build(new SlashCommandBuilder().setName(value.getName()).setDescription(value.getDescription())).toJSON()))
+                    }
+                );
+            })
 
             logger.success("Loaded slashes commandes !");
             logger.success("RedBot successfully loaded and connected to " + client.guilds.cache.size + " guilds !");
