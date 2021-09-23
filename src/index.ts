@@ -20,7 +20,7 @@ const client = new DiscordClient({
     await client.addMusicManagerEvent(new TrackStartEvent());
     await client.addMusicManagerEvent(new RawEvent());
 
-    await client.login("Mzg0MjYwNzI4Nzg3NDM1NTMw.Whp8sA.K8N0tOprY8PWFv8EhDd5C11wJak");
+    await client.login(process.env.BOT_TOKEN);
 })();
 
 process.on('SIGINT', () => {
