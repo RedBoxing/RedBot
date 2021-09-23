@@ -12,7 +12,7 @@ const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf-8'));
 
 export default class EmbedCommand extends BaseCommand {
     constructor() {
-        super("infos", "Show informations about the bot", "informations", [], []);
+        super("infos", "Show informations about the bot", "Informations", [], []);
     }
 
     public async exec(client: DiscordClient, interaction: CommandInteraction): Promise < void > {

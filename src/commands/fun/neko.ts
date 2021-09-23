@@ -7,7 +7,7 @@ import BaseCommand from "../../structures/base/BaseCommand";
 
 export default class NekoCommand extends BaseCommand {
     constructor() {
-        super("neko", "Neko-Chan <3", "fun", [], []);
+        super("neko", "Neko-Chan <3", "Fun", [], []);
     }
 
     public async exec(client: client, interaction: CommandInteraction): Promise<void> {

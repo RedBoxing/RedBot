@@ -7,7 +7,7 @@ import BaseCommand from "../../structures/base/BaseCommand";
 
 export default class PatCommand extends BaseCommand {
     constructor() {
-        super("pat", "Pat your friends", "fun", [], []);
+        super("pat", "Pat your friends", "Fun", [], []);
     }
 
     public async exec(client: client, interaction: CommandInteraction): Promise<void> {

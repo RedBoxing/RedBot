@@ -4,11 +4,10 @@ import axios from 'axios'
 
 import client from "../../client/client";
 import BaseCommand from "../../structures/base/BaseCommand";
-import { options } from "node-os-utils";
 
 export default class KissCommand extends BaseCommand {
     constructor() {
-        super("kiss", "kiss your friends", "fun", [], []);
+        super("kiss", "kiss your friends", "Fun", [], []);
     }
 
     public async exec(client: client, interaction: CommandInteraction): Promise<void> {

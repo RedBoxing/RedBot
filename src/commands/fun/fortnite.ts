@@ -5,7 +5,7 @@ import BaseCommand from "../../structures/base/BaseCommand";
 
 export default class FortniteCommand extends BaseCommand {
     constructor() {
-        super("fortnite", "You are not supposed to use this command...", "fun", [], []);
+        super("fortnite", "You are not supposed to use this command...", "Fun", [], []);
     }
 
     public async exec(client: client, interaction: CommandInteraction): Promise<void> {

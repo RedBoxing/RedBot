@@ -7,7 +7,7 @@ import BaseCommand from "../../structures/base/BaseCommand";
 
 export default class SlapCommand extends BaseCommand {
     constructor() {
-        super("slap", "Slap your friends", "fun", [], []);
+        super("slap", "Slap your friends", "Fun", [], []);
     }
 
     public async exec(client: client, interaction: CommandInteraction): Promise<void> {

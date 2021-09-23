@@ -7,7 +7,7 @@ import BaseCommand from "../../structures/base/BaseCommand";
 
 export default class OwoifyCommand extends BaseCommand {
     constructor() {
-        super("owoify", "OwO-ify a message", "fun", [], []);
+        super("owoify", "OwO-ify a message", "Fun", [], []);
     }
 
     public async exec(client: client, interaction: CommandInteraction): Promise<void> {

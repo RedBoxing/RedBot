@@ -4,11 +4,6 @@ export interface IGuildConfig {
     guildId: string,
     name: string,
     value: string
-    /*prefix: string,
-    mutedRole: string,
-    announcementChannel: string,
-    commandReaction: boolean,
-    moderationChannel: string*/
 }
 
 @Table(
@@ -32,29 +27,4 @@ export default class GuildConfig extends Model implements IGuildConfig {
     @NotEmpty
     @Column(DataType.STRING)
     value: string;
-
- /*   @AllowNull(true)
-    @NotEmpty
-    @Column(DataType.STRING)
-    prefix: string;
-
-    @AllowNull(true)
-    @NotEmpty
-    @Column(DataType.STRING)
-    mutedRole: string;
-
-    @AllowNull(true)
-    @NotEmpty
-    @Column(DataType.STRING)
-    announcementChannel: string;
-
-    @AllowNull(true)
-    @NotEmpty
-    @Column(DataType.STRING)
-    commandReaction: boolean;
-
-    @AllowNull(true)
-    @NotEmpty
-    @Column(DataType.STRING)
-    moderationChannel: string;*/
 }

@@ -6,7 +6,7 @@ import BaseCommand from "../../structures/base/BaseCommand";
 
 export default class ConfigCommand extends BaseCommand {
     constructor() {
-        super("config", "Configure the bot", "administrations", [], []);
+        super("config", "Configure the bot", "Administration", [], []);
     }
 
     public async exec(client: DiscordClient, interaction: CommandInteraction): Promise < void > {

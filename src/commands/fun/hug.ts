@@ -7,7 +7,7 @@ import BaseCommand from "../../structures/base/BaseCommand";
 
 export default class HugCommand extends BaseCommand {
     constructor() {
-        super("hug", "hug your friends", "fun", [], []);
+        super("hug", "hug your friends", "Fun", [], []);
     }
 
     public async exec(client: client, interaction: CommandInteraction): Promise<void> {

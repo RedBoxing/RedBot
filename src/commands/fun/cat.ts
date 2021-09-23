@@ -7,7 +7,7 @@ import BaseCommand from "../../structures/base/BaseCommand";
 
 export default class CatCommand extends BaseCommand {
     constructor() {
-        super("cat", "meow", "fun", [], []);
+        super("cat", "meow", "Fun", [], []);
     }
 
     public async exec(client: client, interaction: CommandInteraction): Promise<void> {

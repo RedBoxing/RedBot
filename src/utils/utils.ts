@@ -1,3 +1,6 @@
+import { MessageEmbed } from "discord.js";
+import DiscordClient from "../client/client";
+
 export function humanFileSize(bytes, si = true, dp = 1) {
     const thresh = si ? 1000 : 1024;
 
@@ -18,4 +21,31 @@ export function humanFileSize(bytes, si = true, dp = 1) {
 
 
     return bytes.toFixed(dp) + ' ' + units[u];
+}
+
+export async function makeEmbed(client: DiscordClient, guildId: string, title: string, desc: string, thumbnail: boolean) : Promise<MessageEmbed> {
+    const embed = new MessageEmbed()
+    .setAuthor(title, client.user.avatarURL())
+    .setDescription(desc)
+    .setFooter((await client.getTranslator().getTranslation(guildId, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL());
+
+    if(thumbnail) {
+        embed.setThumbnail(client.user.avatarURL());
+    }
+
+    return embed;
+}
+
+export function getUserMention(mention: string) : string {
+    const matches = mention.match(/^<@!?(\d+)>$/);
+	if (!matches) return;
+
+	return matches[1];
+}
+
+export function getChannelMention(mention: string) : string {
+    const matches = mention.match(/^<#!?(\d+)>$/);
+	if (!matches) return;
+
+	return matches[1];
 }

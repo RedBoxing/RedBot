@@ -7,7 +7,7 @@ import BaseCommand from "../../structures/base/BaseCommand";
 
 export default class FeedCommand extends BaseCommand {
     constructor() {
-        super("feed", "Feed your friends", "fun", [], []);
+        super("feed", "Feed your friends", "Fun", [], []);
     }
 
     public async exec(client: client, interaction: CommandInteraction): Promise<void> {

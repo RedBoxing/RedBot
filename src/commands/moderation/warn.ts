@@ -3,6 +3,7 @@ import { CommandInteraction, Message, MessageEmbed, TextChannel } from "discord.
 import client from "../../client/client";
 import GuildModeration from "../../database/models/GuildModeration";
 import BaseCommand from "../../structures/base/BaseCommand";
+import { getChannelMention } from "../../utils/utils";
 
 export default class WarsCommand extends BaseCommand {
     constructor() {
@@ -30,9 +31,9 @@ export default class WarsCommand extends BaseCommand {
             interaction.reply({
                 embeds: [
                     new MessageEmbed()
-                .setDescription("User not found ! ")
+                .setDescription("Member not found ! ")
                 .setColor("#FF0000")
-                .setAuthor(`User not found !`, client.user.avatarURL())
+                .setAuthor(`Member not found !`, client.user.avatarURL())
                 .setFooter((await client.getTranslator().getTranslation(interaction.guildId, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
                 ]
             });
@@ -42,28 +43,28 @@ export default class WarsCommand extends BaseCommand {
         const reason = interaction.options.getString("reason")
         const date = new Date();
         
-        const mod = await GuildModeration.create({
+        const mod = (await GuildModeration.create({
             guildId: interaction.guildId,
             userId: target.user.id,
             moderatorId: interaction.user.id,
             sanctionType: 'warn',
             reason: reason,
-            expiration: new Date(date.setMonth(date.getMonth()+1)),
-        });
+            sanctionDate: date.toUTCString(),
+            expiration: new Date(date.setMonth(date.getMonth()+1))
+        })).get();
 
-        const channel = await interaction.guild.channels.resolve(await client.getConfig().getModerationChannel(interaction.guildId)) as TextChannel | null;
+        const channel = await interaction.guild.channels.resolve(getChannelMention(await client.getConfig().getConfig(interaction.guildId, "moderationChannel"))) as TextChannel | null;
         
         if(channel) {
             channel.send({
                 embeds: [
                     new MessageEmbed()
-                .setAuthor("Warn | case #" + mod.id, target.user.avatarURL())
-                .addField("User", target.user.tag, true)
-                .addField("Moderation", interaction.user.tag, true)
-                .addField("Issued", mod.sanctionDate.toLocaleDateString(), true)
-                .addField("Reason", reason, true)
-                .setColor('YELLOW')
-                .setFooter((await client.getTranslator().getTranslation(interaction.guildId, 'REDBOT_BY')), (await client.users.fetch(process.env.AUTHOR_ID)).avatarURL())
+                        .setAuthor("Warn | case #" + mod.id, target.user.avatarURL())
+                        .addField("Member", target.user.tag, true)
+                        .addField("Reason", reason, true)
+                        .setColor('YELLOW')
+                        .setTimestamp(mod.sanctionDate)
+                        .setFooter("Warned by " + interaction.user.tag + " on", interaction.user.avatarURL())
                 ]
             });
         }
@@ -71,14 +72,14 @@ export default class WarsCommand extends BaseCommand {
         interaction.reply({
             embeds: [
                 new MessageEmbed()
-                .setAuthor("User Warned !", client.user.avatarURL())
-                .setDescription("User " + member.user + " Warned !")
+                .setAuthor("Member Warned !", client.user.avatarURL())
+                .setDescription("Member " + member.user.tag + " Warned !")
             ]
         })
     }
 
     public build(builder: SlashCommandBuilder): SlashCommandBuilder {
-        builder.addMentionableOption(option => option.setName("member").setDescription("The guild member to warn").setRequired(true));
+        builder.addUserOption(option => option.setName("member").setDescription("The guild member to warn").setRequired(true));
         builder.addStringOption(option => option.setName("reason").setDescription("The reason of the warn").setRequired(false));
         return builder;
     }

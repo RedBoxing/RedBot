@@ -4,6 +4,7 @@ import client from "../../client/client";
 import BaseEvent from "../../structures/base/BaseEvent";
 import GuildMember from "../../database/models/GuildMember";
 import { reactor } from "../../utils/reactions/reactor";
+import { getChannelMention } from "../../utils/utils";
 
 export default class MessageEvent extends BaseEvent {
     constructor() {
@@ -14,7 +15,7 @@ export default class MessageEvent extends BaseEvent {
         if(message.author.bot || message.channel.type === 'DM') return;
         const content = message.content;
 
-        const countingChannelId = await client.getConfig().getConfig(message.guildId, 'countingChannel');
+        const countingChannelId = getChannelMention(await client.getConfig().getConfig(message.guildId, 'countingChannel'));
         if(countingChannelId !== undefined && message.channelId === countingChannelId) {
             const currentCount : number = parseInt(await client.getConfig().getConfig(message.guildId, 'counting', 0));
             const lastCounter = await client.getConfig().getConfig(message.guildId, 'lastCounter');

@@ -7,7 +7,7 @@ import BaseCommand from "../../structures/base/BaseCommand";
 
 export default class NekoCommand extends BaseCommand {
     constructor() {
-        super("lewd", "Random NSFW content", "fun", [], []);
+        super("lewd", "Random NSFW content", "Fun", [], []);
     }
 
     public async exec(client: client, interaction: CommandInteraction): Promise<void> {

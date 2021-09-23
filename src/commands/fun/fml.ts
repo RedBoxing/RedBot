@@ -6,7 +6,7 @@ import BaseCommand from "../../structures/base/BaseCommand";
 
 export default class FMLCommand extends BaseCommand {
     constructor() {
-        super("fml", "Tell you a random FML", "fun", [], []);
+        super("fml", "Tell you a random FML", "Fun", [], []);
     }
 
     public async exec(client: client, interaction: CommandInteraction): Promise<void> {

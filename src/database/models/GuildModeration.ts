@@ -37,7 +37,7 @@ export default class GuildModeration extends Model implements IGuildModeration {
     @Column(DataType.STRING)
     sanctionType: string;
 
-    @AllowNull(false)
+    @AllowNull(true)
     @NotEmpty
     @Column(DataType.STRING)
     reason: string;
