@@ -37,6 +37,7 @@ export async function makeEmbed(client: DiscordClient, guildId: string, title: s
 }
 
 export function getUserMention(mention: string) : string {
+    if(!mention) return;
     const matches = mention.match(/^<@!?(\d+)>$/);
 	if (!matches) return;
 
@@ -44,6 +45,7 @@ export function getUserMention(mention: string) : string {
 }
 
 export function getChannelMention(mention: string) : string {
+    if(!mention) return;
     const matches = mention.match(/^<#!?(\d+)>$/);
 	if (!matches) return;
 
