@@ -33,6 +33,7 @@
     "discord.js": "^13.1.0",
     "dotenv": "^9.0.2",
     "erela.js": "^2.3.3",
+    "erela.js-deezer": "^1.0.7",
     "erela.js-spotify": "^1.2.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",

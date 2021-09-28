@@ -4,6 +4,7 @@ import logger from '../utils/logger'
 import { Manager, NodeOptions } from 'erela.js';
 
 import Spotify from 'erela.js-spotify'
+import Deezer from 'erela.js-deezer'
 
 import BaseCommand from '../structures/base/BaseCommand';
 import BaseEvent from '../structures/base/BaseEvent';
@@ -43,7 +44,8 @@ export default class DiscordClient extends Discord.Client {
                 new Spotify({
                     clientID: process.env.SPOTIFY_CLIENT_ID,
                     clientSecret: process.env.SPOTIFY_CLIENT_SECRET
-                })
+                }),
+                new Deezer({})
             ],
             autoPlay: true
         });
