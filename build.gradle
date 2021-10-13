@@ -1,0 +1,44 @@
+plugins {
+    id'application'
+    id'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
+mainClassName = 'fr.redboxing.redbot.RedBotMain'
+group 'fr.redboxing'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    jcenter()
+
+    maven {
+        name 'm2-dv8tion'
+        url 'https://m2.dv8tion.net/releases'
+    }
+
+    maven { url 'https://jitpack.io' }
+    maven { url "https://m2.chew.pro/releases" }
+}
+
+dependencies {
+    implementation group: 'net.dv8tion', name: 'JDA', version: '4.3.0_277'
+    implementation group: 'com.github.freyacodes', name: 'Lavalink-Client', version: 'master-SNAPSHOT'
+    implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.1.2'
+    implementation group: 'com.mashape.unirest', name: 'unirest-java', version: '1.4.9'
+    implementation group: 'io.github.cdimascio', name: 'java-dotenv', version: '5.1.1'
+    implementation group: 'org.reflections', name: 'reflections', version: '0.10.1'
+    implementation group: 'com.github.oshi', name: 'oshi-core', version: '5.8.2'
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.6'
+    implementation group: 'se.michaelthelin.spotify', name: 'spotify-web-api-java', version: '6.5.4'
+    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.9.1'
+    implementation group: 'com.zaxxer', name: 'HikariCP', version: '5.0.0'
+    implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.5.7.Final'
+    implementation group: 'org.hibernate', name: 'hibernate-hikaricp', version: '5.5.7.Final'
+    implementation group: 'pw.chew', name: 'jda-chewtils-commons', version: '1.22.0'
+    implementation group: 'pw.chew', name: 'jda-chewtils-command', version: '1.22.0'
+    implementation group: 'pw.chew', name: 'jda-chewtils-menu', version: '1.22.0'
+}
+
+test {
+    useJUnitPlatform()
+}
