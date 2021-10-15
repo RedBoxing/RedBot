@@ -87,8 +87,9 @@ public class DiscordBot {
         builder.setEmojis(Emoji.CHECK.getStripped(), null, Emoji.X.getStripped());
         builder.setServerInvite("https://redboxing.fr");
         builder.addSlashCommands(this.commandManager.getCommands().values().toArray(new SlashCommand[0]));
+        builder.forceGuildOnly("875177970703163452");
 
-        this.jda = JDABuilder.createDefault(BotConfig.get("BOT_TOKEN"), GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_EMOJIS, GatewayIntent.GUILD_VOICE_STATES)
+        this.jda = JDABuilder.createDefault(BotConfig.get("BOT_TOKEN"), GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_EMOJIS, GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.GUILD_MESSAGE_REACTIONS)
                 .disableIntents(GatewayIntent.GUILD_MESSAGE_TYPING, GatewayIntent.GUILD_PRESENCES)
                 .setLargeThreshold(50)
                 .addEventListeners(new EventsListener(this), this.lavalink, this.playerManager, this.eventWaiter, builder.build())

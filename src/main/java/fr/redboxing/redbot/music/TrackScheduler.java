@@ -11,7 +11,9 @@ import lavalink.client.player.LavalinkPlayer;
 import lavalink.client.player.event.PlayerEventListenerAdapter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.Interaction;
 
 import java.awt.*;
@@ -87,16 +89,16 @@ public class TrackScheduler extends PlayerEventListenerAdapter {
         }
     }
 
-    public void queue(Interaction interaction, AudioTrack toPlay, List<AudioTrack> tracks){
-        var shouldPlay = this.player.getPlayingTrack() == null;
+    public void queue(SlashCommandEvent interaction, AudioTrack toPlay, List<AudioTrack> tracks){
+        boolean shouldPlay = this.player.getPlayingTrack() == null;
         if(!shouldPlay){
             this.queue.offer(toPlay);
         }
-        for(var track : tracks){
+        for(AudioTrack track : tracks){
             this.queue.offer(track);
         }
 
-        var embed = new EmbedBuilder()
+        MessageEmbed embed = new EmbedBuilder()
                 .setColor(new Color(76, 80, 193))
                 .setDescription("**Queued " + tracks.size() + " " + MessageUtils.pluralize("track", tracks.size()) + "**\n\n" +
                         (tracks.size() == 0 ? MusicUtils.formatTrackWithInfo(toPlay) : "") +
@@ -104,7 +106,7 @@ public class TrackScheduler extends PlayerEventListenerAdapter {
                 )
                 .setTimestamp(Instant.now())
                 .build();
-        interaction.getHook().sendMessageEmbeds(embed).queue();
+        interaction.getHook().editOriginalEmbeds(embed).queue();
 
         if(shouldPlay){
             this.player.playTrack(toPlay);

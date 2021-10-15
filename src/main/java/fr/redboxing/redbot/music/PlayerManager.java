@@ -13,6 +13,7 @@ import fr.redboxing.redbot.BotConfig;
 import fr.redboxing.redbot.DiscordBot;
 import fr.redboxing.redbot.utils.MessageUtils;
 import fr.redboxing.redbot.utils.Utils;
+import lavalink.client.io.LavalinkRestClient;
 import lavalink.client.io.Link;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -21,6 +22,7 @@ import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -209,7 +211,7 @@ public class PlayerManager extends ListenerAdapter {
         }
     }
 
-    public void play(Interaction interaction, String query, SearchProvider searchProvider) {
+    public void play(SlashCommandEvent interaction, String query, SearchProvider searchProvider) {
         interaction.deferReply().queue();
         GuildMusicManager manager = this.musicManagers.computeIfAbsent(interaction.getGuild().getIdLong(), _guild -> new GuildMusicManager(this.bot, interaction.getGuild(), interaction.getTextChannel()));
 
@@ -241,16 +243,16 @@ public class PlayerManager extends ListenerAdapter {
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
                 manager.connectToChannel(interaction.getMember());
-                for(var track : playlist.getTracks()){
+                for(AudioTrack track : playlist.getTracks()){
                     track.setUserData(interaction.getUser().getIdLong());
                 }
-                var firstTrack = playlist.getTracks().get(0);
+                AudioTrack firstTrack = playlist.getTracks().get(0);
                 if(playlist.isSearchResult()){
                     manager.getScheduler().queue(interaction, firstTrack, Collections.emptyList());
                     return;
                 }
 
-                var toPlay = playlist.getSelectedTrack() == null ? firstTrack : playlist.getSelectedTrack();
+                AudioTrack toPlay = playlist.getSelectedTrack() == null ? firstTrack : playlist.getSelectedTrack();
                 manager.getScheduler().queue(interaction, toPlay, playlist.getTracks().stream().filter(track -> !track.equals(toPlay)).collect(Collectors.toList()));
             }
 
@@ -261,12 +263,12 @@ public class PlayerManager extends ListenerAdapter {
 
             @Override
             public void loadFailed(FriendlyException exception) {
-                interaction.reply("Une erreur est survenue lors du chargement de la musique:\n" + exception.getMessage());
+                interaction.getHook().editOriginal("Une erreur est survenue lors du chargement de la musique:\n" + exception.getMessage()).queue();
             }
         });
     }
 
-    public void loadSpotify(Interaction interaction, GuildMusicManager manager, Matcher matcher) {
+    public void loadSpotify(SlashCommandEvent interaction, GuildMusicManager manager, Matcher matcher) {
         String identifier = matcher.group("identifier");
         switch(matcher.group("type")){
             case "album":
@@ -281,11 +283,11 @@ public class PlayerManager extends ListenerAdapter {
         }
     }
 
-    private void loadSpotifyAlbum(String id, Interaction interaction, GuildMusicManager manager){
+    private void loadSpotifyAlbum(String id, SlashCommandEvent interaction, GuildMusicManager manager){
         this.spotify.getAlbumsTracks(id).build().executeAsync().thenAcceptAsync(tracks -> {
             TrackSimplified[] items = tracks.getItems();
             List<String> toLoad = new ArrayList<String>();
-            for(var track : items){
+            for(TrackSimplified track : items){
                 toLoad.add(track.getArtists()[0].getName() + " " + track.getName());
             }
             this.loadSpotifyTracks(id, interaction, manager, toLoad);
@@ -295,7 +297,7 @@ public class PlayerManager extends ListenerAdapter {
         });
     }
 
-    private void loadSpotifyTrack(String id, Interaction interaction, GuildMusicManager manager){
+    private void loadSpotifyTrack(String id, SlashCommandEvent interaction, GuildMusicManager manager){
         this.spotify.getTrack(id).build().executeAsync().thenAcceptAsync(track ->
                 this.play(interaction, track.getArtists()[0].getName() + " " + track.getName(), SearchProvider.YOUTUBE)
         ).exceptionally(throwable -> {
@@ -304,11 +306,11 @@ public class PlayerManager extends ListenerAdapter {
         });
     }
 
-    private void loadSpotifyPlaylist(String id, Interaction interaction, GuildMusicManager manager){
+    private void loadSpotifyPlaylist(String id, SlashCommandEvent interaction, GuildMusicManager manager){
         this.spotify.getPlaylistsItems(id).build().executeAsync().thenAcceptAsync(tracks -> {
             PlaylistTrack[] items = tracks.getItems();
             List<String> toLoad = new ArrayList<String>();
-            for(var item : items){
+            for(PlaylistTrack item : items){
                 Track track = (Track) item.getTrack();
                 toLoad.add(track.getArtists()[0].getName() + " " + track.getName());
             }
@@ -319,21 +321,21 @@ public class PlayerManager extends ListenerAdapter {
         });
     }
 
-    private void loadSpotifyTracks(String id, Interaction interaction, GuildMusicManager manager, List<String> toLoad){
-        var restClient = manager.getScheduler().getLink().getRestClient();
+    private void loadSpotifyTracks(String id, SlashCommandEvent interaction, GuildMusicManager manager, List<String> toLoad){
+        LavalinkRestClient restClient = manager.getScheduler().getLink().getRestClient();
         Utils.all(toLoad.stream().map(restClient::getYoutubeSearchResult).collect(Collectors.toList()))
                 .thenAcceptAsync(results -> {
-                    var tracks = results.stream().map(result -> {
+                    List<AudioTrack> tracks = results.stream().map(result -> {
                         if(result.isEmpty()){
                             return null;
                         }
-                        var track = result.get(0);
+                        AudioTrack track = result.get(0);
                         track.setUserData(interaction.getUser().getIdLong());
                         return track;
                     }).filter(Objects::nonNull).collect(Collectors.toList());
 
                     if(tracks.isEmpty()){
-                        interaction.getHook().editOriginal("No tracks on youtube found");
+                        interaction.getHook().editOriginal("No tracks on youtube found").queue();
                         return;
                     }
                     manager.connectToChannel(interaction.getMember());
