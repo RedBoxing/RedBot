@@ -9,12 +9,7 @@ import fr.redboxing.redbot.DiscordBot;
 import fr.redboxing.redbot.command.AbstractCommand;
 import fr.redboxing.redbot.command.CommandCategory;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-
-import java.util.Collections;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 public class FMLCommand extends AbstractCommand {
     public FMLCommand(DiscordBot bot) {
@@ -26,7 +21,7 @@ public class FMLCommand extends AbstractCommand {
     }
 
     @Override
-    public void execute(SlashCommandEvent event) {
+    public void execute(SlashCommandInteractionEvent event) {
         try {
             HttpResponse<JsonNode> json = Unirest.get("https://blague.xyz/api/vdm/random").asJson();
             event.replyEmbeds(new EmbedBuilder()

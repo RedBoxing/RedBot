@@ -9,11 +9,9 @@ import fr.redboxing.redbot.command.AbstractCommand;
 import fr.redboxing.redbot.command.CommandCategory;
 import fr.redboxing.redbot.utils.CustomButtonMenu;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.MessageReaction;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.requests.restaction.MessageAction;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,8 +32,8 @@ public class HelpCommand extends AbstractCommand {
     }
 
     @Override
-    protected void execute(SlashCommandEvent event) {
-        List<String> emotes = Arrays.stream(CommandCategory.Enum.values()).filter(e -> e != CommandCategory.Enum.UNKNOWN).map(e -> e.getEmote()).collect(Collectors.toList());
+    protected void execute(SlashCommandInteractionEvent event) {
+        List<String> emotes = Arrays.stream(CommandCategory.values()).filter(e -> e != CommandCategory.UNKNOWN).map(e -> e.getEmote()).collect(Collectors.toList());
         event.deferReply().queue((interactionHook -> {
             interactionHook.retrieveOriginal().queue(msg -> {
                 CustomButtonMenu menu = new CustomButtonMenu.Builder()
@@ -51,28 +49,27 @@ public class HelpCommand extends AbstractCommand {
                         }).build();
 
                 menu.display(msg);
-                interactionHook.editOriginalEmbeds(makeEmbed(CommandCategory.Enum.ADMINISTRATION, bot)).queue();
+                interactionHook.editOriginalEmbeds(makeEmbed(CommandCategory.ADMINISTRATION, bot)).queue();
             });
         }));
     }
 
-    private CommandCategory.Enum getFromEmote(MessageReaction.ReactionEmote reactionEmote) {
+    private CommandCategory getFromEmote(MessageReaction.ReactionEmote reactionEmote) {
         String re = reactionEmote.isEmote()
                 ? reactionEmote.getId()
                 : reactionEmote.getName();
 
-        return Arrays.stream(CommandCategory.Enum.values()).filter(e -> e.getEmote().equals(re)).findFirst().orElse(CommandCategory.Enum.UNKNOWN);
+        return Arrays.stream(CommandCategory.values()).filter(e -> e.getEmote().equals(re)).findFirst().orElse(CommandCategory.UNKNOWN);
     }
 
-    private MessageEmbed makeEmbed(CommandCategory.Enum category, DiscordBot bot) {
+    private MessageEmbed makeEmbed(CommandCategory category, DiscordBot bot) {
         EmbedBuilder builder = new EmbedBuilder()
                 .setAuthor("Commandes: " + category.getName(), bot.getJDA().getSelfUser().getAvatarUrl())
                 .setThumbnail(bot.getJDA().getSelfUser().getAvatarUrl())
                 .setFooter("RedBot by RedBoxing", bot.getJDA().getUserById(BotConfig.getLong("AUTHOR_ID")).getAvatarUrl());
 
         for(AbstractCommand command : bot.getCommandManager().getCommands().values()) {
-            if(command.getCategory() != category.getCategory()) continue;
-            if(command.isHidden()) continue;
+            if(command.getCategory() != category) continue;
 
             builder.addField("``/" + command.getName() + "`` ", command.getHelp(), false);
         }

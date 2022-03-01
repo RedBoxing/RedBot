@@ -6,7 +6,7 @@ import fr.redboxing.redbot.command.AbstractCommand;
 import fr.redboxing.redbot.command.CommandCategory;
 import fr.redboxing.redbot.music.TrackScheduler;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.awt.*;
 
@@ -20,8 +20,8 @@ public class RepeatCommand extends AbstractCommand {
     }
 
     @Override
-    protected void execute(SlashCommandEvent event) {
-        if(!event.getMember().getVoiceState().inVoiceChannel()) {
+    protected void execute(SlashCommandInteractionEvent event) {
+        if(!event.getMember().getVoiceState().inAudioChannel()) {
             event.replyEmbeds(new EmbedBuilder()
                     .setAuthor("Vous n'êtes pas dans un salon vocal !", event.getJDA().getSelfUser().getAvatarUrl())
                     .setDescription("Vous devez être dans un salon vocal pour utiliser cette commande !")

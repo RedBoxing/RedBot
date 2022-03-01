@@ -1,12 +1,11 @@
 package fr.redboxing.redbot.command.commands.administration;
 
-import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import fr.redboxing.redbot.DiscordBot;
 import fr.redboxing.redbot.command.AbstractCommand;
 import fr.redboxing.redbot.command.CommandCategory;
-import fr.redboxing.redbot.database.Repositories.GuildConfigRepository;
-import fr.redboxing.redbot.database.entities.GuildConfig;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import fr.redboxing.redbot.manager.GuildConfigManager;
+import fr.redboxing.redbot.manager.GuildConfiguration;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 
@@ -27,14 +26,10 @@ public class ConfigCommand extends AbstractCommand {
     }
 
     @Override
-    protected void execute(SlashCommandEvent event) {
+    protected void execute(SlashCommandInteractionEvent event) {
         switch (event.getSubcommandName()) {
             case "counting-channel":
-                GuildConfig guildConfig = new GuildConfig();
-                guildConfig.setGuildId(event.getGuild().getId());
-                guildConfig.setName("counting_channel");
-                guildConfig.setValue(event.getOption("channel").getAsString());
-                GuildConfigRepository.createOrUpdate(guildConfig);
+                GuildConfigManager.setConfig(event.getGuild(), GuildConfiguration.COUNTING_CHANNEL, event.getOption("channel").getAsString());
                 break;
         }
     }

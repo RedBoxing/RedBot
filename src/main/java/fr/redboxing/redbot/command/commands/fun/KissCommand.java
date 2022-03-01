@@ -11,11 +11,10 @@ import fr.redboxing.redbot.command.AbstractCommand;
 import fr.redboxing.redbot.command.CommandCategory;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
-import java.io.IOException;
 import java.util.Collections;
 
 public class KissCommand extends AbstractCommand {
@@ -29,7 +28,7 @@ public class KissCommand extends AbstractCommand {
     }
 
     @Override
-    public void execute(SlashCommandEvent event) {
+    public void execute(SlashCommandInteractionEvent event) {
         try {
             HttpResponse<JsonNode> json = Unirest.get("https://nekos.life/api/v2/img/kiss").asJson();
             User user = event.getOption("friend").getAsUser();

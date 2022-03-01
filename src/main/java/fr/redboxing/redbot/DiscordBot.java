@@ -1,32 +1,23 @@
 package fr.redboxing.redbot;
 
-import com.jagrosh.jdautilities.command.CommandClientBuilder;
-import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import fr.redboxing.redbot.command.CommandManager;
-import fr.redboxing.redbot.command.commands.administration.ConfigCommand;
-import fr.redboxing.redbot.command.commands.fun.HugCommand;
-import fr.redboxing.redbot.command.commands.fun.KissCommand;
-import fr.redboxing.redbot.command.commands.informations.InfoCommand;
-import fr.redboxing.redbot.command.commands.music.PlayCommand;
-import fr.redboxing.redbot.command.commands.music.RepeatCommand;
-import fr.redboxing.redbot.command.commands.music.SkipCommand;
-import fr.redboxing.redbot.command.commands.music.StopCommand;
 import fr.redboxing.redbot.database.DatabaseManager;
 import fr.redboxing.redbot.event.EventsListener;
 import fr.redboxing.redbot.music.PlayerManager;
-import fr.redboxing.redbot.utils.Emoji;
 import fr.redboxing.redbot.utils.ThreadFactoryHelper;
 import lavalink.client.io.jda.JdaLavalink;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -42,8 +33,7 @@ public class DiscordBot {
             "{servers} server",
             "{ping} ms",
             "{users} users !",
-            "Current version: 1.0.3 BETA",
-            "RedBot > Yuzuru <3"
+            "Current version: 1.0.4 BETA",
     };
 
     private final CommandManager commandManager;
@@ -52,6 +42,7 @@ public class DiscordBot {
     private final ScheduledExecutorService scheduler;
     private final Random random = new Random();
     private final EventWaiter eventWaiter;
+    private final HashMap<String, HashMap<String, Long>> cooldowns = new HashMap<>();
     private JDA jda;
 
     public DiscordBot() throws LoginException, URISyntaxException {
@@ -80,19 +71,10 @@ public class DiscordBot {
     }
 
     public void restartJDA() throws LoginException {
-        CommandClientBuilder builder = new CommandClientBuilder();
-        builder.setOwnerId(BotConfig.get("AUTHOR_ID"));
-        builder.setPrefix(".");
-        builder.setScheduleExecutor(this.scheduler);
-        builder.setEmojis(Emoji.CHECK.getStripped(), null, Emoji.X.getStripped());
-        builder.setServerInvite("https://redboxing.fr");
-        builder.addSlashCommands(this.commandManager.getCommands().values().toArray(new SlashCommand[0]));
-        builder.forceGuildOnly("875177970703163452");
-
         this.jda = JDABuilder.createDefault(BotConfig.get("BOT_TOKEN"), GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_EMOJIS, GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.GUILD_MESSAGE_REACTIONS)
                 .disableIntents(GatewayIntent.GUILD_MESSAGE_TYPING, GatewayIntent.GUILD_PRESENCES)
                 .setLargeThreshold(50)
-                .addEventListeners(new EventsListener(this), this.lavalink, this.playerManager, this.eventWaiter, builder.build())
+                .addEventListeners(new EventsListener(this), this.lavalink, this.playerManager, this.eventWaiter)
                 .setVoiceDispatchInterceptor(this.lavalink.getVoiceInterceptor())
                 .build();
     }
@@ -117,6 +99,22 @@ public class DiscordBot {
                 LOGGER.error("Unexpected error in scheduler", e);
             }
         }, initDelay, delay, timeUnit);
+    }
+
+    public void setCooldown(User user, String command, long cooldown){
+        if(!this.cooldowns.containsKey(user.getId())){
+            this.cooldowns.put(user.getId(), new HashMap<>());
+        }
+
+        this.cooldowns.get(user.getId()).put(command, System.currentTimeMillis() + cooldown);
+    }
+
+    public long getRemainingCooldown(User user, String command){
+        if(!this.cooldowns.containsKey(user.getId())){
+            return 0;
+        }
+
+        return this.cooldowns.get(user.getId()).getOrDefault(command, 0L) - System.currentTimeMillis();
     }
 
     public EventWaiter getEventWaiter() {

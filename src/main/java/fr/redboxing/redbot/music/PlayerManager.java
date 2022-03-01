@@ -22,11 +22,10 @@ import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceMoveEvent;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.Interaction;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +60,7 @@ public class PlayerManager extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event){
+    public void onMessageReceived(@NotNull MessageReceivedEvent event){
         var manager = this.musicManagers.get(event.getGuild().getIdLong());
         if(manager != null && manager.getScheduler().getChannelId() == event.getChannel().getIdLong()){
             manager.getScheduler().setLastMessageId(event.getMessageIdLong());
@@ -69,7 +68,8 @@ public class PlayerManager extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event){
+    public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event){
+        if(!event.isFromGuild()) return;
         if(event.getUserIdLong() == this.bot.getJDA().getSelfUser().getIdLong()) return;
 
         GuildMusicManager manager = this.musicManagers.get(event.getGuild().getIdLong());
@@ -122,7 +122,7 @@ public class PlayerManager extends ListenerAdapter {
                 }
                 break;
         }
-        if(event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_MANAGE)){
+        if(event.getGuild().getSelfMember().hasPermission((GuildChannel) event.getChannel(), Permission.MESSAGE_MANAGE)){
             event.getReaction().removeReaction(event.getUser()).queue();
         }
     }
@@ -149,7 +149,7 @@ public class PlayerManager extends ListenerAdapter {
             return;
         }
         var currentChannelId = Long.parseLong(manager.getScheduler().getLink().getChannel());
-        VoiceChannel channel;
+        AudioChannel channel;
         if(event.getChannelLeft().getIdLong() == currentChannelId){
             channel = event.getChannelLeft();
         } else if(event.getChannelJoined().getIdLong() == currentChannelId){
@@ -175,7 +175,7 @@ public class PlayerManager extends ListenerAdapter {
             destroy(manager, "Disconnected due to kick");
         }
 
-        VoiceChannel channelLeft = event.getChannelLeft();
+        AudioChannel channelLeft = event.getChannelLeft();
         if(channelLeft.getIdLong() == Long.parseLong(manager.getScheduler().getLink().getChannel())){
             if(isAlone(channelLeft)){
                 manager.planDestroy();
@@ -183,7 +183,7 @@ public class PlayerManager extends ListenerAdapter {
         }
     }
 
-    private boolean isAlone(VoiceChannel channel){
+    private boolean isAlone(AudioChannel channel){
         return channel.getMembers().stream().allMatch(member -> member.getUser().isBot());
     }
 
@@ -207,11 +207,11 @@ public class PlayerManager extends ListenerAdapter {
             player.updateMusicController();
             TextChannel channel = scheduler.getTextChannel();
             if(channel == null || !channel.canTalk()) return;
-            channel.sendMessage(new EmbedBuilder().setColor(Color.RED).setDescription(reason).setTimestamp(Instant.now()).build()).queue();
+            channel.sendMessageEmbeds(new EmbedBuilder().setColor(Color.RED).setDescription(reason).setTimestamp(Instant.now()).build()).queue();
         }
     }
 
-    public void play(SlashCommandEvent interaction, String query, SearchProvider searchProvider) {
+    public void play(SlashCommandInteractionEvent interaction, String query, SearchProvider searchProvider) {
         interaction.deferReply().queue();
         GuildMusicManager manager = this.musicManagers.computeIfAbsent(interaction.getGuild().getIdLong(), _guild -> new GuildMusicManager(this.bot, interaction.getGuild(), interaction.getTextChannel()));
 
@@ -268,7 +268,7 @@ public class PlayerManager extends ListenerAdapter {
         });
     }
 
-    public void loadSpotify(SlashCommandEvent interaction, GuildMusicManager manager, Matcher matcher) {
+    public void loadSpotify(SlashCommandInteractionEvent interaction, GuildMusicManager manager, Matcher matcher) {
         String identifier = matcher.group("identifier");
         switch(matcher.group("type")){
             case "album":
@@ -283,7 +283,7 @@ public class PlayerManager extends ListenerAdapter {
         }
     }
 
-    private void loadSpotifyAlbum(String id, SlashCommandEvent interaction, GuildMusicManager manager){
+    private void loadSpotifyAlbum(String id, SlashCommandInteractionEvent interaction, GuildMusicManager manager){
         this.spotify.getAlbumsTracks(id).build().executeAsync().thenAcceptAsync(tracks -> {
             TrackSimplified[] items = tracks.getItems();
             List<String> toLoad = new ArrayList<String>();
@@ -297,7 +297,7 @@ public class PlayerManager extends ListenerAdapter {
         });
     }
 
-    private void loadSpotifyTrack(String id, SlashCommandEvent interaction, GuildMusicManager manager){
+    private void loadSpotifyTrack(String id, SlashCommandInteractionEvent interaction, GuildMusicManager manager){
         this.spotify.getTrack(id).build().executeAsync().thenAcceptAsync(track ->
                 this.play(interaction, track.getArtists()[0].getName() + " " + track.getName(), SearchProvider.YOUTUBE)
         ).exceptionally(throwable -> {
@@ -306,7 +306,7 @@ public class PlayerManager extends ListenerAdapter {
         });
     }
 
-    private void loadSpotifyPlaylist(String id, SlashCommandEvent interaction, GuildMusicManager manager){
+    private void loadSpotifyPlaylist(String id, SlashCommandInteractionEvent interaction, GuildMusicManager manager){
         this.spotify.getPlaylistsItems(id).build().executeAsync().thenAcceptAsync(tracks -> {
             PlaylistTrack[] items = tracks.getItems();
             List<String> toLoad = new ArrayList<String>();
@@ -321,7 +321,7 @@ public class PlayerManager extends ListenerAdapter {
         });
     }
 
-    private void loadSpotifyTracks(String id, SlashCommandEvent interaction, GuildMusicManager manager, List<String> toLoad){
+    private void loadSpotifyTracks(String id, SlashCommandInteractionEvent interaction, GuildMusicManager manager, List<String> toLoad){
         LavalinkRestClient restClient = manager.getScheduler().getLink().getRestClient();
         Utils.all(toLoad.stream().map(restClient::getYoutubeSearchResult).collect(Collectors.toList()))
                 .thenAcceptAsync(results -> {

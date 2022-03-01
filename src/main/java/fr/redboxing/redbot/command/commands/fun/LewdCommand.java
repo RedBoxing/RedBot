@@ -9,12 +9,7 @@ import fr.redboxing.redbot.DiscordBot;
 import fr.redboxing.redbot.command.AbstractCommand;
 import fr.redboxing.redbot.command.CommandCategory;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-
-import java.util.Collections;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 public class LewdCommand extends AbstractCommand {
     public LewdCommand(DiscordBot bot) {
@@ -27,7 +22,7 @@ public class LewdCommand extends AbstractCommand {
     }
 
     @Override
-    public void execute(SlashCommandEvent event) {
+    public void execute(SlashCommandInteractionEvent event) {
         try {
             HttpResponse<JsonNode> json = Unirest.get("https://nekos.life/api/v2/img/lewd").asJson();
             event.replyEmbeds(new EmbedBuilder()

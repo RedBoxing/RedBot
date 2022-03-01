@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.VoiceChannel;
 
 import java.awt.*;
 import java.time.Instant;
@@ -38,7 +39,7 @@ public class GuildMusicManager {
     public void connectToChannel(Member member){
         var voiceState = member.getVoiceState();
         if(voiceState != null && voiceState.getChannel() != null && this.scheduler.getLink().getChannel() != voiceState.getChannel().getId()){
-            ((JdaLink) this.scheduler.getLink()).connect(voiceState.getChannel());
+            ((JdaLink) this.scheduler.getLink()).connect((VoiceChannel) voiceState.getChannel());
         }
     }
 
@@ -116,7 +117,7 @@ public class GuildMusicManager {
 
         EmbedBuilder embed = this.buildMusicController();
 
-        channel.sendMessage(embed.build()).queue(msg -> {
+        channel.sendMessageEmbeds(embed.build()).queue(msg -> {
             this.scheduler.setControllerMessageId(msg.getIdLong());
             if(!channel.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_ADD_REACTION)) {
                 return;
@@ -137,7 +138,7 @@ public class GuildMusicManager {
         if(channel == null) return;
         if(!channel.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_HISTORY)) return;
 
-        channel.editMessageById(this.scheduler.getControllerMessageId(), new MessageBuilder().setEmbed(this.buildMusicController().build()).build()).override(true).queue();
+        channel.editMessageEmbedsById(this.scheduler.getControllerMessageId(), this.buildMusicController().build()).override(true).queue();
     }
 
     public String getThumbnail(String identifier, AudioSourceManager source){

@@ -13,9 +13,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.interactions.Interaction;
-
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import java.awt.*;
 import java.time.Instant;
 import java.util.Collections;
@@ -89,7 +87,7 @@ public class TrackScheduler extends PlayerEventListenerAdapter {
         }
     }
 
-    public void queue(SlashCommandEvent interaction, AudioTrack toPlay, List<AudioTrack> tracks){
+    public void queue(SlashCommandInteractionEvent interaction, AudioTrack toPlay, List<AudioTrack> tracks){
         boolean shouldPlay = this.player.getPlayingTrack() == null;
         if(!shouldPlay){
             this.queue.offer(toPlay);

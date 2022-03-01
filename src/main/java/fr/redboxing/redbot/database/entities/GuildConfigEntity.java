@@ -1,13 +1,12 @@
 package fr.redboxing.redbot.database.entities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import fr.redboxing.redbot.manager.GuildConfiguration;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "guilds_config")
-public class GuildConfig {
+public class GuildConfigEntity {
     @Id
     @Column(name = "id", nullable = false)
     private Long id;
@@ -15,11 +14,20 @@ public class GuildConfig {
     @Column(name = "guildId", nullable = false)
     private String guildId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "name", nullable = false)
-    private String name;
+    private GuildConfiguration name;
 
     @Column(name = "value")
     private String value;
+
+    public void setName(GuildConfiguration name) {
+        this.name = name;
+    }
+
+    public GuildConfiguration getName() {
+        return name;
+    }
 
     public Long getId() {
         return id;
@@ -35,14 +43,6 @@ public class GuildConfig {
 
     public void setGuildId(String guildId) {
         this.guildId = guildId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getValue() {

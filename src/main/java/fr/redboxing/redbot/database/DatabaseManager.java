@@ -1,6 +1,5 @@
 package fr.redboxing.redbot.database;
 
-import com.zaxxer.hikari.HikariDataSource;
 import fr.redboxing.redbot.BotConfig;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;

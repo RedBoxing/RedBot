@@ -7,8 +7,8 @@ import fr.redboxing.redbot.command.CommandCategory;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDAInfo;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.interactions.components.Button;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import oshi.SystemInfo;
 import oshi.hardware.HardwareAbstractionLayer;
 
@@ -25,13 +25,13 @@ public class InfoCommand extends AbstractCommand {
     }
 
     @Override
-    protected void execute(SlashCommandEvent event) {
+    protected void execute(SlashCommandInteractionEvent event) {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setAuthor("RedBot", event.getJDA().getSelfUser().getAvatarUrl());
         builder.setThumbnail(event.getJDA().getSelfUser().getAvatarUrl());
         builder.setFooter("RedBot by RedBoxing", event.getJDA().getUserById(BotConfig.getLong("AUTHOR_ID")).getAvatarUrl());
 
-        builder.addField("Version", "JDA: `" + JDAInfo.VERSION + "`\nRedBot: `1.0.2`", true);
+        builder.addField("Version", "JDA: `" + JDAInfo.VERSION + "`\nRedBot: `1.0.4 BETA`", true);
         builder.addField("Stats", "Utilisateurs: `" + event.getJDA().getUsers().size() + "`\nGuilds: `" + event.getJDA().getGuilds().size() + "`\nPing: `" + event.getJDA().getGatewayPing() + "ms`", true);
 
         long total = Runtime.getRuntime().totalMemory();
