@@ -31,7 +31,7 @@ public class InfoCommand extends AbstractCommand {
         builder.setThumbnail(event.getJDA().getSelfUser().getAvatarUrl());
         builder.setFooter("RedBot by RedBoxing", event.getJDA().getUserById(BotConfig.getLong("AUTHOR_ID")).getAvatarUrl());
 
-        builder.addField("Version", "JDA: `" + JDAInfo.VERSION + "`\nRedBot: `1.0.4 BETA`", true);
+        builder.addField("Version", "JDA: `" + JDAInfo.VERSION + "`\nRedBot: `2.0.0 BETA`", true);
         builder.addField("Stats", "Utilisateurs: `" + event.getJDA().getUsers().size() + "`\nGuilds: `" + event.getJDA().getGuilds().size() + "`\nPing: `" + event.getJDA().getGatewayPing() + "ms`", true);
 
         long total = Runtime.getRuntime().totalMemory();
