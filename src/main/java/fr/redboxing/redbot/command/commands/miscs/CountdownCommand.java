@@ -22,7 +22,7 @@ public class CountdownCommand extends AbstractCommand {
     @Override
     protected void execute(SlashCommandInteractionEvent event) {
         int seconds = event.getOption("secondes").getAsInt();
-        event.reply("Compte à rebours programmé pour " + seconds + " secondes.").queue();
+        event.reply("Le compte à rebours programmé pour dans " + seconds + " secondes.").queue();
         this.bot.schedule(() -> {
             event.getChannel().sendMessage(event.getMember().getAsMention() + ", le compte a rebours s'est terminé !").queue();
         }, seconds, TimeUnit.SECONDS);

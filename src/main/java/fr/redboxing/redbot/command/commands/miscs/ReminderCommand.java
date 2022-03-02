@@ -29,7 +29,7 @@ public class ReminderCommand extends AbstractCommand {
         String time = event.getOption("duration").getAsString();
         String message = event.getOption("message").getAsString();
         TemporalAmount duration = parse(time);
-        event.reply("Rappel programmé pour le " + duration.toString() + " : " + message).queue();
+        event.reply("Rappel programmé pour dans " + duration.get(ChronoUnit.SECONDS) + " secondes.").queue();
         this.bot.schedule(() -> {
             event.getChannel().sendMessage(event.getMember().getAsMention() + ", votre rappel vient de se terminer : " + message).queue();
         }, duration.get(ChronoUnit.SECONDS), TimeUnit.SECONDS);

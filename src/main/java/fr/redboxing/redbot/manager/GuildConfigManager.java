@@ -17,13 +17,15 @@ public class GuildConfigManager {
             value = (T) config.getDefaultValue();
         }
 
-        switch (config.getType()) {
-            case BOOLEAN -> value = (T) Boolean.valueOf(value.toString());
-            case INTEGER -> value = (T) Integer.valueOf(value.toString());
-            case NUMBER -> value = (T) Double.valueOf(value.toString());
-            case CHANNEL -> value = (T) guild.getGuildChannelById(value.toString());
-            case USER -> value = (T) guild.getMemberById(value.toString());
-            case ROLE -> value = (T) guild.getRoleById(value.toString());
+        if(value != null) {
+            switch (config.getType()) {
+                case BOOLEAN -> value = (T) Boolean.valueOf(value.toString());
+                case INTEGER -> value = (T) Integer.valueOf(value.toString());
+                case NUMBER -> value = (T) Double.valueOf(value.toString());
+                case CHANNEL -> value = (T) guild.getGuildChannelById(value.toString());
+                case USER -> value = (T) guild.getMemberById(value.toString());
+                case ROLE -> value = (T) guild.getRoleById(value.toString());
+            }
         }
 
         return value;
