@@ -32,7 +32,7 @@ public class DiscordBot {
             "{servers} server",
             "{ping} ms",
             "{users} users !",
-            "Current version: 1.0.4 BETA",
+            "Current version: 2.0.0 BETA",
     };
 
     private final CommandManager commandManager;
