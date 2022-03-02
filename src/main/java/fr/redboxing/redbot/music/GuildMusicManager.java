@@ -167,6 +167,10 @@ public class GuildMusicManager {
         return thumbnail;
     }
 
+    public AudioPlayerSendHandler getSendHandler() {
+        return new AudioPlayerSendHandler(this.player);
+    }
+
     public TrackScheduler getScheduler() {
         return scheduler;
     }

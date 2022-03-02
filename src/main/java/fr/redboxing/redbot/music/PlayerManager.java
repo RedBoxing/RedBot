@@ -208,7 +208,11 @@ public class PlayerManager extends ListenerAdapter {
 
     public void play(SlashCommandInteractionEvent interaction, String query, SearchProvider searchProvider) {
         interaction.deferReply().queue();
-        GuildMusicManager manager = this.musicManagers.computeIfAbsent(interaction.getGuild().getIdLong(), _guild -> new GuildMusicManager(this.bot, interaction.getGuild(), interaction.getTextChannel()));
+        GuildMusicManager manager = this.musicManagers.computeIfAbsent(interaction.getGuild().getIdLong(), _guild -> {
+            GuildMusicManager guildMusicManager = new GuildMusicManager(this.bot, interaction.getGuild(), interaction.getTextChannel());
+            interaction.getGuild().getAudioManager().setSendingHandler(guildMusicManager.getSendHandler());
+            return guildMusicManager;
+        });
 
         Matcher matcher = SPOTIFY_URL_PATTERN.matcher(query);
         if (matcher.matches()) {

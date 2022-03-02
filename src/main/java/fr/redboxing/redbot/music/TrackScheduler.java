@@ -141,7 +141,7 @@ public class TrackScheduler extends AudioEventAdapter {
     }
 
     public void increaseVolume(int volumeStep){
-        var newVol = ((int) this.player.getVolume()) * 100 + volumeStep;
+        var newVol = this.player.getVolume() + volumeStep;
         if(newVol <= 0){
             newVol = 10;
         }
@@ -153,7 +153,7 @@ public class TrackScheduler extends AudioEventAdapter {
     }
 
     public void setVolume(int volume){
-        this.player.setVolume((int) (volume / 100.0f));
+        this.player.setVolume(volume);
         this.manager.updateMusicController();
     }
 
