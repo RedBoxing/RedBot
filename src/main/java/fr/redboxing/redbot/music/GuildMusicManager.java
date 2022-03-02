@@ -1,6 +1,10 @@
 package fr.redboxing.redbot.music;
 
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import fr.redboxing.redbot.DiscordBot;
@@ -10,6 +14,7 @@ import fr.redboxing.redbot.utils.MusicUtils;
 import fr.redboxing.redbot.utils.TimeUtils;
 import lavalink.client.io.Link;
 import lavalink.client.io.jda.JdaLink;
+import lombok.Getter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -24,22 +29,31 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class GuildMusicManager {
+    @Getter
+    private AudioPlayerManager playerManager;
+    private AudioPlayer player;
     private final TrackScheduler scheduler;
     private final DiscordBot bot;
     private ScheduledFuture<?> future;
 
     public GuildMusicManager(DiscordBot bot, Guild guild, TextChannel channel) {
         this.bot = bot;
-        Link link = bot.getLavalink().getLink(guild);
-        this.scheduler = new TrackScheduler(this, link, guild, channel);
-        link.getPlayer().addListener(this.scheduler);
+
+        this.playerManager = new DefaultAudioPlayerManager();
+        AudioSourceManagers.registerRemoteSources(this.playerManager);
+        AudioSourceManagers.registerLocalSource(this.playerManager);
+
+        this.player = this.playerManager.createPlayer();
+
+        this.scheduler = new TrackScheduler(this.bot, this, this.player, guild, channel);
+        this.player.addListener(this.scheduler);
         this.future = null;
     }
 
     public void connectToChannel(Member member){
         var voiceState = member.getVoiceState();
-        if(voiceState != null && voiceState.getChannel() != null && this.scheduler.getLink().getChannel() != voiceState.getChannel().getId()){
-            ((JdaLink) this.scheduler.getLink()).connect((VoiceChannel) voiceState.getChannel());
+        if(voiceState != null && voiceState.getChannel() != null && !this.scheduler.getAudioChannel().getId().equals(voiceState.getChannel().getId())) {
+            ((JdaLink) this.scheduler.getPlayer()).connect((VoiceChannel) voiceState.getChannel());
         }
     }
 
@@ -65,13 +79,7 @@ public class GuildMusicManager {
         EmbedBuilder builder = new EmbedBuilder();
         AudioTrack track = this.scheduler.getPlayingTrack();
 
-        if(this.scheduler.getLink().getState() == Link.State.DESTROYED) {
-            builder.setColor(Color.RED)
-                    .addField("Déconnecté", "", false)
-                    .addField("Autheur", "-", true)
-                    .addField("Durée", "-", true)
-                    .addField("Demandé par", "-", true);
-        } else if(track == null) {
+        if(track == null) {
             builder.setColor(Color.RED)
                     .addField("En attente", "Rien a jouer", false)
                     .addField("Autheur", "-", true)
@@ -93,7 +101,7 @@ public class GuildMusicManager {
                     .addField("Demandé par", MessageUtils.getUserMention(track.getUserData(Long.class)), true);
         }
 
-        builder.addField("Volume", (this.scheduler.getFilters().getVolume() * 100) + "%", true)
+        builder.addField("Volume", (this.scheduler.getPlayer().getVolume() * 100) + "%", true)
                 .addField("Répétage", this.scheduler.isRepeat() ? "Oui" : "Non", true)
                 .setTimestamp(Instant.now());
 

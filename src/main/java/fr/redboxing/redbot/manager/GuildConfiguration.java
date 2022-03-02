@@ -1,9 +1,13 @@
 package fr.redboxing.redbot.manager;
 
 import lombok.Getter;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+
+import java.util.List;
 
 public enum GuildConfiguration {
-    COUNTING_CHANNEL("Counting Channel", "The channel where user can count.", String.class, "")
+    COUNTING_CHANNEL("Counting Channel", "The channel where user can count.", "", new OptionData(OptionType.CHANNEL, "channel", "channel to count"))
     ;
 
     @Getter
@@ -11,14 +15,14 @@ public enum GuildConfiguration {
     @Getter
     private String description;
     @Getter
-    private Class<?> type;
+    private List<OptionData> optionData;
     @Getter
     private Object defaultValue;
 
-    GuildConfiguration(String name, String description, Class<?> valueType, Object defaultValue) {
+    GuildConfiguration(String name, String description, Object defaultValue,  OptionData... optionData) {
         this.name = name;
         this.description = description;
-        this.type = valueType;
+        this.optionData = List.of(optionData);
         this.defaultValue = defaultValue;
     }
 }

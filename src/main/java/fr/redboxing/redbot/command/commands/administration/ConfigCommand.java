@@ -18,19 +18,18 @@ public class ConfigCommand extends AbstractCommand {
         this.name = "config";
         this.help = "Configurer le bot";
         this.category = CommandCategory.ADMINISTRATION;
-        this.subcommandGroup = new SubcommandGroupData("test", "test").addSubcommands(
-                Arrays.asList(
-                        new SubcommandData("counting-channel", "Le channel dans lequelle vous aller compter")
-                )
-        );
+
+        for(GuildConfiguration config : GuildConfiguration.values()) {
+            this.subcommands.add(new SubcommandData(config.getName(), config.getDescription()).addOptions());
+        }
     }
 
     @Override
     protected void execute(SlashCommandInteractionEvent event) {
-        switch (event.getSubcommandName()) {
-            case "counting-channel":
+        switch (GuildConfiguration.valueOf(event.getSubcommandName())) {
+            case COUNTING_CHANNEL -> {
                 GuildConfigManager.setConfig(event.getGuild(), GuildConfiguration.COUNTING_CHANNEL, event.getOption("channel").getAsString());
-                break;
+            }
         }
     }
 }

@@ -38,7 +38,6 @@ public class DiscordBot {
 
     private final CommandManager commandManager;
     private final PlayerManager playerManager;
-    private final JdaLavalink lavalink;
     private final ScheduledExecutorService scheduler;
     private final Random random = new Random();
     private final EventWaiter eventWaiter;
@@ -47,8 +46,6 @@ public class DiscordBot {
 
     public DiscordBot() throws LoginException, URISyntaxException {
         this.scheduler = new ScheduledThreadPoolExecutor(2, new ThreadFactoryHelper());
-
-        this.lavalink = new JdaLavalink(BotConfig.get("BOT_ID", "1"), 1, shardId -> this.jda);
         this.playerManager = new PlayerManager(this);
 
         this.eventWaiter = new EventWaiter();
@@ -74,8 +71,7 @@ public class DiscordBot {
         this.jda = JDABuilder.createDefault(BotConfig.get("BOT_TOKEN"), GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_EMOJIS, GatewayIntent.GUILD_VOICE_STATES, GatewayIntent.GUILD_MESSAGE_REACTIONS)
                 .disableIntents(GatewayIntent.GUILD_MESSAGE_TYPING, GatewayIntent.GUILD_PRESENCES)
                 .setLargeThreshold(50)
-                .addEventListeners(new EventsListener(this), this.lavalink, this.playerManager, this.eventWaiter)
-                .setVoiceDispatchInterceptor(this.lavalink.getVoiceInterceptor())
+                .addEventListeners(new EventsListener(this), this.playerManager, this.eventWaiter)
                 .build();
     }
 
@@ -131,9 +127,5 @@ public class DiscordBot {
 
     public PlayerManager getPlayerManager() {
         return playerManager;
-    }
-
-    public JdaLavalink getLavalink() {
-        return lavalink;
     }
 }

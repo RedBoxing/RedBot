@@ -141,7 +141,7 @@ public class CustomButtonMenu extends Menu
         if(text!=null)
             mbuilder.append(text);
         if(description!=null)
-            mbuilder.setEmbed(new EmbedBuilder().setColor(color).setDescription(description).build());
+            mbuilder.setEmbeds(new EmbedBuilder().setColor(color).setDescription(description).build());
         return mbuilder.build();
     }
 

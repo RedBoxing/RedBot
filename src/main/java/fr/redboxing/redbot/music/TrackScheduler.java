@@ -1,15 +1,16 @@
 package fr.redboxing.redbot.music;
 
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import fr.redboxing.redbot.DiscordBot;
 import fr.redboxing.redbot.utils.MessageUtils;
 import fr.redboxing.redbot.utils.MusicUtils;
-import lavalink.client.io.Link;
-import lavalink.client.io.filters.Filters;
-import lavalink.client.player.IPlayer;
-import lavalink.client.player.LavalinkPlayer;
-import lavalink.client.player.event.PlayerEventListenerAdapter;
+import lombok.Getter;
+import lombok.Setter;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.AudioChannel;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -20,24 +21,35 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class TrackScheduler extends PlayerEventListenerAdapter {
+public class TrackScheduler extends AudioEventAdapter {
+    private DiscordBot bot;
     private final GuildMusicManager manager;
     private final LinkedList<AudioTrack> queue;
     private final LinkedList<AudioTrack> history;
-    private final Link link;
-    private final LavalinkPlayer player;
+    @Getter
+    private final AudioPlayer player;
+    @Getter
     private final long channelId;
+    @Getter
+    private long voiceChannelId;
+    @Getter
     private final long guildId;
+    @Getter
+    @Setter
     private boolean repeat;
+    @Getter
+    @Setter
     private long lastMessageId;
+    @Getter
+    @Setter
     private long controllerMessageId;
 
-    public TrackScheduler(GuildMusicManager manager, Link link, Guild guild, TextChannel channel) {
+    public TrackScheduler(DiscordBot bot, GuildMusicManager manager, AudioPlayer player, Guild guild, TextChannel channel) {
+        this.bot = bot;
         this.queue = new LinkedList<>();
         this.history = new LinkedList<>();
         this.manager = manager;
-        this.link = link;
-        this.player = this.link.getPlayer();
+        this.player = player;
         this.repeat = false;
 
         this.guildId = guild.getIdLong();
@@ -45,23 +57,23 @@ public class TrackScheduler extends PlayerEventListenerAdapter {
     }
 
     @Override
-    public void onPlayerPause(IPlayer player) {
+    public void onPlayerPause(AudioPlayer player) {
         this.manager.updateMusicController();
     }
 
     @Override
-    public void onPlayerResume(IPlayer player) {
+    public void onPlayerResume(AudioPlayer player) {
         this.manager.updateMusicController();
     }
 
     @Override
-    public void onTrackStart(IPlayer player, AudioTrack track) {
+    public void onTrackStart(AudioPlayer player, AudioTrack track) {
         this.manager.sendMusicController();
         this.manager.cancelDestroy();
     }
 
     @Override
-    public void onTrackEnd(IPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
+    public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         this.history.push(track.makeClone());
         if(!endReason.mayStartNext){
             this.manager.updateMusicController();
@@ -129,7 +141,7 @@ public class TrackScheduler extends PlayerEventListenerAdapter {
     }
 
     public void increaseVolume(int volumeStep){
-        var newVol = ((int) this.player.getFilters().getVolume()) * 100 + volumeStep;
+        var newVol = ((int) this.player.getVolume()) * 100 + volumeStep;
         if(newVol <= 0){
             newVol = 10;
         }
@@ -141,7 +153,7 @@ public class TrackScheduler extends PlayerEventListenerAdapter {
     }
 
     public void setVolume(int volume){
-        this.player.getFilters().setVolume(volume / 100.0f).commit();
+        this.player.setVolume((int) (volume / 100.0f));
         this.manager.updateMusicController();
     }
 
@@ -157,26 +169,6 @@ public class TrackScheduler extends PlayerEventListenerAdapter {
         return guild.getTextChannelById(this.channelId);
     }
 
-    public long getLastMessageId(){
-        return this.lastMessageId;
-    }
-
-    public void setLastMessageId(long lastMessageId){
-        this.lastMessageId = lastMessageId;
-    }
-
-    public long getControllerMessageId(){
-        return this.controllerMessageId;
-    }
-
-    public void setControllerMessageId(long controllerMessageId) {
-        this.controllerMessageId = controllerMessageId;
-    }
-
-    public Link getLink() {
-        return link;
-    }
-
     public AudioTrack getPlayingTrack() {
         return this.player.getPlayingTrack();
     }
@@ -189,23 +181,7 @@ public class TrackScheduler extends PlayerEventListenerAdapter {
         player.setPaused(paused);
     }
 
-    public Filters getFilters(){
-        return this.player.getFilters();
-    }
-
-    public boolean isRepeat() {
-        return this.repeat;
-    }
-
-    public void setRepeat(boolean repeat) {
-        this.repeat = repeat;
-    }
-
-    public long getGuildId() {
-        return guildId;
-    }
-
-    public long getChannelId() {
-        return channelId;
+    public AudioChannel getAudioChannel() {
+        return this.bot.getJDA().getGuildById(this.guildId).getAudioManager().getConnectedChannel();
     }
 }

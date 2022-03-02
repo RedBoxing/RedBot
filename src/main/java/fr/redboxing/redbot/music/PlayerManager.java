@@ -12,9 +12,6 @@ import com.wrapper.spotify.requests.authorization.client_credentials.ClientCrede
 import fr.redboxing.redbot.BotConfig;
 import fr.redboxing.redbot.DiscordBot;
 import fr.redboxing.redbot.utils.MessageUtils;
-import fr.redboxing.redbot.utils.Utils;
-import lavalink.client.io.LavalinkRestClient;
-import lavalink.client.io.Link;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
@@ -79,7 +76,7 @@ public class PlayerManager extends ListenerAdapter {
         Member member = event.getMember();
 
         GuildVoiceState voiceState = member.getVoiceState();
-        if(voiceState == null || voiceState.getChannel() == null || Long.parseLong(scheduler.getLink().getChannel()) != voiceState.getChannel().getIdLong()) return;
+        if(voiceState == null || voiceState.getChannel() == null || scheduler.getAudioChannel().getId().equals(voiceState.getChannel().getId())) return;
 
         long messageId = event.getMessageIdLong();
         AudioTrack currentTrack = scheduler.getPlayingTrack();
@@ -137,7 +134,7 @@ public class PlayerManager extends ListenerAdapter {
         GuildMusicManager manager = this.getMusicManager(event.getEntity().getGuild());
         if(manager == null) return;
 
-        if(event.getChannelJoined().getId().equals(manager.getScheduler().getLink().getChannel())){
+        if(event.getChannelJoined().getId().equals(manager.getScheduler().getAudioChannel().getId())){
             manager.cancelDestroy();
         }
     }
@@ -148,7 +145,7 @@ public class PlayerManager extends ListenerAdapter {
         if(manager == null){
             return;
         }
-        var currentChannelId = Long.parseLong(manager.getScheduler().getLink().getChannel());
+        var currentChannelId = manager.getScheduler().getAudioChannel().getIdLong();
         AudioChannel channel;
         if(event.getChannelLeft().getIdLong() == currentChannelId){
             channel = event.getChannelLeft();
@@ -176,7 +173,7 @@ public class PlayerManager extends ListenerAdapter {
         }
 
         AudioChannel channelLeft = event.getChannelLeft();
-        if(channelLeft.getIdLong() == Long.parseLong(manager.getScheduler().getLink().getChannel())){
+        if(channelLeft.getIdLong() == manager.getScheduler().getAudioChannel().getIdLong()){
             if(isAlone(channelLeft)){
                 manager.planDestroy();
             }
@@ -197,11 +194,6 @@ public class PlayerManager extends ListenerAdapter {
 
     public void destroy(GuildMusicManager manager, String reason) {
         TrackScheduler scheduler = manager.getScheduler();
-        Link link = scheduler.getLink();
-        if(link != null && link.getState() != Link.State.DESTROYING && link.getState() != Link.State.DESTROYED) {
-            link.destroy();
-        }
-
         GuildMusicManager player = this.musicManagers.remove(scheduler.getGuildId());
         if(player != null) {
             player.updateMusicController();
@@ -232,7 +224,7 @@ public class PlayerManager extends ListenerAdapter {
             }
         }
 
-        manager.getScheduler().getLink().getRestClient().loadItem(query, new AudioLoadResultHandler() {
+        manager.getPlayerManager().loadItem(query, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
                 manager.connectToChannel(interaction.getMember());
@@ -322,29 +314,35 @@ public class PlayerManager extends ListenerAdapter {
     }
 
     private void loadSpotifyTracks(String id, SlashCommandInteractionEvent interaction, GuildMusicManager manager, List<String> toLoad){
-        LavalinkRestClient restClient = manager.getScheduler().getLink().getRestClient();
-        Utils.all(toLoad.stream().map(restClient::getYoutubeSearchResult).collect(Collectors.toList()))
-                .thenAcceptAsync(results -> {
-                    List<AudioTrack> tracks = results.stream().map(result -> {
-                        if(result.isEmpty()){
-                            return null;
-                        }
-                        AudioTrack track = result.get(0);
-                        track.setUserData(interaction.getUser().getIdLong());
-                        return track;
-                    }).filter(Objects::nonNull).collect(Collectors.toList());
+        toLoad.stream().map(identifier -> manager.getPlayerManager().loadItem(identifier, new AudioLoadResultHandler() {
+            @Override
+            public void trackLoaded(AudioTrack track) {
+                manager.connectToChannel(interaction.getMember());
+                manager.getScheduler().queue(interaction, track, Collections.emptyList());
+            }
 
-                    if(tracks.isEmpty()){
-                        interaction.getHook().editOriginal("No tracks on youtube found").queue();
-                        return;
-                    }
-                    manager.connectToChannel(interaction.getMember());
-                    manager.getScheduler().queue(interaction, tracks.remove(0), tracks);
-                })
-                .exceptionally(error -> {
-                    interaction.getHook().editOriginal("Something went wrong while fetching your tracks: \n" + error.getMessage()).queue();
-                    return null;
-                });
+            @Override
+            public void playlistLoaded(AudioPlaylist playlist) {
+                List<AudioTrack> tracks = playlist.getTracks();
+
+                if(tracks.isEmpty()){
+                    interaction.getHook().editOriginal("No tracks on youtube found").queue();
+                    return;
+                }
+                manager.connectToChannel(interaction.getMember());
+                manager.getScheduler().queue(interaction, tracks.remove(0), tracks);
+            }
+
+            @Override
+            public void noMatches() {
+                interaction.getHook().editOriginal("No track could be found !").queue();
+            }
+
+            @Override
+            public void loadFailed(FriendlyException exception) {
+                interaction.getHook().editOriginal("Something went wrong while fetching your tracks: \n" + exception.getMessage()).queue();
+            }
+        }));
     }
 
     private void refreshAccessToken(){

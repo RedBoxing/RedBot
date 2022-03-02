@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
+import java.awt.*;
 import java.util.UUID;
 
 public class MinecraftCommand extends AbstractCommand {
@@ -35,7 +36,7 @@ public class MinecraftCommand extends AbstractCommand {
                 try {
                     event.replyEmbeds(new EmbedBuilder().setAuthor("UUID de " + username).setDescription("UUID de " + username + " : " + MinecraftAPI.usernameToUUID(username)).setFooter("RedBot by RedBoxing", this.bot.getJDA().getSelfUser().getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
                 } catch (Exception e) {
-                    event.reply("Impossible de trouver l'uuid de " + username + ".").queue();
+                    event.replyEmbeds(new EmbedBuilder().setDescription("Impossible de trouver l'uuid de " + username + ".").setColor(Color.RED).build()).queue();
                 }
             }
             case "username" -> {
@@ -43,7 +44,7 @@ public class MinecraftCommand extends AbstractCommand {
                 try {
                     event.replyEmbeds(new EmbedBuilder().setAuthor("Pseudo du joueur avec l'uuid " + uuid).setDescription("Le pseudo du joueur avec l'uuid " + uuid + " est : " + MinecraftAPI.UUIDToUsername(UUID.fromString(uuid))).setFooter("RedBot by RedBoxing", this.bot.getJDA().getSelfUser().getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
                 } catch (Exception e) {
-                    event.reply("Impossible de trouver le pseudo du joueur avec l'uuid " + uuid + ".").queue();
+                    event.replyEmbeds(new EmbedBuilder().setDescription("Impossible de trouver le pseudo du joueur avec l'uuid " + uuid + ".").setColor(Color.RED).build()).queue();
                 }
             }
             case "skin" -> {
@@ -51,7 +52,7 @@ public class MinecraftCommand extends AbstractCommand {
                     String skin = MinecraftAPI.getSkinURL(MinecraftAPI.usernameToUUID(username));
                     event.replyEmbeds(new EmbedBuilder().setAuthor("Skin de " + username).setImage(skin).setFooter("RedBot by RedBoxing", this.bot.getJDA().getSelfUser().getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
                 } catch (Exception e) {
-                    event.reply("Impossible de trouver le skin de " + username + ".").queue();
+                    event.replyEmbeds(new EmbedBuilder().setDescription("Impossible de trouver le skin de " + username + ".").setColor(Color.RED).build()).queue();
                 }
             }
             case "cape" -> {
@@ -59,7 +60,7 @@ public class MinecraftCommand extends AbstractCommand {
                     String cape = MinecraftAPI.getCapeURL(MinecraftAPI.usernameToUUID(username));
                     event.replyEmbeds(new EmbedBuilder().setAuthor("Cape de " + username).setImage(cape).setFooter("RedBot by RedBoxing", this.bot.getJDA().getSelfUser().getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
                 } catch (Exception e) {
-                    event.reply("Impossible de trouver la cape de " + username + ".").queue();
+                    event.replyEmbeds(new EmbedBuilder().setDescription("Impossible de trouver la cape de " + username + ".").setColor(Color.RED).build()).queue();
                 }
             }
 
@@ -68,7 +69,7 @@ public class MinecraftCommand extends AbstractCommand {
                     String head = MinecraftAPI.getPlayerHead(MinecraftAPI.usernameToUUID(username));
                     event.replyEmbeds(new EmbedBuilder().setAuthor("Tête de " + username).setImage(head).setFooter("RedBot by RedBoxing", this.bot.getJDA().getSelfUser().getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
                 } catch (Exception e) {
-                    event.reply("Impossible de trouver la tête de " + username + ".").queue();
+                    event.replyEmbeds(new EmbedBuilder().setDescription("Impossible de trouver la tête de " + username + ".").setColor(Color.RED).build()).queue();
                 }
             }
 
@@ -77,7 +78,7 @@ public class MinecraftCommand extends AbstractCommand {
                     String render = MinecraftAPI.getPlayerRender(MinecraftAPI.usernameToUUID(username));
                     event.replyEmbeds(new EmbedBuilder().setAuthor("Render de " + username).setImage(render).setFooter("RedBot by RedBoxing", this.bot.getJDA().getSelfUser().getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
                 } catch (Exception e) {
-                    event.reply("Impossible de trouver le render de " + username + ".").queue();
+                    event.replyEmbeds(new EmbedBuilder().setDescription("Impossible de trouver le render de " + username + ".").setColor(Color.RED).build()).queue();
                 }
             }
         }
