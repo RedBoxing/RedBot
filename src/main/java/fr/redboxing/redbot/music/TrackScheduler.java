@@ -182,6 +182,10 @@ public class TrackScheduler extends AudioEventAdapter {
     }
 
     public AudioChannel getAudioChannel() {
-        return this.bot.getJDA().getGuildById(this.guildId).getAudioManager().getConnectedChannel();
+        return this.getGuild().getAudioManager().getConnectedChannel();
+    }
+
+    public Guild getGuild(){
+        return this.bot.getJDA().getGuildById(this.guildId);
     }
 }

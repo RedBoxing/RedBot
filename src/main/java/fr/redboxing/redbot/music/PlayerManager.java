@@ -11,6 +11,7 @@ import com.wrapper.spotify.model_objects.specification.TrackSimplified;
 import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
 import fr.redboxing.redbot.BotConfig;
 import fr.redboxing.redbot.DiscordBot;
+import fr.redboxing.redbot.utils.Emoji;
 import fr.redboxing.redbot.utils.MessageUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -97,7 +98,7 @@ public class PlayerManager extends ListenerAdapter {
                     scheduler.setPaused(false);
                 }
                 break;
-            case "PlayPause:744945002416963634"://play pause
+            case "\u23EF"://play pause
                 if(requesterId == userId || member.hasPermission(Permission.ADMINISTRATOR)){
                     scheduler.pause();
                 }
@@ -134,7 +135,7 @@ public class PlayerManager extends ListenerAdapter {
         GuildMusicManager manager = this.getMusicManager(event.getEntity().getGuild());
         if(manager == null) return;
 
-        if(event.getChannelJoined().getId().equals(manager.getScheduler().getAudioChannel().getId())){
+        if(event.getChannelJoined() == manager.getScheduler().getAudioChannel()) {
             manager.cancelDestroy();
         }
     }
@@ -197,6 +198,7 @@ public class PlayerManager extends ListenerAdapter {
         GuildMusicManager player = this.musicManagers.remove(scheduler.getGuildId());
         if(player != null) {
             player.updateMusicController();
+            scheduler.getPlayer().destroy();
             TextChannel channel = scheduler.getTextChannel();
             if(channel == null || !channel.canTalk()) return;
             channel.sendMessageEmbeds(new EmbedBuilder().setColor(Color.RED).setDescription(reason).setTimestamp(Instant.now()).build()).queue();

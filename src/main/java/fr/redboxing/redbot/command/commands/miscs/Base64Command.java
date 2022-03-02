@@ -1,13 +1,16 @@
 package fr.redboxing.redbot.command.commands.miscs;
 
+import fr.redboxing.redbot.BotConfig;
 import fr.redboxing.redbot.DiscordBot;
 import fr.redboxing.redbot.command.AbstractCommand;
+import fr.redboxing.redbot.utils.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
+import java.awt.*;
 import java.util.Base64;
 
 public class Base64Command extends AbstractCommand {
@@ -25,10 +28,10 @@ public class Base64Command extends AbstractCommand {
         String str = event.getOptionsByName("string").get(0).getAsString();
         switch (event.getSubcommandName()) {
             case "encode" -> {
-                event.replyEmbeds(new EmbedBuilder().setTitle("Encode").setDescription(Base64.getEncoder().encodeToString(str.getBytes())).setFooter("RedBot by RedBoxing", this.bot.getJDA().getSelfUser().getAvatarUrl()).build()).queue();
+                event.replyEmbeds(new EmbedBuilder().setTitle("Encode").setDescription(Base64.getEncoder().encodeToString(str.getBytes())).setFooter("RedBot by RedBoxing", this.bot.getJDA().getUserById(BotConfig.get("AUTHOR_ID")).getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
             }
             case "decode" -> {
-                event.replyEmbeds(new EmbedBuilder().setTitle("Decode").setDescription(new String(Base64.getDecoder().decode(str))).setFooter("RedBot by RedBoxing", this.bot.getJDA().getSelfUser().getAvatarUrl()).build()).queue();
+                event.replyEmbeds(new EmbedBuilder().setTitle("Decode").setDescription(new String(Base64.getDecoder().decode(str))).setFooter("RedBot by RedBoxing", this.bot.getJDA().getUserById(BotConfig.get("AUTHOR_ID")).getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
             }
         }
     }

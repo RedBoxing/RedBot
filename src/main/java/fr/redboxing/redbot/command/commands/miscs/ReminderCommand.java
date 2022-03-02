@@ -20,18 +20,18 @@ public class ReminderCommand extends AbstractCommand {
         this.name = "reminder";
         this.help = "Programme un rappel";
         this.category = CommandCategory.MISCS;
-        this.options.add(new OptionData(OptionType.STRING, "duration", "Temps de rappel"));
-        this.options.add(new OptionData(OptionType.STRING, "message", "Message à envoyer"));
+        this.options.add(new OptionData(OptionType.STRING, "duration", "Temps de rappel").setRequired(true));
+        this.options.add(new OptionData(OptionType.STRING, "message", "Message à envoyer").setRequired(true));
     }
 
     @Override
     protected void execute(SlashCommandInteractionEvent event) {
-        String time = event.getOption("time").getAsString();
+        String time = event.getOption("duration").getAsString();
         String message = event.getOption("message").getAsString();
         TemporalAmount duration = parse(time);
         event.reply("Rappel programmé pour le " + duration.toString() + " : " + message).queue();
         this.bot.schedule(() -> {
-            event.getChannel().sendMessage(event.getUser() + ", votre rappel vient de se terminer : " + message).queue();
+            event.getChannel().sendMessage(event.getMember().getAsMention() + ", votre rappel vient de se terminer : " + message).queue();
         }, duration.get(ChronoUnit.SECONDS), TimeUnit.SECONDS);
     }
 

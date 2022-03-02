@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.Optional;
 
 public class GuildConfigRepository {
     public static GuildConfigEntity findById(Long id) {
@@ -26,7 +27,7 @@ public class GuildConfigRepository {
         session.getTransaction().commit();
     }
 
-    public static GuildConfigEntity findByName(String guildId, GuildConfiguration name) {
+    public static Optional<GuildConfigEntity> findByName(String guildId, GuildConfiguration name) {
         Session session = DatabaseManager.getSessionFactory().openSession();
         session.beginTransaction();
 
@@ -37,20 +38,20 @@ public class GuildConfigRepository {
 
         CriteriaQuery<GuildConfigEntity> query = criteriaQuery.where(builder.equal(root.get("guildId"), guildId), builder.equal(root.get("name"), name));
 
-        GuildConfigEntity guildConfig = session.createQuery(query).getSingleResult();
+        Optional<GuildConfigEntity> guildConfig = session.createQuery(query).stream().findFirst();
         session.getTransaction().commit();
 
         return guildConfig;
     }
 
     public static void createOrUpdate(GuildConfigEntity guildConfig) {
-        GuildConfigEntity guildConfig1 = findByName(guildConfig.getGuildId(), guildConfig.getName());
-        if(guildConfig1 == null) {
-            guildConfig1 = guildConfig;
+        Optional<GuildConfigEntity> guildConfig1 = findByName(guildConfig.getGuildId(), guildConfig.getName());
+        if(guildConfig1.isEmpty()) {
+            guildConfig1 = Optional.of(guildConfig);
         } else {
-            guildConfig1.setValue(guildConfig.getValue());
+            guildConfig1.get().setValue(guildConfig.getValue());
         }
 
-        save(guildConfig1);
+        save(guildConfig1.get());
     }
 }

@@ -12,16 +12,13 @@ import fr.redboxing.redbot.utils.Emoji;
 import fr.redboxing.redbot.utils.MessageUtils;
 import fr.redboxing.redbot.utils.MusicUtils;
 import fr.redboxing.redbot.utils.TimeUtils;
-import lavalink.client.io.Link;
-import lavalink.client.io.jda.JdaLink;
 import lombok.Getter;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.managers.AudioManager;
 
 import java.awt.*;
 import java.time.Instant;
@@ -52,8 +49,9 @@ public class GuildMusicManager {
 
     public void connectToChannel(Member member){
         var voiceState = member.getVoiceState();
-        if(voiceState != null && voiceState.getChannel() != null && !this.scheduler.getAudioChannel().getId().equals(voiceState.getChannel().getId())) {
-            ((JdaLink) this.scheduler.getPlayer()).connect((VoiceChannel) voiceState.getChannel());
+        if(voiceState != null && voiceState.getChannel() != null && this.scheduler.getAudioChannel() != voiceState.getChannel()) {
+            AudioManager audioManager = this.scheduler.getGuild().getAudioManager();
+            audioManager.openAudioConnection(voiceState.getChannel());
         }
     }
 
@@ -101,7 +99,7 @@ public class GuildMusicManager {
                     .addField("Demandé par", MessageUtils.getUserMention(track.getUserData(Long.class)), true);
         }
 
-        builder.addField("Volume", (this.scheduler.getPlayer().getVolume() * 100) + "%", true)
+        builder.addField("Volume", (this.scheduler.getPlayer().getVolume()) + "%", true)
                 .addField("Répétage", this.scheduler.isRepeat() ? "Oui" : "Non", true)
                 .setTimestamp(Instant.now());
 

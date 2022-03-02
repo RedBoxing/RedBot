@@ -3,10 +3,12 @@ package fr.redboxing.redbot.command;
 import fr.redboxing.redbot.BotConfig;
 import fr.redboxing.redbot.DiscordBot;
 import lombok.Getter;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.*;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +48,8 @@ public abstract class AbstractCommand {
         try {
             this.execute(event);
         } catch (Exception e) {
-            event.reply("Une erreur est survenue lors de l'execution de la commande : " + e.getMessage()).setEphemeral(true).queue();
+            event.replyEmbeds(new EmbedBuilder().setTitle("Une erreur est survenue lors de l'execution de la commande").setDescription(e.getMessage()).setColor(Color.RED).build()).setEphemeral(true).queue();
+            e.printStackTrace();
         }
     }
 

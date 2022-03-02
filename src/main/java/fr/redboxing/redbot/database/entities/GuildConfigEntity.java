@@ -8,6 +8,7 @@ import javax.persistence.*;
 @Table(name = "guilds_config")
 public class GuildConfigEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 

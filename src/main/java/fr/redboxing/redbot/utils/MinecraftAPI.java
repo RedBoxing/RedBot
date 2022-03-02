@@ -4,6 +4,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.UUID;
@@ -15,18 +16,14 @@ public class MinecraftAPI {
         if(json.has("error")) {
             throw new UnirestException(json.getString("errorMessage"));
         } else {
-            return UUID.fromString(json.getString("id"));
+            return UUIDUtils.untrimUUID(json.getString("id"));
         }
     }
 
     public static String UUIDToUsername(UUID uuid) throws UnirestException {
-        HttpResponse<JsonNode> res = Unirest.get("https://api.mojang.com/user/profiles/" + uuid.toString().replace("-", "") + "/names").asJson();
-        JSONObject json = res.getBody().getObject();
-        if(json.has("error")) {
-            throw new UnirestException(json.getString("errorMessage"));
-        } else {
-            return json.getJSONArray("nameHistory").getJSONObject(0).getString("name");
-        }
+        HttpResponse<JsonNode> res = Unirest.get("https://api.mojang.com/user/profiles/" + uuid.toString() + "/names").asJson();
+        JSONArray nameHistory = res.getBody().getArray();
+        return nameHistory.getJSONObject(nameHistory.length() - 1).getString("name");
     }
 
     public static String getSkinURL(UUID uuid) {

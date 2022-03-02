@@ -6,7 +6,6 @@ import fr.redboxing.redbot.database.DatabaseManager;
 import fr.redboxing.redbot.event.EventsListener;
 import fr.redboxing.redbot.music.PlayerManager;
 import fr.redboxing.redbot.utils.ThreadFactoryHelper;
-import lavalink.client.io.jda.JdaLavalink;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;

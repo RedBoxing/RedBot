@@ -14,15 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DatabaseManager {
-    //private HikariDataSource dataSource = new HikariDataSource();
     private static StandardServiceRegistry registry;
     private static SessionFactory sessionFactory;
-
-    public DatabaseManager() {
-       /* this.dataSource.setJdbcUrl("jdbc:" + BotConfig.get("DATABASE_DIALECT") + "//" + BotConfig.get("DATABASE_HOST") + ":" + BotConfig.get("DATABASE_PORT") + "/" + BotConfig.get("DATABASE_DB"));
-        this.dataSource.setUsername(BotConfig.get("DATABASE_USER"));
-        this.dataSource.setPassword(BotConfig.get("DATABASE_PASSWORD"));*/
-    }
 
     public static SessionFactory getSessionFactory() {
         if (sessionFactory == null) {
@@ -35,7 +28,7 @@ public class DatabaseManager {
                 settings.put(Environment.USER, BotConfig.get("DATABASE_USER"));
                 settings.put(Environment.PASS, BotConfig.get("DATABASE_PASSWORD"));
                 settings.put(Environment.HBM2DDL_AUTO, "update");
-                settings.put(Environment.SHOW_SQL, true);
+                settings.put(Environment.SHOW_SQL, false);
                 settings.put(Environment.FORMAT_SQL, true);
                 settings.put(Environment.CONNECTION_PROVIDER, "org.hibernate.hikaricp.internal.HikariCPConnectionProvider");
                 settings.put(Environment.DIALECT, "org.hibernate.dialect.MariaDBDialect");
