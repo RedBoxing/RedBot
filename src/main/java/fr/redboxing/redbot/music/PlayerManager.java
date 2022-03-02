@@ -77,7 +77,7 @@ public class PlayerManager extends ListenerAdapter {
         Member member = event.getMember();
 
         GuildVoiceState voiceState = member.getVoiceState();
-        if(voiceState == null || voiceState.getChannel() == null || scheduler.getAudioChannel().getId().equals(voiceState.getChannel().getId())) return;
+        if(voiceState == null || voiceState.getChannel() == null || !scheduler.getAudioChannel().getId().equals(voiceState.getChannel().getId())) return;
 
         long messageId = event.getMessageIdLong();
         AudioTrack currentTrack = scheduler.getPlayingTrack();
@@ -199,6 +199,7 @@ public class PlayerManager extends ListenerAdapter {
         if(player != null) {
             player.updateMusicController();
             scheduler.getPlayer().destroy();
+            scheduler.getGuild().getAudioManager().closeAudioConnection();
             TextChannel channel = scheduler.getTextChannel();
             if(channel == null || !channel.canTalk()) return;
             channel.sendMessageEmbeds(new EmbedBuilder().setColor(Color.RED).setDescription(reason).setTimestamp(Instant.now()).build()).queue();
