@@ -2,7 +2,7 @@ package fr.redboxing.redbot.database.Repositories;
 
 import fr.redboxing.redbot.database.DatabaseManager;
 import fr.redboxing.redbot.database.entities.GuildConfigEntity;
-import fr.redboxing.redbot.manager.GuildConfiguration;
+import fr.redboxing.redbot.config.GuildConfiguration;
 import org.hibernate.Session;
 
 import javax.persistence.criteria.CriteriaBuilder;

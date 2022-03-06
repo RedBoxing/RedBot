@@ -29,7 +29,7 @@ public class FMLCommand extends AbstractCommand {
                     .setDescription(json.getBody().getObject().getJSONObject("vdm").getString("content"))
                     .setColor((int)Math.floor(Math.random() * (0xffffff + 1)))
                     .setFooter("RedBot by RedBoxing", event.getJDA().getUserById(BotConfig.get("AUTHOR_ID")).getAvatarUrl())
-                    .build());
+                    .build()).queue();
         } catch (UnirestException e) {
             e.printStackTrace();
         }

@@ -1,10 +1,9 @@
 package fr.redboxing.redbot.event;
 
-import fr.redboxing.redbot.BotConfig;
 import fr.redboxing.redbot.DiscordBot;
 import fr.redboxing.redbot.command.AbstractCommand;
-import fr.redboxing.redbot.manager.GuildConfigManager;
-import fr.redboxing.redbot.manager.GuildConfiguration;
+import fr.redboxing.redbot.config.GuildConfigManager;
+import fr.redboxing.redbot.config.GuildConfiguration;
 import fr.redboxing.redbot.utils.Reactor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
@@ -18,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.net.URI;
 
 public class EventsListener extends ListenerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(EventsListener.class);

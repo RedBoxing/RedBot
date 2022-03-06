@@ -1,6 +1,6 @@
 package fr.redboxing.redbot.database.entities;
 
-import fr.redboxing.redbot.manager.GuildConfiguration;
+import fr.redboxing.redbot.config.GuildConfiguration;
 
 import javax.persistence.*;
 

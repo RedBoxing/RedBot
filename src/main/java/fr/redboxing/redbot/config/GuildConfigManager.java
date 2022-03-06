@@ -1,4 +1,4 @@
-package fr.redboxing.redbot.manager;
+package fr.redboxing.redbot.config;
 
 import fr.redboxing.redbot.database.Repositories.GuildConfigRepository;
 import fr.redboxing.redbot.database.entities.GuildConfigEntity;

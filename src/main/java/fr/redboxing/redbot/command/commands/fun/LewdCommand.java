@@ -30,7 +30,7 @@ public class LewdCommand extends AbstractCommand {
                     .setImage(json.getBody().getObject().getString("url"))
                     .setColor((int)Math.floor(Math.random() * (0xffffff + 1)))
                     .setFooter("RedBot by RedBoxing", event.getJDA().getUserById(BotConfig.get("AUTHOR_ID")).getAvatarUrl())
-                    .build());
+                    .build()).queue();
         } catch (UnirestException e) {
             e.printStackTrace();
         }

@@ -32,11 +32,11 @@ public class HugCommand extends AbstractCommand {
             HttpResponse<JsonNode> json = Unirest.get("https://nekos.life/api/v2/img/hug").asJson();
             User user = event.getOption("friend").getAsUser();
             event.replyEmbeds(new EmbedBuilder()
-                    .setAuthor("Owo, " + event.getMember().getNickname() + " just hugged " + event.getGuild().getMember(user).getNickname() + " !", event.getJDA().getSelfUser().getAvatarUrl())
+                    .setAuthor("Owo, " + event.getMember().getEffectiveName() + " just hugged " + event.getGuild().getMember(user).getEffectiveName() + " !", event.getJDA().getSelfUser().getAvatarUrl())
                     .setImage(json.getBody().getObject().getString("url"))
                     .setColor((int)Math.floor(Math.random() * (0xffffff + 1)))
                     .setFooter("RedBot by RedBoxing", event.getJDA().getUserById(BotConfig.get("AUTHOR_ID")).getAvatarUrl())
-                    .build());
+                    .build()).queue();
         } catch (UnirestException e) {
             e.printStackTrace();
         }

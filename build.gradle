@@ -1,15 +1,28 @@
 plugins {
+    id 'fabric-loom' version '0.11-SNAPSHOT'
     id 'application'
     id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
 mainClassName = 'fr.redboxing.redbot.RedBotMain'
-group 'fr.redboxing'
-version '2.0-SNAPSHOT'
+archivesBaseName = project.archives_base_name
+version = project.mod_version
+group = project.maven_group
+
+loom {
+    accessWidenerPath = file("src/main/resources/redbot.accesswidener")
+}
 
 repositories {
     mavenCentral()
+
+    flatDir {
+        dirs 'libs'
+    }
 
     maven {
         name 'm2-dv8tion'
@@ -24,24 +37,66 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.22'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
 
+    // jda
     implementation group: 'net.dv8tion', name: 'JDA', version: '5.0.0-alpha.9'
     implementation group: 'com.sedmelluq', name: 'lavaplayer', version: '1.3.77'
     implementation group: 'se.michaelthelin.spotify', name: 'spotify-web-api-java', version: '6.5.4'
+    implementation group: 'pw.chew', name: 'jda-chewtils-commons', version: '1.24.1'
+    implementation group: 'pw.chew', name: 'jda-chewtils-command', version: '1.24.1'
+    implementation group: 'pw.chew', name: 'jda-chewtils-menu', version: '1.24.1'
 
+    // miscs
     implementation group: 'io.github.cdimascio', name: 'java-dotenv', version: '5.1.1'
     implementation group: 'com.github.oshi', name: 'oshi-core', version: '5.8.2'
     implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.6'
     implementation group: 'com.mashape.unirest', name: 'unirest-java', version: '1.4.9'
     implementation group: 'org.reflections', name: 'reflections', version: '0.10.2'
 
+    // database
     implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.1.2'
     implementation group: 'com.zaxxer', name: 'HikariCP', version: '5.0.0'
     implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.6.5.Final'
     implementation group: 'org.hibernate', name: 'hibernate-hikaricp', version: '5.6.5.Final'
 
-    implementation group: 'pw.chew', name: 'jda-chewtils-commons', version: '1.24.1'
-    implementation group: 'pw.chew', name: 'jda-chewtils-command', version: '1.24.1'
-    implementation group: 'pw.chew', name: 'jda-chewtils-menu', version: '1.24.1'
+    //minecraft
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    modImplementation "baritone:baritone:1.18"
+    modImplementation "altoclef:altoclef:0.4.0"
+    implementation 'com.github.Litarvan:OpenAuth:v1.1.1'
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 17
+}
+
+java {
+    withSourcesJar()
+}
+
+jar {
+    from("LICENSE") {
+        rename { "${it}_${project.archivesBaseName}"}
+    }
+}
+
+
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }
 
 publishing {

@@ -4,8 +4,10 @@ import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import fr.redboxing.redbot.command.CommandManager;
 import fr.redboxing.redbot.database.DatabaseManager;
 import fr.redboxing.redbot.event.EventsListener;
+import fr.redboxing.redbot.minecraft.MinecraftManager;
 import fr.redboxing.redbot.music.PlayerManager;
 import fr.redboxing.redbot.utils.ThreadFactoryHelper;
+import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -25,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 public class DiscordBot {
     private static final Logger LOGGER = LoggerFactory.getLogger(DiscordBot.class);
+    private static DiscordBot INSTANCE;
     private static final String[] statusList = {
             "Bot par RedBoxing",
             "https://redboxing.fr",
@@ -35,15 +38,23 @@ public class DiscordBot {
             "Current version: 2.0.0 BETA",
     };
 
+    @Getter
     private final CommandManager commandManager;
+    @Getter
     private final PlayerManager playerManager;
+    @Getter
+    private final MinecraftManager minecraftManager;
+
     private final ScheduledExecutorService scheduler;
     private final Random random = new Random();
+    @Getter
     private final EventWaiter eventWaiter;
     private final HashMap<String, HashMap<String, Long>> cooldowns = new HashMap<>();
+    @Getter
     private JDA jda;
 
     public DiscordBot() throws LoginException, URISyntaxException {
+        INSTANCE = this;
         this.scheduler = new ScheduledThreadPoolExecutor(2, new ThreadFactoryHelper());
         this.playerManager = new PlayerManager(this);
 
@@ -51,10 +62,14 @@ public class DiscordBot {
         this.commandManager = new CommandManager();
         this.commandManager.loadCommands(this);
 
+        this.minecraftManager = new MinecraftManager(this);
+
         DatabaseManager.getSessionFactory();
 
         restartJDA();
         this.scheduleAtFixedRate(this::refreshStatus, 0L, 10L, TimeUnit.SECONDS);
+
+        this.minecraftManager.initialize();
     }
 
     private void refreshStatus() {
@@ -112,19 +127,7 @@ public class DiscordBot {
         return this.cooldowns.get(user.getId()).getOrDefault(command, 0L) - System.currentTimeMillis();
     }
 
-    public EventWaiter getEventWaiter() {
-        return eventWaiter;
-    }
-
-    public JDA getJDA() {
-        return jda;
-    }
-
-    public CommandManager getCommandManager() {
-        return commandManager;
-    }
-
-    public PlayerManager getPlayerManager() {
-        return playerManager;
+    public static DiscordBot getInstance(){
+        return INSTANCE;
     }
 }

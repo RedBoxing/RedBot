@@ -1,10 +1,7 @@
-package fr.redboxing.redbot.manager;
+package fr.redboxing.redbot.config;
 
 import lombok.Getter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-
-import java.util.List;
 
 public enum GuildConfiguration {
     COUNTING_CHANNEL("countingchannel", "The channel where user can count.", "", OptionType.CHANNEL),
