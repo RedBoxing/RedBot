@@ -64,9 +64,9 @@ public class HelpCommand extends AbstractCommand {
 
     private MessageEmbed makeEmbed(CommandCategory category, DiscordBot bot) {
         EmbedBuilder builder = new EmbedBuilder()
-                .setAuthor("Commandes: " + category.getName(), bot.getJDA().getSelfUser().getAvatarUrl())
-                .setThumbnail(bot.getJDA().getSelfUser().getAvatarUrl())
-                .setFooter("RedBot by RedBoxing", bot.getJDA().getUserById(BotConfig.getLong("AUTHOR_ID")).getAvatarUrl());
+                .setAuthor("Commandes: " + category.getName(), bot.getJda().getSelfUser().getAvatarUrl())
+                .setThumbnail(bot.getJda().getSelfUser().getAvatarUrl())
+                .setFooter("RedBot by RedBoxing", bot.getJda().getUserById(BotConfig.getLong("AUTHOR_ID")).getAvatarUrl());
 
         for(AbstractCommand command : bot.getCommandManager().getCommands().values()) {
             if(command.getCategory() != category) continue;

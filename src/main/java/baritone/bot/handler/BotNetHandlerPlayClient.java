@@ -8,6 +8,9 @@ import baritone.bot.spec.BotWorld;
 import com.google.common.collect.Multimap;
 import com.mojang.authlib.GameProfile;
 import fr.redboxing.redbot.DiscordBot;
+import fr.redboxing.redbot.minecraft.events.EntityRemoveEvent;
+import fr.redboxing.redbot.minecraft.events.GameJoinEvent;
+import fr.redboxing.redbot.minecraft.events.RespawnEvent;
 import fr.redboxing.redbot.minecraft.mixins.net.minecraft.client.network.IMixinClientPlayNetworkHandler;
 import fr.redboxing.redbot.minecraft.mixins.net.minecraft.client.world.IMixinClientWorld;
 import io.netty.buffer.Unpooled;
@@ -160,7 +163,7 @@ public class BotNetHandlerPlayClient extends ClientPlayNetworkHandler {
 
         if(this.world.handlePreChunk(this.player, packet.getX(), packet.getZ(), false)) {
             super.onUnloadChunk(packet);
-            BotManager.getInstance().getBot(this.player).ifPresent(bot -> bot.getAltoClef().onChunkUnload(new ChunkPos(packet.getX(), packet.getZ())));
+            //BotManager.getInstance().getBot(this.player).ifPresent(bot -> bot.getAltoClef().onChunkUnload(new ChunkPos(packet.getX(), packet.getZ())));
         }
     }
 

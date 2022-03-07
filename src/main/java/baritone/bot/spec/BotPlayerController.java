@@ -24,7 +24,7 @@ public class BotPlayerController extends ClientPlayerInteractionManager {
     @Override
     public ActionResult interactBlock(ClientPlayerEntity player, ClientWorld world, Hand hand, BlockHitResult hitResult) {
         if(hitResult != null) {
-            DiscordBot.getInstance().getMinecraftManager().getBot(this.user.getPlayer()).ifPresent(bot -> bot.getAltoClef().getContainerTracker().onBlockInteract(hitResult.getBlockPos(), world.getBlockState(hitResult.getBlockPos()).getBlock()));
+            //DiscordBot.getInstance().getMinecraftManager().getBot(this.user.getPlayer()).ifPresent(bot -> bot.getAltoClef().getContainerTracker().onBlockInteract(hitResult.getBlockPos(), world.getBlockState(hitResult.getBlockPos()).getBlock()));
         }
 
         return super.interactBlock(player, world, hand, hitResult);
@@ -33,7 +33,7 @@ public class BotPlayerController extends ClientPlayerInteractionManager {
     @Override
     public void cancelBlockBreaking() {
         if(((IMixinClientPlayerInteractionManager) this).getCurrentBreakingProgress() == 0) {
-            DiscordBot.getInstance().getMinecraftManager().getBot(this.user.getPlayer()).ifPresent(bot -> bot.getAltoClef().getControllerExtras().onBlockStopBreaking());
+            //DiscordBot.getInstance().getMinecraftManager().getBot(this.user.getPlayer()).ifPresent(bot -> bot.getAltoClef().getControllerExtras().onBlockStopBreaking());
         }
 
         super.cancelBlockBreaking();

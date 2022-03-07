@@ -12,3 +12,5 @@ accessible method net/minecraft/client/gui/DrawableHelper fillGradient (Lnet/min
 accessible method net/minecraft/client/font/TextRenderer drawGlyph (Lnet/minecraft/client/font/GlyphRenderer;ZZFFFLnet/minecraft/util/math/Matrix4f;Lnet/minecraft/client/render/VertexConsumer;FFFFI)V
 
 accessible class net/minecraft/client/gl/WindowFramebuffer$Size
+accessible class net/minecraft/client/render/WorldRenderer$ChunkInfo
+accessible class net/minecraft/client/render/WorldRenderer$ChunkInfoList

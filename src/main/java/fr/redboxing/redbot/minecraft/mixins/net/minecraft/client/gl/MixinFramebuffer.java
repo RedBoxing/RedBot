@@ -44,8 +44,8 @@ public class MixinFramebuffer {
         ci.cancel();
     }
 
-    @Inject(method = "method_35610", at = @At("HEAD"), cancellable = true)
-    public void method_35610(CallbackInfo ci) {
+    @Inject(method = "method_22598", at = @At("HEAD"), cancellable = true)
+    private static void method_22598(CallbackInfo ci) {
         ci.cancel();
     }
 

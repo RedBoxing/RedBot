@@ -3,6 +3,8 @@ package fr.redboxing.redbot.minecraft;
 import baritone.api.IBaritone;
 import baritone.api.bot.IBaritoneUser;
 import baritone.api.bot.IUserManager;
+import baritone.api.bot.connect.ConnectionStatus;
+import baritone.api.bot.connect.IConnectionResult;
 import baritone.bot.UserManager;
 import com.mojang.authlib.Agent;
 import com.mojang.authlib.Environment;
@@ -22,9 +24,13 @@ import fr.redboxing.redbot.minecraft.auth.AccountType;
 import fr.redboxing.redbot.minecraft.utils.AuthProfile;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.fabricmc.loader.impl.launch.knot.Knot;
 import net.fabricmc.loader.impl.launch.knot.KnotClient;
 import net.fabricmc.loader.impl.util.Arguments;
+import net.fabricmc.loader.impl.util.SystemProperties;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.network.ServerAddress;
+import net.minecraft.client.network.ServerInfo;
 import net.minecraft.client.util.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +40,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class MinecraftManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(MinecraftManager.class);
@@ -44,6 +51,9 @@ public class MinecraftManager {
     private final Map<UUID, MinecraftBot> bots = new HashMap<>();
 
     @Getter
+    private final Map<String, UUID> accounts = new HashMap<>();
+
+    @Getter
     private Thread thread;
 
     public MinecraftManager(DiscordBot bot) {
@@ -52,8 +62,17 @@ public class MinecraftManager {
 
     public void initialize() {
         this.thread = new Thread(() -> {
-            KnotClient.main(new String[0]);
+            System.setProperty(SystemProperties.DEVELOPMENT, "true");
+            System.setProperty(SystemProperties.SIDE, "client");
+            try {
+                KnotClient.main(new String[0]);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            System.out.println(Knot.getLauncher().getEnvironmentType());
         });
+
+        this.thread.start();
     }
 
     public static IUserManager getUserManager() {
@@ -89,6 +108,20 @@ public class MinecraftManager {
 
         Optional<Map.Entry<UUID, MinecraftBot>> optional = this.bots.entrySet().stream().filter((entry) -> entry.getKey().equals(player.getUuid())).findFirst();
         return optional.map(Map.Entry::getValue);
+    }
+
+    public CompletableFuture<Boolean> startBot(Session session, ServerAddress serverAddress) {
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+        this.bot.execute(() -> {
+            IConnectionResult result = getUserManager().connect(session, serverAddress, new ServerInfo("Minecraft Server", serverAddress.getAddress() + ":" + serverAddress.getPort(), false));
+            if(result.getStatus() == ConnectionStatus.SUCCESS && result.getUser().isPresent()) {
+                future.complete(this.addBot(result.getUser().get()) != null);
+            } else {
+                future.complete(false);
+            }
+        });
+
+        return future;
     }
 
     private Session authenticate(String accessToken, String clientToken, AccountType accountType) throws AuthenticationException, MicrosoftAuthenticationException {

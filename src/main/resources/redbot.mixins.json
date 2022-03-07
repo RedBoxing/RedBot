@@ -19,12 +19,14 @@
     "net.minecraft.client.network.IMixinClientPlayerInteractionManager",
     "net.minecraft.client.network.IMixinClientPlayNetworkHandler",
     "net.minecraft.client.render.MixinGameRenderer",
-    "net.minecraft.client.render.MixinMixinWorldRenderer",
+    "net.minecraft.client.render.MixinWorldRenderer",
     "net.minecraft.client.render.MixinWorldRenderer",
     "net.minecraft.client.texture.MixinNativeImage",
     "net.minecraft.client.util.MixinInputUtil",
     "net.minecraft.client.util.MixinWindow",
     "net.minecraft.client.util.MixinWindowProvider",
+    "net.minecraft.client.util.thread.IMixinReentrantThreadExecutor",
+    "net.minecraft.client.util.thread.IMixinThreadExecutor",
     "net.minecraft.client.world.IMixinClientWorld"
   ],
   "client": [

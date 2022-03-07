@@ -721,4 +721,19 @@ public class MixinRenderSystem {
     private static void getShaderGameTime(CallbackInfoReturnable<Float> cir) {
         cir.setReturnValue(0.0F);
     }
+
+    @Inject(method = "getModelViewStack", at = @At("HEAD"), cancellable = true)
+    private static void getModelViewStack(CallbackInfoReturnable<MatrixStack> cir) {
+        cir.setReturnValue(null);
+    }
+
+    @Inject(method = "getTextureMatrix", at = @At("HEAD"), cancellable = true)
+    private static void getTextureMatrix(CallbackInfoReturnable<Matrix4f> cir) {
+        cir.setReturnValue(null);
+    }
+
+    @Inject(method = "getModelViewMatrix", at = @At("HEAD"), cancellable = true)
+    private static void getModelViewMatrix(CallbackInfoReturnable<Matrix4f> cir) {
+        cir.setReturnValue(null);
+    }
 }

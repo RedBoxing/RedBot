@@ -67,7 +67,7 @@ public class EventsListener extends ListenerAdapter {
 
     @Override
     public void onReady(@NotNull ReadyEvent event) {
-        this.bot.getJDA().updateCommands().addCommands(this.bot.getCommandManager().getCommands().values().stream().map(AbstractCommand::buildCommandData).toArray(CommandData[]::new)).queue(cmds -> {
+        this.bot.getJda().updateCommands().addCommands(this.bot.getCommandManager().getCommands().values().stream().map(AbstractCommand::buildCommandData).toArray(CommandData[]::new)).queue(cmds -> {
             LOGGER.info("Registered {} commands !", cmds.size());
         });
     }

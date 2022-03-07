@@ -28,10 +28,10 @@ public class Base64Command extends AbstractCommand {
         String str = event.getOptionsByName("string").get(0).getAsString();
         switch (event.getSubcommandName()) {
             case "encode" -> {
-                event.replyEmbeds(new EmbedBuilder().setTitle("Encode").setDescription(Base64.getEncoder().encodeToString(str.getBytes())).setFooter("RedBot by RedBoxing", this.bot.getJDA().getUserById(BotConfig.get("AUTHOR_ID")).getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
+                event.replyEmbeds(new EmbedBuilder().setTitle("Encode").setDescription(Base64.getEncoder().encodeToString(str.getBytes())).setFooter("RedBot by RedBoxing", this.bot.getJda().getUserById(BotConfig.get("AUTHOR_ID")).getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
             }
             case "decode" -> {
-                event.replyEmbeds(new EmbedBuilder().setTitle("Decode").setDescription(new String(Base64.getDecoder().decode(str))).setFooter("RedBot by RedBoxing", this.bot.getJDA().getUserById(BotConfig.get("AUTHOR_ID")).getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
+                event.replyEmbeds(new EmbedBuilder().setTitle("Decode").setDescription(new String(Base64.getDecoder().decode(str))).setFooter("RedBot by RedBoxing", this.bot.getJda().getUserById(BotConfig.get("AUTHOR_ID")).getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
             }
         }
     }

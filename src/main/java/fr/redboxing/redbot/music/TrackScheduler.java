@@ -162,7 +162,7 @@ public class TrackScheduler extends AudioEventAdapter {
     }
 
     public TextChannel getTextChannel(){
-        Guild guild = this.manager.getBot().getJDA().getGuildById(this.guildId);
+        Guild guild = this.manager.getBot().getJda().getGuildById(this.guildId);
         if(guild == null){
             return null;
         }
@@ -186,6 +186,6 @@ public class TrackScheduler extends AudioEventAdapter {
     }
 
     public Guild getGuild(){
-        return this.bot.getJDA().getGuildById(this.guildId);
+        return this.bot.getJda().getGuildById(this.guildId);
     }
 }

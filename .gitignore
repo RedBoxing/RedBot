@@ -13,3 +13,5 @@ gradle-app.setting
 .idea
 .env
 gradle.properties
+run/
+out/

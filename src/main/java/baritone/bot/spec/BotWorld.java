@@ -39,7 +39,7 @@ public class BotWorld extends ClientWorld {
     @Override
     public void onBlockChanged(BlockPos pos, BlockState oldBlock, BlockState newBlock) {
         if(!this.hasBlock(oldBlock, pos) && this.hasBlock(newBlock, pos)) {
-            DiscordBot.getInstance().getMinecraftManager().getBot(((BotNetHandlerPlayClient) ((IMixinClientWorld) this).getNetHandler()).getUser().getPlayer()).ifPresent(bot -> bot.getAltoClef().getControllerExtras().onBlockPlaced(pos, newBlock));
+            //DiscordBot.getInstance().getMinecraftManager().getBot(((BotNetHandlerPlayClient) ((IMixinClientWorld) this).getNetHandler()).getUser().getPlayer()).ifPresent(bot -> bot.getAltoClef().getControllerExtras().onBlockPlaced(pos, newBlock));
         }
 
         super.onBlockChanged(pos, oldBlock, newBlock);

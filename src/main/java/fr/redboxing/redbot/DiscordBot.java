@@ -111,6 +111,10 @@ public class DiscordBot {
         }, initDelay, delay, timeUnit);
     }
 
+    public void execute(Runnable runnable) {
+        this.scheduler.execute(runnable);
+    }
+
     public void setCooldown(User user, String command, long cooldown){
         if(!this.cooldowns.containsKey(user.getId())){
             this.cooldowns.put(user.getId(), new HashMap<>());

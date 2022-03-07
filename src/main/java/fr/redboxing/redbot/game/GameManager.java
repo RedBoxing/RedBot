@@ -16,7 +16,7 @@ public class GameManager {
     private final Map<String, AbstractGame<?>> games = new HashMap<>();
 
     public void initialize() {
-        Reflections reflections = new Reflections("fr.redboxing.redbot.command.commands", new org.reflections.scanners.Scanner[0]);
+       /* Reflections reflections = new Reflections("fr.redboxing.redbot.command.commands", new org.reflections.scanners.Scanner[0]);
         Set<Class<? extends AbstractGame>> classes = reflections.getSubTypesOf(AbstractGame.class);
         for (Class<? extends AbstractGame<?>> s : classes) {
             try {
@@ -31,7 +31,7 @@ public class GameManager {
             } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
     }
 
     public void createGame(User user, String name) {

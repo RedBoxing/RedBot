@@ -14,13 +14,13 @@ import java.util.List;
 public class MixinFontManager {
     @SuppressWarnings("UnresolvedMixinReference")
     @Group(name = "setFontsHook")
-    @Redirect(method = "method_27544(Lnet/minecraft/client/font/FontStorage;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/FontStorage;setFonts(Ljava/util/List;)V"), remap = false)
+    @Redirect(method = "method_27540(Lnet/minecraft/client/font/FontStorage;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/FontStorage;setFonts(Ljava/util/List;)V"), remap = false)
     private static void setFontsHookDev(FontStorage fontStorage, List<Font> fonts) {
     }
 
     @SuppressWarnings("UnresolvedMixinReference")
     @Group(name = "setFontsHook")
-    @Redirect(method = "method_27544(Lnet/minecraft/class_377;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/class_377;method_2004(Ljava/util/List;)V"), remap = false)
+    @Redirect(method = "method_27540(Lnet/minecraft/class_377;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/class_377;method_2004(Ljava/util/List;)V"), remap = false)
     private static void setFontsHookProd(FontStorage fontStorage, List<Font> fonts) {
     }
 }

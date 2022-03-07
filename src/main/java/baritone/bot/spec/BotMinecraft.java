@@ -9,6 +9,8 @@ import fr.redboxing.redbot.DiscordBot;
 import fr.redboxing.redbot.minecraft.MinecraftManager;
 import fr.redboxing.redbot.minecraft.mixins.net.minecraft.client.IMixinGameOptions;
 import fr.redboxing.redbot.minecraft.mixins.net.minecraft.client.IMixinMinecraftClient;
+import fr.redboxing.redbot.minecraft.mixins.net.minecraft.client.util.thread.IMixinReentrantThreadExecutor;
+import fr.redboxing.redbot.minecraft.mixins.net.minecraft.client.util.thread.IMixinThreadExecutor;
 import fr.redboxing.redbot.utils.ObjectAllocator;
 import net.minecraft.client.Keyboard;
 import net.minecraft.client.MinecraftClient;
@@ -62,96 +64,6 @@ public class BotMinecraft extends MinecraftClient implements Helper {
     }
 
     @Override
-    public boolean shouldExecuteAsync() {
-        return mc.shouldExecuteAsync();
-    }
-
-    @Override
-    protected boolean hasRunningTasks() {
-        return ((IMixinReentrantThreadExecutor) mc).invokeHasRunningTasks();
-    }
-
-    @Override
-    public void executeTask(Runnable task) {
-        mc.executeTask(task);
-    }
-
-    @Override
-    public boolean isOnThread() {
-        return mc.isOnThread();
-    }
-
-    @Override
-    public int getTaskCount() {
-        return mc.getTaskCount();
-    }
-
-    @Override
-    public String getName() {
-        return mc.getName();
-    }
-
-    @Override
-    public <V> CompletableFuture<V> submit(Supplier<V> task) {
-        return mc.submit(task);
-    }
-
-    @Override
-    public CompletableFuture<Void> submit(Runnable task) {
-        return mc.submit(task);
-    }
-
-    @Override
-    public void submitAndJoin(Runnable runnable) {
-        mc.submitAndJoin(runnable);
-    }
-
-    @Override
-    public void send(Runnable runnable) {
-        mc.send(runnable);
-    }
-
-    @Override
-    public void execute(Runnable runnable) {
-        mc.execute(runnable);
-    }
-
-    @Override
-    protected void cancelTasks() {
-        ((IMixinThreadExecutor) mc).invokeCancelTasks();
-    }
-
-    @Override
-    protected void runTasks() {
-        ((IMixinThreadExecutor) mc).invokeRunTasks();
-    }
-
-    @Override
-    public boolean runTask() {
-        return mc.runTask();
-    }
-
-    @Override
-    public void runTasks(BooleanSupplier stopCondition) {
-        mc.runTasks(stopCondition);
-    }
-
-    @Override
-    protected void waitForTasks() {
-        ((IMixinThreadExecutor) mc).invokeWaitForTasks();
-    }
-
-    @Override
-    public List<Sampler> createSamplers() {
-        return mc.createSamplers();
-    }
-
-    @Override
-    protected Thread getThread() {
-        return ((IMixinMinecraftClient) mc).invokeGetThread();
-    }
-
-    @Override
     public TutorialManager getTutorialManager() {
         return this.tutorialManager;
     }
@@ -168,12 +80,12 @@ public class BotMinecraft extends MinecraftClient implements Helper {
     @Override
     public void setScreen(@Nullable Screen screen) {
         if(screen == null) {
-            DiscordBot.getInstance().getMinecraftManager().getBot(this.player).ifPresent(bot -> bot.getAltoClef().getContainerTracker().onScreenClose());
+            //DiscordBot.getInstance().getMinecraftManager().getBot(this.player).ifPresent(bot -> bot.getAltoClef().getContainerTracker().onScreenClose());
         }
 
         super.setScreen(screen);
 
-        DiscordBot.getInstance().getMinecraftManager().getBot(this.player).ifPresent(bot -> bot.getAltoClef().getContainerTracker().onScreenOpenFirstTick(screen));
+        //DiscordBot.getInstance().getMinecraftManager().getBot(this.player).ifPresent(bot -> bot.getAltoClef().getContainerTracker().onScreenOpenFirstTick(screen));
     }
 
     public static BotMinecraft allocate(IBaritoneUser user) {

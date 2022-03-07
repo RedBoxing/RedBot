@@ -7,7 +7,6 @@ import baritone.api.utils.IPlayerContext;
 import baritone.bot.BaritoneUser;
 import com.google.common.eventbus.EventBus;
 import fr.redboxing.redbot.minecraft.bot.BotAltoClef;
-import fr.redboxing.redbot.minecraft.mixins.adris.altoclef.IMixinSettings;
 import lombok.Getter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -36,7 +35,7 @@ public class MinecraftBot {
         this.eventBus.register(this);
 
         this.altoClef.onInitializeLoad();
-        ((IMixinSettings) this.altoClef.getModSettings()).setIdleWhenNotActive(true);
+       // ((IMixinSettings) this.altoClef.getModSettings()).setIdleWhenNotActive(true);
     }
 
     public IPlayerContext getPlayerContext() {

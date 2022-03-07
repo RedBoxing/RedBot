@@ -38,7 +38,7 @@ public class BotWorldProvider {
      * @return The new world
      */
     private BotWorld createWorldForDim(RegistryKey<World> registryKey, DimensionType dimensionType, ClientWorld.Properties properties, BotNetHandlerPlayClient networkHandler) {
-        return new BotWorld(networkHandler, properties, registryKey, dimensionType, 8, () -> MinecraftClient.getInstance().getProfiler(), false, 0);
+        return new BotWorld(networkHandler, properties, registryKey, dimensionType, 8, 8, () -> MinecraftClient.getInstance().getProfiler(), false, 0);
     }
 
     public void tick() {

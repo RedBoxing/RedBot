@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(WorldRenderer.class)
-public class MixinMixinWorldRenderer {
+public class MixinWorldRenderer {
     @Inject(method = "scheduleChunkRender", at = @At("HEAD"), cancellable = true)
     private void scheduleChunkRender(int x, int y, int z, boolean important, CallbackInfo ci) {
         ci.cancel();

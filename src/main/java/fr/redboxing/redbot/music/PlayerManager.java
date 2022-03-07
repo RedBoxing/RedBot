@@ -68,7 +68,7 @@ public class PlayerManager extends ListenerAdapter {
     @Override
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event){
         if(!event.isFromGuild()) return;
-        if(event.getUserIdLong() == this.bot.getJDA().getSelfUser().getIdLong()) return;
+        if(event.getUserIdLong() == this.bot.getJda().getSelfUser().getIdLong()) return;
 
         GuildMusicManager manager = this.musicManagers.get(event.getGuild().getIdLong());
         if(manager == null) return;
