@@ -3,8 +3,8 @@ package fr.redboxing.redbot.minecraft.mixins.baritone;
 import baritone.Baritone;
 import baritone.BaritoneProvider;
 import baritone.api.IBaritone;
-import baritone.api.bot.IBaritoneUser;
-import baritone.bot.UserManager;
+import fr.redboxing.redbot.minecraft.baritone.api.bot.IBaritoneUser;
+import fr.redboxing.redbot.minecraft.baritone.bot.UserManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -27,7 +27,7 @@ public class IMixinBaritoneProvider {
         List<IBaritone> baritones = new ArrayList<>();
         baritones.add(this.primary);
 
-        for(IBaritoneUser user : UserManager.INSTANCE.getUsers()) {
+        for(IBaritoneUser user : UserManager.getInstance().getUsers()) {
             baritones.add(user.getBaritone());
         }
 

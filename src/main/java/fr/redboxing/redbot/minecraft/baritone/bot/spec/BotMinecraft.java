@@ -1,16 +1,13 @@
-package baritone.bot.spec;
+package fr.redboxing.redbot.minecraft.baritone.bot.spec;
 
-import baritone.api.bot.IBaritoneUser;
+import fr.redboxing.redbot.minecraft.baritone.api.bot.IBaritoneUser;
 import baritone.api.utils.Helper;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.minecraft.UserApiService;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
-import fr.redboxing.redbot.DiscordBot;
 import fr.redboxing.redbot.minecraft.MinecraftManager;
 import fr.redboxing.redbot.minecraft.mixins.net.minecraft.client.IMixinGameOptions;
 import fr.redboxing.redbot.minecraft.mixins.net.minecraft.client.IMixinMinecraftClient;
-import fr.redboxing.redbot.minecraft.mixins.net.minecraft.client.util.thread.IMixinReentrantThreadExecutor;
-import fr.redboxing.redbot.minecraft.mixins.net.minecraft.client.util.thread.IMixinThreadExecutor;
 import fr.redboxing.redbot.utils.ObjectAllocator;
 import net.minecraft.client.Keyboard;
 import net.minecraft.client.MinecraftClient;
@@ -27,15 +24,10 @@ import net.minecraft.client.tutorial.TutorialManager;
 import net.minecraft.client.util.Session;
 import net.minecraft.client.util.Window;
 import net.minecraft.util.Arm;
-import net.minecraft.util.profiler.Sampler;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.Proxy;
 import java.util.EnumSet;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 
 public class BotMinecraft extends MinecraftClient implements Helper {
     private IBaritoneUser user;

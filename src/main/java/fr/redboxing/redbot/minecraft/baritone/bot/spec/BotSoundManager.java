@@ -1,4 +1,4 @@
-package baritone.bot.spec;
+package fr.redboxing.redbot.minecraft.baritone.bot.spec;
 
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.SoundManager;

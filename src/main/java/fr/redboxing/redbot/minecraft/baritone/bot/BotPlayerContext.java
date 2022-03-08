@@ -1,6 +1,6 @@
-package baritone.bot;
+package fr.redboxing.redbot.minecraft.baritone.bot;
 
-import baritone.api.bot.IBaritoneUser;
+import fr.redboxing.redbot.minecraft.baritone.api.bot.IBaritoneUser;
 import baritone.api.cache.IWorldData;
 import baritone.api.utils.IPlayerContext;
 import baritone.api.utils.IPlayerController;

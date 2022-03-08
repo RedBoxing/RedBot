@@ -1,4 +1,4 @@
-package baritone.api.bot.connect;
+package fr.redboxing.redbot.minecraft.baritone.api.bot.connect;
 
 public enum ConnectionStatus {
 

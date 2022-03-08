@@ -1,13 +1,13 @@
-package baritone.bot.connect;
+package fr.redboxing.redbot.minecraft.baritone.bot.connect;
 
-import baritone.api.bot.IBaritoneUser;
-import baritone.api.bot.connect.ConnectionStatus;
-import baritone.api.bot.connect.IConnectionResult;
+import fr.redboxing.redbot.minecraft.baritone.api.bot.IBaritoneUser;
+import fr.redboxing.redbot.minecraft.baritone.api.bot.connect.ConnectionStatus;
+import fr.redboxing.redbot.minecraft.baritone.api.bot.connect.IConnectionResult;
 
 import java.util.Objects;
 import java.util.Optional;
 
-import static baritone.api.bot.connect.ConnectionStatus.SUCCESS;
+import static fr.redboxing.redbot.minecraft.baritone.api.bot.connect.ConnectionStatus.SUCCESS;
 
 public class ConnectionResult implements IConnectionResult {
     /**

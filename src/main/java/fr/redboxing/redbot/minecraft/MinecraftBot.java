@@ -2,9 +2,9 @@ package fr.redboxing.redbot.minecraft;
 
 import adris.altoclef.AltoClef;
 import baritone.api.IBaritone;
-import baritone.api.bot.IBaritoneUser;
+import fr.redboxing.redbot.minecraft.baritone.api.bot.IBaritoneUser;
 import baritone.api.utils.IPlayerContext;
-import baritone.bot.BaritoneUser;
+import fr.redboxing.redbot.minecraft.baritone.bot.BaritoneUser;
 import com.google.common.eventbus.EventBus;
 import fr.redboxing.redbot.minecraft.bot.BotAltoClef;
 import lombok.Getter;

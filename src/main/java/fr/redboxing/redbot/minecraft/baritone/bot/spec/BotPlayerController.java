@@ -1,7 +1,6 @@
-package baritone.bot.spec;
+package fr.redboxing.redbot.minecraft.baritone.bot.spec;
 
-import baritone.bot.BaritoneUser;
-import fr.redboxing.redbot.DiscordBot;
+import fr.redboxing.redbot.minecraft.baritone.bot.BaritoneUser;
 import fr.redboxing.redbot.minecraft.mixins.net.minecraft.client.network.IMixinClientPlayerInteractionManager;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;

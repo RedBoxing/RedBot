@@ -1,6 +1,6 @@
-package baritone.api.bot;
+package fr.redboxing.redbot.minecraft.baritone.api.bot;
 
-import baritone.api.bot.connect.IConnectionResult;
+import fr.redboxing.redbot.minecraft.baritone.api.bot.connect.IConnectionResult;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.network.ServerAddress;
 import net.minecraft.client.network.ServerInfo;

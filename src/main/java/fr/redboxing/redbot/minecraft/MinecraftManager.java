@@ -1,11 +1,13 @@
 package fr.redboxing.redbot.minecraft;
 
 import baritone.api.IBaritone;
-import baritone.api.bot.IBaritoneUser;
-import baritone.api.bot.IUserManager;
-import baritone.api.bot.connect.ConnectionStatus;
-import baritone.api.bot.connect.IConnectionResult;
-import baritone.bot.UserManager;
+import fr.redboxing.redbot.minecraft.baritone.api.bot.IBaritoneUser;
+import fr.redboxing.redbot.minecraft.baritone.api.bot.IUserManager;
+import fr.redboxing.redbot.minecraft.baritone.api.bot.connect.ConnectionStatus;
+import fr.redboxing.redbot.minecraft.baritone.api.bot.connect.IConnectionResult;
+import baritone.api.event.events.TickEvent;
+import baritone.api.event.events.type.EventState;
+import fr.redboxing.redbot.minecraft.baritone.bot.UserManager;
 import com.mojang.authlib.Agent;
 import com.mojang.authlib.Environment;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
@@ -23,11 +25,8 @@ import fr.redboxing.redbot.DiscordBot;
 import fr.redboxing.redbot.minecraft.auth.AccountType;
 import fr.redboxing.redbot.minecraft.utils.AuthProfile;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import net.fabricmc.loader.impl.launch.knot.Knot;
-import net.fabricmc.loader.impl.launch.knot.KnotClient;
-import net.fabricmc.loader.impl.util.Arguments;
-import net.fabricmc.loader.impl.util.SystemProperties;
+import net.minecraft.Bootstrap;
+import net.minecraft.SharedConstants;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ServerAddress;
 import net.minecraft.client.network.ServerInfo;
@@ -53,30 +52,21 @@ public class MinecraftManager {
     @Getter
     private final Map<String, UUID> accounts = new HashMap<>();
 
-    @Getter
-    private Thread thread;
-
     public MinecraftManager(DiscordBot bot) {
         this.bot = bot;
     }
 
     public void initialize() {
-        this.thread = new Thread(() -> {
-            System.setProperty(SystemProperties.DEVELOPMENT, "true");
-            System.setProperty(SystemProperties.SIDE, "client");
-            try {
-                KnotClient.main(new String[0]);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            System.out.println(Knot.getLauncher().getEnvironmentType());
-        });
+        SharedConstants.createGameVersion();
+        Bootstrap.initialize();
+    }
 
-        this.thread.start();
+    public void tick() {
+        ((UserManager) getUserManager()).onTick(new TickEvent(EventState.POST, TickEvent.Type.IN, 1));
     }
 
     public static IUserManager getUserManager() {
-        return UserManager.INSTANCE;
+        return UserManager.getInstance();
     }
 
     public static Optional<IBaritoneUser> getBaritoneUserForPlayer(ClientPlayerEntity player) {
@@ -113,7 +103,11 @@ public class MinecraftManager {
     public CompletableFuture<Boolean> startBot(Session session, ServerAddress serverAddress) {
         CompletableFuture<Boolean> future = new CompletableFuture<>();
         this.bot.execute(() -> {
+            LOGGER.info("Starting bot for {}", session.getUsername());
             IConnectionResult result = getUserManager().connect(session, serverAddress, new ServerInfo("Minecraft Server", serverAddress.getAddress() + ":" + serverAddress.getPort(), false));
+
+            LOGGER.info("Status: {}", result.getStatus());
+
             if(result.getStatus() == ConnectionStatus.SUCCESS && result.getUser().isPresent()) {
                 future.complete(this.addBot(result.getUser().get()) != null);
             } else {

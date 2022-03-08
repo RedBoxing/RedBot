@@ -1,8 +1,5 @@
-package baritone.bot.spec;
+package fr.redboxing.redbot.minecraft.baritone.bot.spec;
 
-import baritone.bot.handler.BotNetHandlerPlayClient;
-import fr.redboxing.redbot.DiscordBot;
-import fr.redboxing.redbot.minecraft.mixins.net.minecraft.client.world.IMixinClientWorld;
 import it.unimi.dsi.fastutil.ints.IntArraySet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.block.BlockState;

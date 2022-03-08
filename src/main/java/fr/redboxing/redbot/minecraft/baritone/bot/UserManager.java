@@ -1,19 +1,20 @@
-package baritone.bot;
+package fr.redboxing.redbot.minecraft.baritone.bot;
 
-import baritone.api.BaritoneAPI;
-import baritone.api.bot.IBaritoneUser;
-import baritone.api.bot.IUserManager;
-import baritone.api.bot.connect.IConnectionResult;
+import fr.redboxing.redbot.minecraft.baritone.api.bot.IBaritoneUser;
+import fr.redboxing.redbot.minecraft.baritone.api.bot.IUserManager;
+import fr.redboxing.redbot.minecraft.baritone.api.bot.connect.IConnectionResult;
 import baritone.api.event.events.TickEvent;
 import baritone.api.event.events.type.EventState;
 import baritone.api.event.listener.AbstractGameEventListener;
 import baritone.api.utils.Helper;
-import baritone.bot.connect.ConnectionResult;
-import baritone.bot.handler.BotNetHandlerLoginClient;
-import baritone.bot.spec.BotEntity;
-import baritone.bot.spec.BotWorld;
+import fr.redboxing.redbot.minecraft.baritone.bot.connect.ConnectionResult;
+import fr.redboxing.redbot.minecraft.baritone.bot.handler.BotNetHandlerLoginClient;
+import fr.redboxing.redbot.minecraft.baritone.bot.spec.BotEntity;
+import fr.redboxing.redbot.minecraft.baritone.bot.spec.BotWorld;
 import fr.redboxing.redbot.DiscordBot;
+import fr.redboxing.redbot.minecraft.baritone.api.bot.connect.ConnectionStatus;
 import fr.redboxing.redbot.minecraft.events.ClientTickEvent;
+import lombok.Getter;
 import net.minecraft.client.network.Address;
 import net.minecraft.client.network.AllowedAddressResolver;
 import net.minecraft.client.network.ServerAddress;
@@ -32,16 +33,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static baritone.api.bot.connect.ConnectionStatus.*;
-
-public enum UserManager implements IUserManager, AbstractGameEventListener, Helper {
-    INSTANCE;
+public class UserManager implements IUserManager, AbstractGameEventListener, Helper {
+    @Getter
+    private static final UserManager instance = new UserManager();
 
     private final List<IBaritoneUser> users;
     private final BotWorldProvider worldProvider;
 
     UserManager() {
-        BaritoneAPI.getProvider().getPrimaryBaritone().getGameEventHandler().registerEventListener(this);
+        //BaritoneAPI.getProvider().getPrimaryBaritone().getGameEventHandler().registerEventListener(this);
         this.users = new CopyOnWriteArrayList<>();
         this.worldProvider = new BotWorldProvider();
     }
@@ -53,6 +53,8 @@ public enum UserManager implements IUserManager, AbstractGameEventListener, Help
         }
 
         this.users.forEach(user -> {
+            user.getMinecraft().runTasks();
+
             if (user.getPlayer() != null && user.getPlayerController() != null) {
                 user.getPlayerController().syncHeldItem();
             }
@@ -79,7 +81,7 @@ public enum UserManager implements IUserManager, AbstractGameEventListener, Help
     public final IConnectionResult connect(Session session, ServerAddress address, @Nullable ServerInfo serverInfo) {
         ServerInfo data = serverInfo;
         if (data == null) {
-            return ConnectionResult.failed(NO_CURRENT_CONNECTION);
+            return ConnectionResult.failed(ConnectionStatus.NO_CURRENT_CONNECTION);
         }
 
         // Connect to the server from the parsed server data
@@ -100,7 +102,7 @@ public enum UserManager implements IUserManager, AbstractGameEventListener, Help
 
         Optional<InetSocketAddress> optional = AllowedAddressResolver.DEFAULT.resolve(address).map(Address::getInetSocketAddress);
         if(optional.isEmpty()) {
-            return ConnectionResult.failed(CANT_RESOLVE_HOST);
+            return ConnectionResult.failed(ConnectionStatus.CANT_RESOLVE_HOST);
         }
 
         InetSocketAddress inetSocketAddress = optional.get();
@@ -121,7 +123,7 @@ public enum UserManager implements IUserManager, AbstractGameEventListener, Help
             return ConnectionResult.success(user);
         } catch (Exception e) {
             e.printStackTrace();
-            return ConnectionResult.failed(CONNECTION_FAILED);
+            return ConnectionResult.failed(ConnectionStatus.CONNECTION_FAILED);
         }
     }
 

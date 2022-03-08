@@ -1,7 +1,7 @@
-package baritone.bot;
+package fr.redboxing.redbot.minecraft.baritone.bot;
 
-import baritone.bot.handler.BotNetHandlerPlayClient;
-import baritone.bot.spec.BotWorld;
+import fr.redboxing.redbot.minecraft.baritone.bot.handler.BotNetHandlerPlayClient;
+import fr.redboxing.redbot.minecraft.baritone.bot.spec.BotWorld;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.registry.RegistryKey;

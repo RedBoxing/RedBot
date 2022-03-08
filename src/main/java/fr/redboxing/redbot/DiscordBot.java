@@ -68,6 +68,7 @@ public class DiscordBot {
 
         restartJDA();
         this.scheduleAtFixedRate(this::refreshStatus, 0L, 10L, TimeUnit.SECONDS);
+        this.scheduleAtFixedRate(this.minecraftManager::tick, 0L, 5L, TimeUnit.MICROSECONDS);
 
         this.minecraftManager.initialize();
     }
@@ -112,7 +113,7 @@ public class DiscordBot {
     }
 
     public void execute(Runnable runnable) {
-        this.scheduler.execute(runnable);
+        this.scheduler.schedule(runnable, 0L, TimeUnit.MILLISECONDS);
     }
 
     public void setCooldown(User user, String command, long cooldown){

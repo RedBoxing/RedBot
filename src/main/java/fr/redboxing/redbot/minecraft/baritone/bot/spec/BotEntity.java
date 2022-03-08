@@ -1,6 +1,6 @@
-package baritone.bot.spec;
+package fr.redboxing.redbot.minecraft.baritone.bot.spec;
 
-import baritone.api.bot.IBaritoneUser;
+import fr.redboxing.redbot.minecraft.baritone.api.bot.IBaritoneUser;
 import baritone.utils.InputOverrideHandler;
 import baritone.utils.PlayerMovementInput;
 import fr.redboxing.redbot.minecraft.mixins.net.minecraft.client.network.IMixinAbstractClientPlayerEntity;

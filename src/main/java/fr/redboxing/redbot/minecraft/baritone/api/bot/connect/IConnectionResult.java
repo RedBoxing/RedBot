@@ -1,6 +1,6 @@
-package baritone.api.bot.connect;
+package fr.redboxing.redbot.minecraft.baritone.api.bot.connect;
 
-import baritone.api.bot.IBaritoneUser;
+import fr.redboxing.redbot.minecraft.baritone.api.bot.IBaritoneUser;
 
 import java.util.Optional;
 

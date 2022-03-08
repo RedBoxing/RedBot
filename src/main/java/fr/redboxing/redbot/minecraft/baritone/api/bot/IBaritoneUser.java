@@ -1,4 +1,4 @@
-package baritone.api.bot;
+package fr.redboxing.redbot.minecraft.baritone.api.bot;
 
 import baritone.api.IBaritone;
 import baritone.api.utils.IPlayerController;

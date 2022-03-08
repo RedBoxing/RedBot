@@ -1,10 +1,10 @@
-package baritone.bot.handler;
+package fr.redboxing.redbot.minecraft.baritone.bot.handler;
 
-import baritone.bot.BaritoneUser;
-import baritone.bot.spec.BotEntity;
-import baritone.bot.spec.BotMinecraft;
-import baritone.bot.spec.BotPlayerController;
-import baritone.bot.spec.BotWorld;
+import fr.redboxing.redbot.minecraft.baritone.bot.BaritoneUser;
+import fr.redboxing.redbot.minecraft.baritone.bot.spec.BotEntity;
+import fr.redboxing.redbot.minecraft.baritone.bot.spec.BotMinecraft;
+import fr.redboxing.redbot.minecraft.baritone.bot.spec.BotPlayerController;
+import fr.redboxing.redbot.minecraft.baritone.bot.spec.BotWorld;
 import com.google.common.collect.Multimap;
 import com.mojang.authlib.GameProfile;
 import fr.redboxing.redbot.DiscordBot;
@@ -15,7 +15,6 @@ import fr.redboxing.redbot.minecraft.mixins.net.minecraft.client.network.IMixinC
 import fr.redboxing.redbot.minecraft.mixins.net.minecraft.client.world.IMixinClientWorld;
 import io.netty.buffer.Unpooled;
 import lombok.Getter;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.ClientBrandRetriever;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.recipebook.ClientRecipeBook;
@@ -27,7 +26,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.map.MapState;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkThreadUtils;
 import net.minecraft.network.PacketByteBuf;
@@ -42,19 +40,10 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.LightType;
-import net.minecraft.world.chunk.ChunkNibbleArray;
-import net.minecraft.world.chunk.WorldChunk;
-import net.minecraft.world.chunk.light.LightingProvider;
 
-import java.util.BitSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.function.IntConsumer;
 

@@ -106,9 +106,9 @@ public class MinecraftCommand extends AbstractCommand {
                 event.replyEmbeds(new EmbedBuilder()
                         .setDescription("Connexion au serveur " + serverAddress + ":" + serverPort + " en cours...")
                         .setColor(Color.GREEN)
-                        .build()).queue();
+                        .build()).setEphemeral(true).queue();
 
-                this.bot.getMinecraftManager().startBot(this.bot.getMinecraftManager().login(email, password, "mojang"), new ServerAddress(serverAddress, serverPort)).thenAccept(success -> {
+                this.bot.getMinecraftManager().startBot(this.bot.getMinecraftManager().login(email, password, "microsoft"), new ServerAddress(serverAddress, serverPort)).thenAccept(success -> {
                     if(success) {
                         event.getChannel().sendMessageEmbeds(new EmbedBuilder()
                                 .setDescription("Connexion au serveur " + serverAddress + ":" + serverPort + " réussie.")
