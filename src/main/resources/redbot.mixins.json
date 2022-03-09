@@ -29,8 +29,6 @@
     "net.minecraft.client.util.thread.IMixinThreadExecutor",
     "net.minecraft.client.world.IMixinClientWorld"
   ],
-  "client": [
-  ],
   "injectors": {
     "defaultRequire": 1
   }

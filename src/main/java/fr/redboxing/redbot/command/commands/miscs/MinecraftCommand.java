@@ -35,6 +35,7 @@ public class MinecraftCommand extends AbstractCommand {
                 new OptionData(OptionType.INTEGER, "port", "Port du serveur (défaut 25565)", false),
                 new OptionData(OptionType.STRING, "password", "Mot de passe du compte", false)
                 ));
+        this.subcommands.add(new SubcommandData("test", "test"));
     }
 
     @Override
@@ -117,6 +118,22 @@ public class MinecraftCommand extends AbstractCommand {
                     } else {
                         event.getChannel().sendMessageEmbeds(new EmbedBuilder()
                                 .setDescription("Connexion au serveur " + serverAddress + ":" + serverPort + " échouée.")
+                                .setColor(Color.RED)
+                                .build()).queue();
+                    }
+                });
+            }
+
+            case "test" -> {
+                this.bot.getMinecraftManager().startBot(this.bot.getMinecraftManager().login("", "", "microsoft"), new ServerAddress("play.redboxing.fr", 25581)).thenAccept(success -> {
+                    if(success) {
+                        event.getChannel().sendMessageEmbeds(new EmbedBuilder()
+                                .setDescription("Connexion au serveur réussie.")
+                                .setColor(Color.GREEN)
+                                .build()).queue();
+                    } else {
+                        event.getChannel().sendMessageEmbeds(new EmbedBuilder()
+                                .setDescription("Connexion au serveur échouée.")
                                 .setColor(Color.RED)
                                 .build()).queue();
                     }

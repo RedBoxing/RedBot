@@ -68,9 +68,7 @@ public class DiscordBot {
 
         restartJDA();
         this.scheduleAtFixedRate(this::refreshStatus, 0L, 10L, TimeUnit.SECONDS);
-        this.scheduleAtFixedRate(this.minecraftManager::tick, 0L, 5L, TimeUnit.MICROSECONDS);
-
-        this.minecraftManager.initialize();
+        //this.scheduleAtFixedRate(this.minecraftManager::tick, 0L, 5L, TimeUnit.MILLISECONDS);
     }
 
     private void refreshStatus() {

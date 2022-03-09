@@ -1,5 +1,6 @@
 package fr.redboxing.redbot.minecraft.baritone.bot.spec;
 
+import com.google.common.collect.Queues;
 import fr.redboxing.redbot.minecraft.baritone.api.bot.IBaritoneUser;
 import baritone.api.utils.Helper;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
@@ -8,6 +9,7 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import fr.redboxing.redbot.minecraft.MinecraftManager;
 import fr.redboxing.redbot.minecraft.mixins.net.minecraft.client.IMixinGameOptions;
 import fr.redboxing.redbot.minecraft.mixins.net.minecraft.client.IMixinMinecraftClient;
+import fr.redboxing.redbot.minecraft.mixins.net.minecraft.client.util.thread.IMixinThreadExecutor;
 import fr.redboxing.redbot.utils.ObjectAllocator;
 import net.minecraft.client.Keyboard;
 import net.minecraft.client.MinecraftClient;
@@ -83,6 +85,7 @@ public class BotMinecraft extends MinecraftClient implements Helper {
     public static BotMinecraft allocate(IBaritoneUser user) {
         BotMinecraft mc = ObjectAllocator.allocate(BotMinecraft.class);
         mc.user = user;
+        ((IMixinThreadExecutor) mc).setTasks(Queues.newConcurrentLinkedQueue());
         ((IMixinMinecraftClient) mc).setOptions(createGameOptions(mc));
         ((IMixinMinecraftClient) mc).setWindow(ObjectAllocator.allocate(Window.class));
         ((IMixinMinecraftClient) mc).setMouse(new Mouse(mc));

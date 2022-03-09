@@ -1,6 +1,7 @@
 package fr.redboxing.redbot.minecraft;
 
 import baritone.api.IBaritone;
+import fr.redboxing.redbot.FabricEntryPoint;
 import fr.redboxing.redbot.minecraft.baritone.api.bot.IBaritoneUser;
 import fr.redboxing.redbot.minecraft.baritone.api.bot.IUserManager;
 import fr.redboxing.redbot.minecraft.baritone.api.bot.connect.ConnectionStatus;
@@ -24,7 +25,17 @@ import fr.litarvan.openauth.model.response.RefreshResponse;
 import fr.redboxing.redbot.DiscordBot;
 import fr.redboxing.redbot.minecraft.auth.AccountType;
 import fr.redboxing.redbot.minecraft.utils.AuthProfile;
+import fr.redboxing.redbot.utils.ReflectionUtils;
 import lombok.Getter;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider;
+import net.fabricmc.loader.impl.launch.FabricLauncherBase;
+import net.fabricmc.loader.impl.launch.knot.Knot;
+import net.fabricmc.loader.impl.util.SystemProperties;
+import net.fabricmc.loader.impl.util.UrlConversionException;
+import net.fabricmc.loader.impl.util.UrlUtil;
+import net.fabricmc.loader.impl.util.log.Log;
+import net.fabricmc.loader.impl.util.log.LogCategory;
 import net.minecraft.Bootstrap;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -33,12 +44,16 @@ import net.minecraft.client.network.ServerInfo;
 import net.minecraft.client.util.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spongepowered.asm.launch.MixinBootstrap;
+import org.spongepowered.asm.mixin.Mixins;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.Proxy;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.net.URL;
+import java.nio.file.Path;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class MinecraftManager {
@@ -56,13 +71,24 @@ public class MinecraftManager {
         this.bot = bot;
     }
 
-    public void initialize() {
-        SharedConstants.createGameVersion();
-        Bootstrap.initialize();
+    public void tick() {
+        //((UserManager) getUserManager()).onTick(new TickEvent(EventState.POST, TickEvent.Type.IN, 1));
     }
 
-    public void tick() {
-        ((UserManager) getUserManager()).onTick(new TickEvent(EventState.POST, TickEvent.Type.IN, 1));
+    public CompletableFuture<Boolean> startBot(Session session, ServerAddress serverAddress) {
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+        this.bot.execute(() -> {
+            LOGGER.info("Starting bot for {}", session.getUsername());
+            IConnectionResult result = getUserManager().connect(session, serverAddress, new ServerInfo("Minecraft Server", serverAddress.getAddress() + ":" + serverAddress.getPort(), false));
+
+            if(result.getStatus() == ConnectionStatus.SUCCESS && result.getUser().isPresent()) {
+                future.complete(this.addBot(result.getUser().get()) != null);
+            } else {
+                future.complete(false);
+            }
+        });
+
+        return future;
     }
 
     public static IUserManager getUserManager() {
@@ -98,24 +124,6 @@ public class MinecraftManager {
 
         Optional<Map.Entry<UUID, MinecraftBot>> optional = this.bots.entrySet().stream().filter((entry) -> entry.getKey().equals(player.getUuid())).findFirst();
         return optional.map(Map.Entry::getValue);
-    }
-
-    public CompletableFuture<Boolean> startBot(Session session, ServerAddress serverAddress) {
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
-        this.bot.execute(() -> {
-            LOGGER.info("Starting bot for {}", session.getUsername());
-            IConnectionResult result = getUserManager().connect(session, serverAddress, new ServerInfo("Minecraft Server", serverAddress.getAddress() + ":" + serverAddress.getPort(), false));
-
-            LOGGER.info("Status: {}", result.getStatus());
-
-            if(result.getStatus() == ConnectionStatus.SUCCESS && result.getUser().isPresent()) {
-                future.complete(this.addBot(result.getUser().get()) != null);
-            } else {
-                future.complete(false);
-            }
-        });
-
-        return future;
     }
 
     private Session authenticate(String accessToken, String clientToken, AccountType accountType) throws AuthenticationException, MicrosoftAuthenticationException {

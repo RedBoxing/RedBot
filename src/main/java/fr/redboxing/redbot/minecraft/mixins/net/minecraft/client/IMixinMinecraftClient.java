@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 import java.io.File;
+import java.util.Queue;
 
 @Mixin(MinecraftClient.class)
 public interface IMixinMinecraftClient {

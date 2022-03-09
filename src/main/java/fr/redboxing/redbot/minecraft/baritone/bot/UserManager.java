@@ -1,5 +1,6 @@
 package fr.redboxing.redbot.minecraft.baritone.bot;
 
+import baritone.api.BaritoneAPI;
 import fr.redboxing.redbot.minecraft.baritone.api.bot.IBaritoneUser;
 import fr.redboxing.redbot.minecraft.baritone.api.bot.IUserManager;
 import fr.redboxing.redbot.minecraft.baritone.api.bot.connect.IConnectionResult;
@@ -41,13 +42,15 @@ public class UserManager implements IUserManager, AbstractGameEventListener, Hel
     private final BotWorldProvider worldProvider;
 
     UserManager() {
-        //BaritoneAPI.getProvider().getPrimaryBaritone().getGameEventHandler().registerEventListener(this);
+        BaritoneAPI.getProvider().getPrimaryBaritone().getGameEventHandler().registerEventListener(this);
         this.users = new CopyOnWriteArrayList<>();
         this.worldProvider = new BotWorldProvider();
     }
 
     @Override
     public void onTick(TickEvent event) {
+        if(instance == null) return;
+
         if (event.getState() != EventState.PRE) {
             return;
         }
