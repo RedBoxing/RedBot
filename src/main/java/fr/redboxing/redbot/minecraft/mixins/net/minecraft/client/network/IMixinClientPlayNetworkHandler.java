@@ -25,5 +25,11 @@ public interface IMixinClientPlayNetworkHandler {
 
     @Accessor("chunkLoadDistance")
     void setChunkLoadDistance(int chunkLoadDistance);
+
+    @Accessor("simulationDistance")
+    int getSimulationDistance();
+
+    @Accessor("simulationDistance")
+    void setSimulationDistance(int simulationDistance);
 }
 

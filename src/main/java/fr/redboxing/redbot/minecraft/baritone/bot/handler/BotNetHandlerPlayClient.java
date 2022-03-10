@@ -71,6 +71,7 @@ public class BotNetHandlerPlayClient extends ClientPlayNetworkHandler {
         }
 
         ((IMixinClientPlayNetworkHandler) this).setChunkLoadDistance(packet.viewDistance());
+        ((IMixinClientPlayNetworkHandler) this).setSimulationDistance(packet.simulationDistance());
 
         ClientWorld.Properties properties = new ClientWorld.Properties(Difficulty.NORMAL, packet.hardcore(), packet.flatWorld());
         ((IMixinClientPlayNetworkHandler) this).setWorldProperties(properties);
@@ -280,6 +281,7 @@ public class BotNetHandlerPlayClient extends ClientPlayNetworkHandler {
 
     @Override
     public void onDisconnected(Text reason) {
+        System.out.println("Play Disconnected: " + reason);
         if(this.player != null) {
             this.world.removeEntity(this.player.getId(), Entity.RemovalReason.DISCARDED);
         }

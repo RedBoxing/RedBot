@@ -32,7 +32,7 @@ public class CommandManager {
 
                 AbstractCommand c = s.getConstructor(DiscordBot.class).newInstance(bot);
                 if (!commands.containsKey(c.getName())) {
-                    LOGGER.info("Loaded command '" + c.getName() + "'");
+                    LOGGER.info("Loaded command '" + c.getName() + "' with " + c.getSubCommandsMethods().size() + " sub-commands");
                     commands.put(c.getName(), c);
                 }
             } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {

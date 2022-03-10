@@ -5,6 +5,7 @@ import fr.redboxing.redbot.minecraft.baritone.bot.spec.BotMinecraft;
 import net.minecraft.client.network.ClientLoginNetworkHandler;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkState;
+import net.minecraft.network.packet.s2c.login.LoginHelloS2CPacket;
 import net.minecraft.network.packet.s2c.login.LoginSuccessS2CPacket;
 import net.minecraft.text.Text;
 
@@ -14,7 +15,9 @@ public class BotNetHandlerLoginClient extends ClientLoginNetworkHandler {
     private final BaritoneUser user;
 
     public BotNetHandlerLoginClient(ClientConnection connection, BaritoneUser user) {
-        super(connection, user.getMinecraft(), null, (text) -> {});
+        super(connection, user.getMinecraft(), null, (text) -> {
+            System.out.println("Login: " + text);
+        });
         this.connection = connection;
         this.mc = user.getMinecraft();
         this.user = user;
@@ -28,6 +31,7 @@ public class BotNetHandlerLoginClient extends ClientLoginNetworkHandler {
 
     @Override
     public void onDisconnected(Text reason) {
+        System.out.println("Login Disconnected: " + reason);
         this.user.getManager().disconnect(this.user, reason);
     }
 }

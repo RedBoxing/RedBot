@@ -4,6 +4,7 @@ import fr.redboxing.redbot.BotConfig;
 import fr.redboxing.redbot.DiscordBot;
 import fr.redboxing.redbot.command.AbstractCommand;
 import fr.redboxing.redbot.command.CommandCategory;
+import fr.redboxing.redbot.command.SubCommand;
 import fr.redboxing.redbot.utils.MinecraftAPI;
 import fr.redboxing.redbot.utils.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -38,107 +39,125 @@ public class MinecraftCommand extends AbstractCommand {
         this.subcommands.add(new SubcommandData("test", "test"));
     }
 
+    @SubCommand("uuid")
+    private void executeGetUUID(SlashCommandInteractionEvent event) {
+        String username = event.getOption("pseudo").getAsString();
+        try {
+            event.replyEmbeds(new EmbedBuilder().setAuthor("UUID de " + username).setDescription("UUID de " + username + " : " + MinecraftAPI.usernameToUUID(username)).setFooter("RedBot by RedBoxing", this.bot.getJda().getUserById(BotConfig.get("AUTHOR_ID")).getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
+        } catch (Exception e) {
+            event.replyEmbeds(new EmbedBuilder().setDescription("Impossible de trouver l'uuid de " + username + ".").setColor(Color.RED).build()).queue();
+        }
+    }
+
+    @SubCommand("username")
+    private void executeGetUsername(SlashCommandInteractionEvent event) {
+        String uuid = event.getOption("uuid").getAsString();
+        try {
+            event.replyEmbeds(new EmbedBuilder().setAuthor("Pseudo du joueur").setDescription("Le pseudo du joueur avec l'uuid " + uuid + " est : " + MinecraftAPI.UUIDToUsername(UUID.fromString(uuid))).setFooter("RedBot by RedBoxing", this.bot.getJda().getUserById(BotConfig.get("AUTHOR_ID")).getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
+        } catch (Exception e) {
+            event.replyEmbeds(new EmbedBuilder().setDescription("Impossible de trouver le pseudo du joueur avec l'uuid " + uuid + ".").setColor(Color.RED).build()).queue();
+            e.printStackTrace();
+        }
+    }
+
+    @SubCommand("skin")
+    private void executeGetSkin(SlashCommandInteractionEvent event) {
+        String username = event.getOption("pseudo").getAsString();
+        try {
+            String skin = MinecraftAPI.getSkinURL(MinecraftAPI.usernameToUUID(username));
+            event.replyEmbeds(new EmbedBuilder().setAuthor("Skin de " + username).setImage(skin).setFooter("RedBot by RedBoxing", this.bot.getJda().getUserById(BotConfig.get("AUTHOR_ID")).getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
+        } catch (Exception e) {
+            event.replyEmbeds(new EmbedBuilder().setDescription("Impossible de trouver le skin de " + username + ".").setColor(Color.RED).build()).queue();
+        }
+    }
+
+    @SubCommand("cape")
+    private void executeGetCape(SlashCommandInteractionEvent event) {
+        String username = event.getOption("pseudo").getAsString();
+        try {
+            String cape = MinecraftAPI.getCapeURL(MinecraftAPI.usernameToUUID(username));
+            event.replyEmbeds(new EmbedBuilder().setAuthor("Cape de " + username).setImage(cape).setFooter("RedBot by RedBoxing", this.bot.getJda().getUserById(BotConfig.get("AUTHOR_ID")).getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
+        } catch (Exception e) {
+            event.replyEmbeds(new EmbedBuilder().setDescription("Impossible de trouver la cape de " + username + ".").setColor(Color.RED).build()).queue();
+        }
+    }
+
+    @SubCommand("head")
+    private void executeGetHead(SlashCommandInteractionEvent event) {
+        String username = event.getOption("pseudo").getAsString();
+        try {
+            String head = MinecraftAPI.getPlayerHead(MinecraftAPI.usernameToUUID(username));
+            event.replyEmbeds(new EmbedBuilder().setAuthor("Tête de " + username).setImage(head).setFooter("RedBot by RedBoxing", this.bot.getJda().getUserById(BotConfig.get("AUTHOR_ID")).getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
+        } catch (Exception e) {
+            event.replyEmbeds(new EmbedBuilder().setDescription("Impossible de trouver la tête de " + username + ".").setColor(Color.RED).build()).queue();
+        }
+    }
+
+    @SubCommand("render")
+    private void executeGetRender(SlashCommandInteractionEvent event) {
+        String username = event.getOption("pseudo").getAsString();
+        try {
+            String render = MinecraftAPI.getPlayerRender(MinecraftAPI.usernameToUUID(username));
+            event.replyEmbeds(new EmbedBuilder().setAuthor("Render de " + username).setImage(render).setFooter("RedBot by RedBoxing", this.bot.getJda().getUserById(BotConfig.get("AUTHOR_ID")).getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
+        } catch (Exception e) {
+            event.replyEmbeds(new EmbedBuilder().setDescription("Impossible de trouver le render de " + username + ".").setColor(Color.RED).build()).queue();
+        }
+    }
+
+    @SubCommand("join")
+    private void executeJoin(SlashCommandInteractionEvent event) {
+        String email = event.getOption("email").getAsString();
+        String password = event.getOption("password").getAsString();
+        String serverAddress = event.getOption("server").getAsString();
+        int serverPort = event.getOption("port").getAsInt();
+
+        event.replyEmbeds(new EmbedBuilder()
+                .setDescription("Connexion au serveur " + serverAddress + ":" + serverPort + " en cours...")
+                .setColor(Color.CYAN)
+                .build()).setEphemeral(true).queue();
+
+        this.bot.getMinecraftManager().startBot(this.bot.getMinecraftManager().login(email, password, "microsoft"), new ServerAddress(serverAddress, serverPort)).thenAccept(success -> {
+            if(success) {
+                event.getChannel().sendMessageEmbeds(new EmbedBuilder()
+                        .setDescription("Connexion au serveur " + serverAddress + ":" + serverPort + " réussie.")
+                        .setColor(Color.GREEN)
+                        .build()).queue();
+            } else {
+                event.getChannel().sendMessageEmbeds(new EmbedBuilder()
+                        .setDescription("Connexion au serveur " + serverAddress + ":" + serverPort + " échouée.")
+                        .setColor(Color.RED)
+                        .build()).queue();
+            }
+        });
+    }
+
+    @SubCommand("test")
+    private void executeTest(SlashCommandInteractionEvent event) {
+        event.replyEmbeds(new EmbedBuilder()
+                .setDescription("Connexion au serveur en cours...")
+                .setColor(Color.CYAN)
+                .build()).setEphemeral(true).queue();
+
+        this.bot.getMinecraftManager().startBot(this.bot.getMinecraftManager().login("", "", "microsoft"), new ServerAddress("127.0.0.1", 25565)).thenAccept(success -> {
+            if(success) {
+                event.getHook().editOriginalEmbeds(new EmbedBuilder()
+                        .setDescription("Connexion au serveur réussie.")
+                        .setColor(Color.GREEN)
+                        .build()).queue();
+            } else {
+                event.getHook().editOriginalEmbeds(new EmbedBuilder()
+                        .setDescription("Connexion au serveur échouée.")
+                        .setColor(Color.RED)
+                        .build()).queue();
+            }
+        });
+    }
+
     @Override
     protected void execute(SlashCommandInteractionEvent event) {
-        String username = "";
-
-        if(event.getOption("pseudo") != null) {
-            username = event.getOption("pseudo").getAsString();
-        }
-
-        switch (event.getSubcommandName()) {
-            case "uuid" -> {
-                try {
-                    event.replyEmbeds(new EmbedBuilder().setAuthor("UUID de " + username).setDescription("UUID de " + username + " : " + MinecraftAPI.usernameToUUID(username)).setFooter("RedBot by RedBoxing", this.bot.getJda().getUserById(BotConfig.get("AUTHOR_ID")).getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
-                } catch (Exception e) {
-                    event.replyEmbeds(new EmbedBuilder().setDescription("Impossible de trouver l'uuid de " + username + ".").setColor(Color.RED).build()).queue();
-                }
-            }
-            case "username" -> {
-                String uuid = event.getOption("uuid").getAsString();
-                try {
-                    event.replyEmbeds(new EmbedBuilder().setAuthor("Pseudo du joueur").setDescription("Le pseudo du joueur avec l'uuid " + uuid + " est : " + MinecraftAPI.UUIDToUsername(UUID.fromString(uuid))).setFooter("RedBot by RedBoxing", this.bot.getJda().getUserById(BotConfig.get("AUTHOR_ID")).getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
-                } catch (Exception e) {
-                    event.replyEmbeds(new EmbedBuilder().setDescription("Impossible de trouver le pseudo du joueur avec l'uuid " + uuid + ".").setColor(Color.RED).build()).queue();
-                    e.printStackTrace();
-                }
-            }
-            case "skin" -> {
-                try {
-                    String skin = MinecraftAPI.getSkinURL(MinecraftAPI.usernameToUUID(username));
-                    event.replyEmbeds(new EmbedBuilder().setAuthor("Skin de " + username).setImage(skin).setFooter("RedBot by RedBoxing", this.bot.getJda().getUserById(BotConfig.get("AUTHOR_ID")).getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
-                } catch (Exception e) {
-                    event.replyEmbeds(new EmbedBuilder().setDescription("Impossible de trouver le skin de " + username + ".").setColor(Color.RED).build()).queue();
-                }
-            }
-            case "cape" -> {
-                try {
-                    String cape = MinecraftAPI.getCapeURL(MinecraftAPI.usernameToUUID(username));
-                    event.replyEmbeds(new EmbedBuilder().setAuthor("Cape de " + username).setImage(cape).setFooter("RedBot by RedBoxing", this.bot.getJda().getUserById(BotConfig.get("AUTHOR_ID")).getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
-                } catch (Exception e) {
-                    event.replyEmbeds(new EmbedBuilder().setDescription("Impossible de trouver la cape de " + username + ".").setColor(Color.RED).build()).queue();
-                }
-            }
-
-            case "head" -> {
-                try {
-                    String head = MinecraftAPI.getPlayerHead(MinecraftAPI.usernameToUUID(username));
-                    event.replyEmbeds(new EmbedBuilder().setAuthor("Tête de " + username).setImage(head).setFooter("RedBot by RedBoxing", this.bot.getJda().getUserById(BotConfig.get("AUTHOR_ID")).getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
-                } catch (Exception e) {
-                    event.replyEmbeds(new EmbedBuilder().setDescription("Impossible de trouver la tête de " + username + ".").setColor(Color.RED).build()).queue();
-                }
-            }
-
-            case "render" -> {
-                try {
-                    String render = MinecraftAPI.getPlayerRender(MinecraftAPI.usernameToUUID(username));
-                    event.replyEmbeds(new EmbedBuilder().setAuthor("Render de " + username).setImage(render).setFooter("RedBot by RedBoxing", this.bot.getJda().getUserById(BotConfig.get("AUTHOR_ID")).getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
-                } catch (Exception e) {
-                    event.replyEmbeds(new EmbedBuilder().setDescription("Impossible de trouver le render de " + username + ".").setColor(Color.RED).build()).queue();
-                }
-            }
-
-            case "join" -> {
-                String email = event.getOption("email").getAsString();
-                String password = event.getOption("password").getAsString();
-                String serverAddress = event.getOption("server").getAsString();
-                int serverPort = event.getOption("port").getAsInt();
-
-                event.replyEmbeds(new EmbedBuilder()
-                        .setDescription("Connexion au serveur " + serverAddress + ":" + serverPort + " en cours...")
-                        .setColor(Color.GREEN)
-                        .build()).setEphemeral(true).queue();
-
-                this.bot.getMinecraftManager().startBot(this.bot.getMinecraftManager().login(email, password, "microsoft"), new ServerAddress(serverAddress, serverPort)).thenAccept(success -> {
-                    if(success) {
-                        event.getChannel().sendMessageEmbeds(new EmbedBuilder()
-                                .setDescription("Connexion au serveur " + serverAddress + ":" + serverPort + " réussie.")
-                                .setColor(Color.GREEN)
-                                .build()).queue();
-                    } else {
-                        event.getChannel().sendMessageEmbeds(new EmbedBuilder()
-                                .setDescription("Connexion au serveur " + serverAddress + ":" + serverPort + " échouée.")
-                                .setColor(Color.RED)
-                                .build()).queue();
-                    }
-                });
-            }
-
-            case "test" -> {
-                this.bot.getMinecraftManager().startBot(this.bot.getMinecraftManager().login("", "", "microsoft"), new ServerAddress("play.redboxing.fr", 25581)).thenAccept(success -> {
-                    if(success) {
-                        event.getChannel().sendMessageEmbeds(new EmbedBuilder()
-                                .setDescription("Connexion au serveur réussie.")
-                                .setColor(Color.GREEN)
-                                .build()).queue();
-                    } else {
-                        event.getChannel().sendMessageEmbeds(new EmbedBuilder()
-                                .setDescription("Connexion au serveur échouée.")
-                                .setColor(Color.RED)
-                                .build()).queue();
-                    }
-                });
-            }
-        }
+        event.replyEmbeds(new EmbedBuilder()
+                .setDescription("Utilisation: `/minecraft <command>`")
+                .setColor(Color.RED)
+                .build()).queue();
     }
 }
