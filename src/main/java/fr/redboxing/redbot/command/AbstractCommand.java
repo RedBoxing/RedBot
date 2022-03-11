@@ -6,16 +6,16 @@ import lombok.Getter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public abstract class AbstractCommand {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCommand.class);
@@ -47,8 +47,8 @@ public abstract class AbstractCommand {
 
         for (Method method : clazz.getDeclaredMethods()) {
             if (method.isAnnotationPresent(SubCommand.class)) {
-                if (method.getParameterTypes().length != 1 || !method.getParameterTypes()[0].equals(SlashCommandInteractionEvent.class)) {
-                    throw new IllegalArgumentException("The method " + method.getName() + " must have a single parameter of type SlashCommandInteractionEvent");
+                if (!method.getParameterTypes()[0].equals(SlashCommandInteractionEvent.class)) {
+                    throw new IllegalArgumentException("Method " + method.getName() + " must have a parameter of type " + SlashCommandInteractionEvent.class.getName());
                 }
                 method.setAccessible(true);
                 this.subCommandsMethods.put(method.getAnnotation(SubCommand.class).value(), method);
@@ -71,9 +71,29 @@ public abstract class AbstractCommand {
         try {
             String subcommand = event.getSubcommandName();
             if(subcommand != null && this.subCommandsMethods.containsKey(subcommand)) {
-                this.subCommandsMethods.get(subcommand).invoke(this, event);
+                List<OptionMapping> optionMappings = event.getOptions();
+                List<Object> options = new ArrayList<>();
+                options.add(event);
+
+                for (OptionMapping optionMapping : optionMappings) {
+                    OptionType type = optionMapping.getType();
+                    switch (type) {
+                        case BOOLEAN -> options.add(optionMapping.getAsBoolean());
+                        case STRING -> options.add(optionMapping.getAsString());
+                        case INTEGER -> options.add(optionMapping.getAsInt());
+                        case NUMBER -> options.add(optionMapping.getAsDouble());
+                        case CHANNEL -> options.add(optionMapping.getAsGuildChannel());
+                        case USER -> options.add(optionMapping.getAsUser());
+                        case ROLE -> options.add(optionMapping.getAsRole());
+                        default -> throw new IllegalArgumentException("Unknown option type " + type);
+                    }
+                }
+
+                Object[] args = options.toArray();
+                this.subCommandsMethods.get(subcommand).invoke(this, args);
             } else if(subcommand != null && !this.subCommandsMethods.containsKey(subcommand)) {
                 LOGGER.error("The subcommand " + subcommand + " is not defined for the command " + this.name);
+                this.execute(event);
             } else {
                 this.execute(event);
             }

@@ -1,6 +1,7 @@
 package fr.redboxing.redbot.minecraft;
 
 import baritone.api.IBaritone;
+import com.mojang.authlib.yggdrasil.YggdrasilEnvironment;
 import fr.redboxing.redbot.FabricEntryPoint;
 import fr.redboxing.redbot.minecraft.baritone.api.bot.IBaritoneUser;
 import fr.redboxing.redbot.minecraft.baritone.api.bot.IUserManager;
@@ -27,6 +28,7 @@ import fr.redboxing.redbot.minecraft.auth.AccountType;
 import fr.redboxing.redbot.minecraft.utils.AuthProfile;
 import fr.redboxing.redbot.utils.ReflectionUtils;
 import lombok.Getter;
+import net.dv8tion.jda.api.entities.User;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider;
 import net.fabricmc.loader.impl.launch.FabricLauncherBase;
@@ -75,20 +77,23 @@ public class MinecraftManager {
         //((UserManager) getUserManager()).onTick(new TickEvent(EventState.POST, TickEvent.Type.IN, 1));
     }
 
-    public CompletableFuture<Boolean> startBot(Session session, ServerAddress serverAddress) {
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
-        this.bot.execute(() -> {
-            LOGGER.info("Starting bot for {}", session.getUsername());
-            IConnectionResult result = getUserManager().connect(session, serverAddress, new ServerInfo("Minecraft Server", serverAddress.getAddress() + ":" + serverAddress.getPort(), false));
+    public ConnectionStatus connect(User owner, String username, String password, AccountType type, ServerAddress address) {
+        Session session = this.login(username, password, type);
+        ConnectionStatus status = this.startBot(session, address);
+        if(status == ConnectionStatus.SUCCESS) {
+            this.accounts.put(owner.getId(), session.getProfile().getId());
+        }
 
-            if(result.getStatus() == ConnectionStatus.SUCCESS && result.getUser().isPresent()) {
-                future.complete(this.addBot(result.getUser().get()) != null);
-            } else {
-                future.complete(false);
-            }
-        });
+        return status;
+    }
 
-        return future;
+    public ConnectionStatus startBot(Session session, ServerAddress serverAddress) {
+        IConnectionResult result = getUserManager().connect(session, serverAddress, new ServerInfo("Minecraft Server", serverAddress.getAddress() + ":" + serverAddress.getPort(), false));
+        if(result.getStatus() == ConnectionStatus.SUCCESS && result.getUser().isPresent()) {
+            this.addBot(result.getUser().get());
+        }
+
+        return result.getStatus();
     }
 
     public static IUserManager getUserManager() {
@@ -178,10 +183,10 @@ public class MinecraftManager {
         return null;
     }
 
-    public Session login(String username, String password, String accountType) {
-        if(accountType.equals("mojang")) {
+    public Session login(String username, String password, AccountType accountType) {
+        if(accountType == AccountType.MOJANG || accountType == AccountType.THE_ALTENING) {
             try {
-                YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new YggdrasilAuthenticationService(Proxy.NO_PROXY, "").createUserAuthentication(Agent.MINECRAFT);
+                YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new YggdrasilAuthenticationService(Proxy.NO_PROXY, "", accountType == AccountType.THE_ALTENING ? THE_ALTENING : YggdrasilEnvironment.PROD.getEnvironment()).createUserAuthentication(Agent.MINECRAFT);
                 auth.setUsername(username);
                 auth.setPassword(password);
 
@@ -192,26 +197,13 @@ public class MinecraftManager {
             } catch (com.mojang.authlib.exceptions.AuthenticationException e) {
                 e.printStackTrace();
             }
-        } else if(accountType.equals("microsoft")) {
+        } else if(accountType == AccountType.MICROSOFT) {
             try {
                 MicrosoftAuthenticator authenticator = new MicrosoftAuthenticator();
                 MicrosoftAuthResult result = authenticator.loginWithCredentials(username, password);
 
                 return new Session(result.getProfile().getName(), result.getProfile().getId(), result.getAccessToken(), Optional.empty(), Optional.empty(), Session.AccountType.MSA);
             } catch (MicrosoftAuthenticationException e) {
-                e.printStackTrace();
-            }
-        } else if(accountType.equals("the_altening")) {
-            try {
-                YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new YggdrasilAuthenticationService(Proxy.NO_PROXY, "", THE_ALTENING).createUserAuthentication(Agent.MINECRAFT);
-                auth.setUsername(username);
-                auth.setPassword("aazaesf");
-
-                if (auth.canLogIn()) {
-                    auth.logIn();
-                    return new Session(auth.getSelectedProfile().getName(), auth.getSelectedProfile().getId().toString(), auth.getAuthenticatedToken(), Optional.empty(), Optional.empty(), Session.AccountType.MOJANG);
-                }
-            } catch (com.mojang.authlib.exceptions.AuthenticationException e) {
                 e.printStackTrace();
             }
         }
