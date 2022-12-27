@@ -1,5 +1,4 @@
 plugins {
-    id 'fabric-loom' version '0.11-SNAPSHOT'
     id 'application'
     id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '5.2.0'
@@ -9,13 +8,6 @@ sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
 mainClassName = 'fr.redboxing.redbot.RedBotMain'
-archivesBaseName = project.archives_base_name
-version = project.mod_version
-group = project.maven_group
-
-loom {
-    accessWidenerPath = file("src/main/resources/redbot.accesswidener")
-}
 
 repositories {
     mavenCentral()
@@ -48,7 +40,7 @@ dependencies {
     // miscs
     implementation group: 'io.github.cdimascio', name: 'java-dotenv', version: '5.1.1'
     implementation group: 'com.github.oshi', name: 'oshi-core', version: '5.8.2'
-    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.6'
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.9'
     implementation group: 'com.mashape.unirest', name: 'unirest-java', version: '1.4.9'
     implementation group: 'org.reflections', name: 'reflections', version: '0.10.2'
 
@@ -57,17 +49,6 @@ dependencies {
     implementation group: 'com.zaxxer', name: 'HikariCP', version: '5.0.0'
     implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.6.5.Final'
     implementation group: 'org.hibernate', name: 'hibernate-hikaricp', version: '5.6.5.Final'
-
-    //minecraft
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-    modImplementation "baritone:baritone:1.18"
-    modImplementation "altoclef:altoclef:0.4.0"
-    implementation 'com.github.Litarvan:OpenAuth:v1.1.1'
 }
 
 processResources {

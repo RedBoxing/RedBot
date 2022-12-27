@@ -1,14 +1,17 @@
 package fr.redboxing.redbot.database.entities;
 
-import fr.redboxing.redbot.config.GuildConfiguration;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "guilds_config")
-public class GuildConfigEntity {
+@Table(name = "ai_history")
+@AllArgsConstructor
+@NoArgsConstructor
+public class AIEntry {
     @Id
     @Getter
     @Setter
@@ -23,12 +26,16 @@ public class GuildConfigEntity {
 
     @Getter
     @Setter
-    @Enumerated(EnumType.STRING)
-    @Column(name = "name", nullable = false)
-    private GuildConfiguration name;
+    @Column(name = "authorId", nullable = false)
+    private String authorId;
 
     @Getter
     @Setter
-    @Column(name = "value")
-    private String value;
+    @Column(name = "request", nullable = false)
+    private String request;
+
+    @Getter
+    @Setter
+    @Column(name = "response", nullable = false)
+    private String response;
 }

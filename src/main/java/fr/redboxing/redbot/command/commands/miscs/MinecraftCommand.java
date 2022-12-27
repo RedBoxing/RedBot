@@ -4,9 +4,7 @@ import fr.redboxing.redbot.BotConfig;
 import fr.redboxing.redbot.DiscordBot;
 import fr.redboxing.redbot.command.AbstractCommand;
 import fr.redboxing.redbot.command.CommandCategory;
-import fr.redboxing.redbot.command.SubCommand;
-import fr.redboxing.redbot.minecraft.auth.AccountType;
-import fr.redboxing.redbot.minecraft.baritone.api.bot.connect.ConnectionStatus;
+import fr.redboxing.redbot.command.SubCommand;;
 import fr.redboxing.redbot.utils.MinecraftAPI;
 import fr.redboxing.redbot.utils.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -14,8 +12,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import net.minecraft.client.network.ServerAddress;
-import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.UUID;
@@ -33,13 +29,6 @@ public class MinecraftCommand extends AbstractCommand {
         this.subcommands.add(new SubcommandData("cape", "Affiche la cape d'un joueur.").addOptions(new OptionData(OptionType.STRING, "pseudo", "Le pseudo du joueur.").setRequired(true)));
         this.subcommands.add(new SubcommandData("head", "Affiche la tête d'un joueur.").addOptions(new OptionData(OptionType.STRING, "pseudo", "Le pseudo du joueur.").setRequired(true)));
         this.subcommands.add(new SubcommandData("render", "Affiche le skin d'un joueur avec un rendu.").addOptions(new OptionData(OptionType.STRING, "pseudo", "Le pseudo du joueur.").setRequired(true)));
-        this.subcommands.add(new SubcommandData("join", "Connecte un bot a un serveur").addOptions(
-                new OptionData(OptionType.STRING, "email", "Email du compte", true),
-                new OptionData(OptionType.STRING, "server", "Address du serveur", true),
-                new OptionData(OptionType.INTEGER, "port", "Port du serveur (défaut 25565)", false),
-                new OptionData(OptionType.STRING, "password", "Mot de passe du compte", false)
-                ));
-        this.subcommands.add(new SubcommandData("test", "test"));
     }
 
     @SubCommand("uuid")
@@ -104,53 +93,6 @@ public class MinecraftCommand extends AbstractCommand {
             event.replyEmbeds(new EmbedBuilder().setAuthor("Render de " + username).setImage(render).setFooter("RedBot by RedBoxing", this.bot.getJda().getUserById(BotConfig.get("AUTHOR_ID")).getAvatarUrl()).setColor(Utils.randomColor()).build()).queue();
         } catch (Exception e) {
             event.replyEmbeds(new EmbedBuilder().setDescription("Impossible de trouver le render de " + username + ".").setColor(Color.RED).build()).queue();
-        }
-    }
-
-    @SubCommand("join")
-    private void executeJoin(SlashCommandInteractionEvent event, String email, String server, int port, String password) {
-        if (port == 0) {
-            port = 25565;
-        }
-
-        event.replyEmbeds(new EmbedBuilder()
-                .setDescription("Connexion au serveur " + server + ":" + port + " en cours...")
-                .setColor(Color.CYAN)
-                .build()).setEphemeral(true).queue();
-
-        ConnectionStatus status = this.bot.getMinecraftManager().connect(event.getUser(), email, password, AccountType.MICROSOFT, new ServerAddress(server, port));
-        if(status == ConnectionStatus.SUCCESS) {
-            event.getChannel().sendMessageEmbeds(new EmbedBuilder()
-                    .setDescription("Connexion au serveur " + server + ":" + port + " réussie.")
-                    .setColor(Color.GREEN)
-                    .build()).queue();
-        } else {
-            event.getChannel().sendMessageEmbeds(new EmbedBuilder()
-                    .setDescription("Connexion au serveur " + server + ":" + port + " échouée.")
-                    .setColor(Color.RED)
-                    .build()).queue();
-        }
-    }
-
-    @SubCommand("test")
-    private void executeTest(SlashCommandInteractionEvent event) {
-        event.replyEmbeds(new EmbedBuilder()
-                .setDescription("Connexion au serveur en cours...")
-                .setColor(Color.CYAN)
-                .build()).setEphemeral(true).queue();
-
-        ConnectionStatus status = this.bot.getMinecraftManager().connect(event.getUser(), "", "", AccountType.MICROSOFT, new ServerAddress("127.0.0.1", 25565));
-
-        if(status == ConnectionStatus.SUCCESS) {
-            event.getHook().editOriginalEmbeds(new EmbedBuilder()
-                    .setDescription("Connexion au serveur réussie.")
-                    .setColor(Color.GREEN)
-                    .build()).queue();
-        } else {
-            event.getHook().editOriginalEmbeds(new EmbedBuilder()
-                    .setDescription("Connexion au serveur échouée.")
-                    .setColor(Color.RED)
-                    .build()).queue();
         }
     }
 

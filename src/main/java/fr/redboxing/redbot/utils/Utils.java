@@ -22,6 +22,7 @@ public class Utils {
             "\uD83D\uDD1F"
     };
 
+    private static String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?!*%()_+-=<>/\\|[]{}'\";:";
 
     public static <T> CompletableFuture<List<T>> all(List<CompletableFuture<T>> futures){
         CompletableFuture<?>[] cfs = futures.toArray(new CompletableFuture<?>[]{});
@@ -55,5 +56,17 @@ public class Utils {
             }
         }
         return "0";
+    }
+
+    public static String randomString(int length) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            sb.append(CHARACTERS.charAt(RANDOM.nextInt(CHARACTERS.length())));
+        }
+        return sb.toString();
+    }
+
+    public static int randomBetween(int min, int max) {
+        return RANDOM.nextInt(max - min + 1) + min;
     }
 }

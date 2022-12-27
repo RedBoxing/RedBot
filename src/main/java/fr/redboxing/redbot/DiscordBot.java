@@ -4,7 +4,7 @@ import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import fr.redboxing.redbot.command.CommandManager;
 import fr.redboxing.redbot.database.DatabaseManager;
 import fr.redboxing.redbot.event.EventsListener;
-import fr.redboxing.redbot.minecraft.MinecraftManager;
+import fr.redboxing.redbot.managers.AIManager;
 import fr.redboxing.redbot.music.PlayerManager;
 import fr.redboxing.redbot.utils.ThreadFactoryHelper;
 import lombok.Getter;
@@ -20,10 +20,7 @@ import javax.security.auth.login.LoginException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Random;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class DiscordBot {
     private static final Logger LOGGER = LoggerFactory.getLogger(DiscordBot.class);
@@ -37,14 +34,13 @@ public class DiscordBot {
             "{users} users !",
             "Current version: 2.0.0 BETA",
     };
-
     @Getter
     private final CommandManager commandManager;
     @Getter
     private final PlayerManager playerManager;
-    @Getter
-    private final MinecraftManager minecraftManager;
 
+    @Getter
+    private final AIManager aiManager;
     private final ScheduledExecutorService scheduler;
     private final Random random = new Random();
     @Getter
@@ -52,7 +48,6 @@ public class DiscordBot {
     private final HashMap<String, HashMap<String, Long>> cooldowns = new HashMap<>();
     @Getter
     private JDA jda;
-
     public DiscordBot() throws LoginException, URISyntaxException {
         INSTANCE = this;
         this.scheduler = new ScheduledThreadPoolExecutor(2, new ThreadFactoryHelper());
@@ -62,13 +57,12 @@ public class DiscordBot {
         this.commandManager = new CommandManager();
         this.commandManager.loadCommands(this);
 
-        this.minecraftManager = new MinecraftManager(this);
+        this.aiManager = new AIManager(this);
 
         DatabaseManager.getSessionFactory();
 
         restartJDA();
         this.scheduleAtFixedRate(this::refreshStatus, 0L, 10L, TimeUnit.SECONDS);
-        //this.scheduleAtFixedRate(this.minecraftManager::tick, 0L, 5L, TimeUnit.MILLISECONDS);
     }
 
     private void refreshStatus() {

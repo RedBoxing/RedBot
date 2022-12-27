@@ -5,6 +5,7 @@ import fr.redboxing.redbot.command.AbstractCommand;
 import fr.redboxing.redbot.command.CommandCategory;
 import fr.redboxing.redbot.config.GuildConfigManager;
 import fr.redboxing.redbot.config.GuildConfiguration;
+import fr.redboxing.redbot.managers.TranslationManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -27,7 +28,9 @@ public class ConfigCommand extends AbstractCommand {
 
     @Override
     protected void execute(SlashCommandInteractionEvent event) {
+        if(!event.isFromGuild() || event.getUser().isBot()) return;
+
         GuildConfigManager.setConfig(event.getGuild(), GuildConfiguration.getByName(event.getSubcommandName()), event.getOption("value").getAsString());
-        event.replyEmbeds(new EmbedBuilder().setDescription("Configuration modifiée avec succès.").setColor(Color.GREEN).build()).queue();
+        event.replyEmbeds(new EmbedBuilder().setDescription(TranslationManager.getTranslation(event.getGuild(), "config.edit.success")).setColor(Color.GREEN).build()).queue();
     }
 }

@@ -1,6 +1,7 @@
 package fr.redboxing.redbot.database;
 
 import fr.redboxing.redbot.BotConfig;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
@@ -70,5 +71,41 @@ public class DatabaseManager {
         if (registry != null) {
             StandardServiceRegistryBuilder.destroy(registry);
         }
+    }
+
+    public static <T> T findById(Long id, Class<T> cls) {
+        Session session = getSessionFactory().openSession();
+        session.beginTransaction();
+        T obj = session.find(cls, id);
+        session.getTransaction().commit();
+        return obj;
+    }
+
+    public static void save(Object obj) {
+        Session session = getSessionFactory().openSession();
+        session.beginTransaction();
+        session.saveOrUpdate(obj);
+        session.getTransaction().commit();
+    }
+
+    public static void delete(Object obj) {
+        Session session = getSessionFactory().openSession();
+        session.beginTransaction();
+        session.delete(obj);
+        session.getTransaction().commit();
+    }
+
+    public static void update(Object obj) {
+        Session session = getSessionFactory().openSession();
+        session.beginTransaction();
+        session.update(obj);
+        session.getTransaction().commit();
+    }
+
+    public static void createOrUpdate(Object object) {
+        Session session = getSessionFactory().openSession();
+        session.beginTransaction();
+        session.saveOrUpdate(object);
+        session.getTransaction().commit();
     }
 }

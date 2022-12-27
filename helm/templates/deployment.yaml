@@ -1,0 +1,57 @@
+#a kubernetes deployment yaml for a java application
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redbot-deployment
+  labels:
+    app: redbot
+spec:
+  replica: 1
+  selector:
+    matchLabels:
+      app: redbot
+  template:
+    metadata:
+      labels:
+        app: redbot
+    spec:
+      containers:
+        - image: 10.0.0.104:5000/redbot:latest
+          name: redbot
+          env:
+            - name: BOT_TOKEN
+              value: {{ .Values.bot.token }}
+            - name: BOT_ID
+              value: {{ .Values.bot.id }}
+            - name: CAT_API_KEY
+              value: {{ .Values.api_keys.cat_api_key }}
+            - name: HUGGINGFACE_API_KEY
+              value: {{ .Values.api_keys.huggingface_api_key }}
+            - name: SPOTIFY_CLIENT_ID
+              value: {{ .Values.spotify.client_id }}
+            - name: SPOTIFY_CLIENT_SECRET
+              value: {{ .Values.spotify.client_secret }}
+            - name: GOOGLE_API_KEY
+              value: {{ .Values.api_keys.google_api_key }}
+            - name: EXPERIENCE_COOLDOWN
+              value: {{ .Values.experience_cooldown }}
+            - name: DATABASE_DIALECT
+              value: {{ .Values.database.dialect }}
+            - name: DATABASE_HOST
+              value: {{ .Values.database.host }}
+            - name: DATABASE_PORT
+              value: {{ .Values.database.port }}
+            - name: DATABASE_NAME
+              value: {{ .Values.database.database }}
+            - name: DATABASE_USER
+              value: {{ .Values.database.user }}
+            - name: DATABASE_PASSWORD
+              value: {{ .Values.database.password }}
+            - name: AUTHOR_ID
+              value: {{ .Values.author_id }}
+            - name: BOT_GUILD
+              value: {{ .Values.bot_guild }}
+            - name: BOT_ERROR_CHANNEL
+              value: {{ .Values.bot_error_channel }}
+            - name: DEVELOPMENT_MODE
+              value: {{ .Values.development_mode }}

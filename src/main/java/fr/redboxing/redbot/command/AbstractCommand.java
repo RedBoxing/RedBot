@@ -71,21 +71,27 @@ public abstract class AbstractCommand {
         try {
             String subcommand = event.getSubcommandName();
             if(subcommand != null && this.subCommandsMethods.containsKey(subcommand)) {
+                SubcommandData subcommandData = this.subcommands.stream().filter(s -> s.getName().equals(subcommand)).findFirst().get();
                 List<OptionMapping> optionMappings = event.getOptions();
                 List<Object> options = new ArrayList<>();
                 options.add(event);
 
-                for (OptionMapping optionMapping : optionMappings) {
-                    OptionType type = optionMapping.getType();
-                    switch (type) {
-                        case BOOLEAN -> options.add(optionMapping.getAsBoolean());
-                        case STRING -> options.add(optionMapping.getAsString());
-                        case INTEGER -> options.add(optionMapping.getAsInt());
-                        case NUMBER -> options.add(optionMapping.getAsDouble());
-                        case CHANNEL -> options.add(optionMapping.getAsGuildChannel());
-                        case USER -> options.add(optionMapping.getAsUser());
-                        case ROLE -> options.add(optionMapping.getAsRole());
-                        default -> throw new IllegalArgumentException("Unknown option type " + type);
+                for(int i = 0; i < subcommandData.getOptions().size(); i++) {
+                    if(i < optionMappings.size()) {
+                        OptionMapping optionMapping = optionMappings.get(i);
+                        OptionType type = optionMapping.getType();
+                        switch (type) {
+                            case BOOLEAN -> options.add(optionMapping.getAsBoolean());
+                            case STRING -> options.add(optionMapping.getAsString());
+                            case INTEGER -> options.add(optionMapping.getAsInt());
+                            case NUMBER -> options.add(optionMapping.getAsDouble());
+                            case CHANNEL -> options.add(optionMapping.getAsGuildChannel());
+                            case USER -> options.add(optionMapping.getAsUser());
+                            case ROLE -> options.add(optionMapping.getAsRole());
+                            default -> throw new IllegalArgumentException("Unknown option type " + type);
+                        }
+                    } else {
+                        options.add(null);
                     }
                 }
 

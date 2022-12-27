@@ -4,6 +4,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import fr.redboxing.redbot.utils.UUIDUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
