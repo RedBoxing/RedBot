@@ -12,6 +12,5 @@ gradle-app.setting
 .gradletasknamecache
 .idea
 .env
-gradle.properties
 run/
 out/
