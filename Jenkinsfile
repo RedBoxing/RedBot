@@ -40,7 +40,7 @@ spec:
     stage('Build') {
       environment {
         REGISTRY_CREDS = credentials('registry')
-        REGISTRY_URL = "docker-registry:5000"
+        REGISTRY_URL = "nexus-server:8082"
       }
       steps {
         container("gradle") {
