@@ -50,9 +50,11 @@ spec:
         container('dind') {
           sh "echo ${env.GIT_COMMIT}"
           // Build new image
-          sh "until docker container ls; do sleep 3; done && docker image build -t  ${env.IMAGE_REPO}:${env.GIT_COMMIT} ."
+          sh "until docker container ls; do sleep 3; done && docker image build -t ${env.IMAGE_REPO}:${env.GIT_COMMIT} ."
+          // Login to registry
+          sh "docker login --username $REGISTRY_CREDS_USR --password $REGISTRY_CREDS_PSW $REGISTRY_URL"
           // Publish new image
-          sh "docker login --username $REGISTRY_CREDS_USR --password $REGISTRY_CREDS_PSW && docker image push ${env.REGISTRY_URL}/${env.IMAGE_REPO}:${env.GIT_COMMIT}"
+          sh "docker image push ${env.REGISTRY_URL}/${env.IMAGE_REPO}:${env.GIT_COMMIT}"
         }
       }
     }
