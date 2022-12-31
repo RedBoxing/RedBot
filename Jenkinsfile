@@ -34,7 +34,7 @@ spec:
         }
     }
   environment {
-      IMAGE_REPO = "RedBoxing/RedBot"
+      IMAGE_REPO = "redboxing/redbot"
   }
   stages {
     stage('Build') {
