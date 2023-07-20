@@ -4,7 +4,6 @@ import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import fr.redboxing.redbot.command.CommandManager;
 import fr.redboxing.redbot.database.DatabaseManager;
 import fr.redboxing.redbot.event.EventsListener;
-import fr.redboxing.redbot.managers.AIManager;
 import fr.redboxing.redbot.music.PlayerManager;
 import fr.redboxing.redbot.utils.ThreadFactoryHelper;
 import lombok.Getter;

@@ -1,5 +1,7 @@
 package fr.redboxing.redbot.event;
 
+import com.google.gson.JsonObject;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import fr.redboxing.redbot.BotConfig;
 import fr.redboxing.redbot.DiscordBot;
 import fr.redboxing.redbot.command.AbstractCommand;
@@ -8,6 +10,7 @@ import fr.redboxing.redbot.config.GuildConfiguration;
 import fr.redboxing.redbot.database.DatabaseManager;
 import fr.redboxing.redbot.database.entities.GuildMember;
 import fr.redboxing.redbot.managers.GuildsMembersManager;
+import fr.redboxing.redbot.utils.HTTPUtils;
 import fr.redboxing.redbot.utils.Reactor;
 import fr.redboxing.redbot.utils.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -28,6 +31,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -85,10 +89,6 @@ public class EventsListener extends ListenerAdapter {
                 Reactor.success(event.getMessage()).queue();
                 GuildConfigManager.setConfig(event.getGuild(), GuildConfiguration.COUNT, count);
                 GuildConfigManager.setConfig(event.getGuild(), GuildConfiguration.LAST_COUNTER, event.getMember().getId());
-            }
-        } else {
-            if(event.getMessage().getContentRaw().startsWith(event.getJDA().getSelfUser().getAsMention())) {
-                this.bot.getAiManager().process(event.getMessage(), event.getAuthor());
             }
         }
     }
