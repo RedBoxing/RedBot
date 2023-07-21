@@ -28,7 +28,8 @@ public class ChatCommand extends AbstractCommand {
 
     @Override
     protected void execute(SlashCommandInteractionEvent event) {
-        OptionMapping msgOpt = event.getOption("msg");
+        event.reply("Command temporary disabled.").queue();
+       /* OptionMapping msgOpt = event.getOption("msg");
         if(msgOpt == null) {
             event.reply("Failed to get message!").queue();
             return;
@@ -53,6 +54,6 @@ public class ChatCommand extends AbstractCommand {
                 hook.editOriginal("Failed to get response from RedBot!").queue();
                 e.printStackTrace();
             }
-        });
+        });*/
     }
 }

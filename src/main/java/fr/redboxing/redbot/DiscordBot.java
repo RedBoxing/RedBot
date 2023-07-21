@@ -37,9 +37,6 @@ public class DiscordBot {
     private final CommandManager commandManager;
     @Getter
     private final PlayerManager playerManager;
-
-    @Getter
-    private final AIManager aiManager;
     private final ScheduledExecutorService scheduler;
     private final Random random = new Random();
     @Getter
@@ -55,8 +52,6 @@ public class DiscordBot {
         this.eventWaiter = new EventWaiter();
         this.commandManager = new CommandManager();
         this.commandManager.loadCommands(this);
-
-        this.aiManager = new AIManager(this);
 
         DatabaseManager.getSessionFactory();
 
