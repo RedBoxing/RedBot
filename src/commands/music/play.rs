@@ -24,6 +24,8 @@ lazy_static! {
     )
     .expect("Failed to compile youtube regex");
 
+    static ref YOUTUBE_PLAYLIST : Regex = Regex::new(r"^.*(youtu.be\/|list=)([^#\&\?]*).*").expect("Failed to compile youtube playlist regex");
+
     static ref SPOTIFY_REGEX : Regex = Regex::new(r"(https?:\/\/)(www.)?open.spotify.com\/((?<region>[a-zA-Z-]+)\/)?(user\/(?<user>[a-zA-Z0-9-_]+)\/)?(?<type>track|album|playlist|artist)\/(?<identifier>[a-zA-Z0-9-_]+)").expect("Failed to compile spotify regex");
 }
 
