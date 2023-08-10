@@ -1,0 +1,9 @@
+version: "3.4"
+
+services:
+  redbot:
+    image: repo.redboxing.fr/RedBoxing/RedBot:latest
+    build:
+      context: ../
+      dockerfile: ../Dockerfile
+    restart: always

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redbot
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: redbot
+  template:
+    metadata:
+      labels:
+        app: redbot
+    spec:
+      containers:
+      - name: redbot
+        image: repo.redboxing.fr/RedBoxing/RedBot:latest
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
