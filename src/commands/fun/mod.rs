@@ -1,3 +1,4 @@
+pub mod chat;
 pub mod hug;
 pub mod kiss;
 pub mod lewd;

@@ -1,3 +1,7 @@
+extern crate google_youtube3;
+extern crate hyper;
+extern crate hyper_rustls;
+
 use poise::serenity_prelude::Colour;
 
 use crate::{
@@ -11,7 +15,7 @@ use rspotify::{
     prelude::*,
     ClientCredsSpotify, Credentials,
 };
-use songbird::{input::Restartable, Event, TrackEvent};
+use songbird::{input::error::Result as SongbirdResult, input::Restartable, Event, TrackEvent};
 
 use fancy_regex::Regex as FancyRegex;
 use lazy_static::lazy_static;
@@ -83,110 +87,203 @@ pub async fn play(
 
     let mut handler = handler_lock.lock().await;
 
-    let sources = if YOUTUBE_REGEX.is_match(&query).unwrap_or(false) {
-        [Restartable::ytdl(query, true).await]
-    } else if let Some(matcher) = SPOTIFY_REGEX.captures(&query) {
-        let creds = Credentials::from_env().unwrap();
-        let spotify = ClientCredsSpotify::new(creds);
-        spotify.request_token().await.unwrap();
+    let sources: [SongbirdResult<Restartable>; 1] =
+        if YOUTUBE_REGEX.is_match(&query).unwrap_or(false) {
+            [Restartable::ytdl(query, true).await].try_into().unwrap()
+        } else if let Some(_matcher) = YOUTUBE_PLAYLIST.captures(&query) {
+            //let id = matcher.get(2).unwrap().as_str().to_string();
 
-        let link_type = matcher.name("type").unwrap().as_str();
-        let id = matcher.name("identifier").unwrap().as_str().to_string();
+            /*   let secret = oauth2::ApplicationSecret {
+                client_id: std::env::var("GOOGLE_CLIENT_ID").expect("Missing GOOGLE_CLIENT_ID"),
+                client_secret: std::env::var("GOOGLE_CLIENT_SECRET")
+                    .expect("Missing GOOGLE_CLIENT_SECRET"),
+                project_id: Some(
+                    std::env::var("GOOGLE_PROJECT_ID").expect("Missing GOOGLE_PROJECT_ID"),
+                ),
+                auth_uri: "https://accounts.google.com/o/oauth2/auth".to_string(),
+                token_uri: "https://oauth2.googleapis.com/token".to_string(),
+                auth_provider_x509_cert_url: Some(
+                    "https://www.googleapis.com/oauth2/v1/certs".to_string(),
+                ),
+                redirect_uris: vec!["http://localhost".to_string()],
+                ..Default::default()
+            };
 
-        match link_type {
-            "album" => {
-                let album = spotify
-                    .album(AlbumId::from_id(id).expect("The provided Spotify link is invalid!"))
-                    .await
-                    .unwrap();
-                let tracks = album.tracks.items;
+            let auth = oauth2::InstalledFlowAuthenticator::builder(
+                secret,
+                oauth2::InstalledFlowReturnMethod::HTTPRedirect,
+            )
+            .build()
+            .await
+            .unwrap();*/
 
-                let sources = tracks.iter().map(|track| async move {
-                    Restartable::ytdl_search(
-                        format!(
-                            "{} - {}",
-                            track.name,
-                            track
-                                .artists
-                                .clone()
-                                .into_iter()
-                                .map(|artist| artist.name)
-                                .collect::<Vec<_>>()
-                                .join(", ")
-                        ),
-                        true,
-                    )
-                    .await
-                });
+            /*     let auth = oauth2::AccessTokenAuthenticator::builder(
+                std::env::var("GOOGLE_API_KEY").expect("Missing GOOGLE_API_KEY"),
+            )
+            .build()
+            .await
+            .unwrap();
 
-                futures::future::join_all(sources).await.try_into().unwrap()
-            }
-            "playlist" => {
-                let playlist = spotify
-                    .playlist(
-                        PlaylistId::from_id(id).expect("The provided Spotify link is invalid!"),
-                        None, //Some("items(track(name,artists(name)))"),
-                        None,
-                    )
-                    .await
-                    .unwrap();
-                let tracks = playlist.tracks.items;
+            let hub = YouTube::new(
+                hyper::Client::builder().build(
+                    hyper_rustls::HttpsConnectorBuilder::new()
+                        .with_native_roots()
+                        .https_or_http()
+                        .enable_http1()
+                        .enable_http2()
+                        .build(),
+                ),
+                auth,
+            );
 
-                let sources = tracks.iter().map(|track| async move {
-                    let track = track.clone().track.unwrap();
+            let results = hub
+                .playlist_items()
+                .list(&vec!["snippet".to_string()])
+                .playlist_id(&id)
+                .max_results(50)
+                .doit()
+                .await
+                .expect("Failed to fetch playlist items");
 
-                    match track {
-                        PlayableItem::Track(track) => Restartable::ytdl_search(
+            let items = results.1.items.unwrap();
+            let sources = items.into_iter().map(|item| async move {
+                Restartable::ytdl_search(
+                    format!(
+                        "https://www.youtube.com/watch?v={}",
+                        item.snippet.unwrap().resource_id.unwrap().video_id.unwrap()
+                    ),
+                    true,
+                )
+                .await
+            });
+
+            futures::future::join_all(sources).await.try_into().unwrap()*/
+            return Err("Playlists are not supported yet".to_string().into());
+        } else if let Some(matcher) = SPOTIFY_REGEX.captures(&query) {
+            let creds = Credentials::from_env().unwrap();
+            let spotify = ClientCredsSpotify::new(creds);
+            spotify.request_token().await.unwrap();
+
+            let link_type = matcher.name("type").unwrap().as_str();
+            let id = matcher.name("identifier").unwrap().as_str().to_string();
+
+            match link_type {
+                "album" => {
+                    let album = spotify
+                        .album(AlbumId::from_id(id).expect("The provided Spotify link is invalid!"))
+                        .await
+                        .unwrap();
+                    let tracks = album.tracks.items;
+
+                    let sources = tracks.iter().map(|track| async move {
+                        Restartable::ytdl_search(
                             format!(
                                 "{} - {}",
                                 track.name,
                                 track
                                     .artists
+                                    .clone()
                                     .into_iter()
                                     .map(|artist| artist.name)
                                     .collect::<Vec<_>>()
                                     .join(", ")
                             ),
                             true,
-                        ),
-                        PlayableItem::Episode(episode) => Restartable::ytdl_search(
-                            format!("{} - {}", episode.name, episode.show.name),
+                        )
+                        .await
+                    });
+
+                    futures::future::join_all(sources).await.try_into().unwrap()
+                }
+                "playlist" => {
+                    let playlist = spotify
+                        .playlist(
+                            PlaylistId::from_id(id).expect("The provided Spotify link is invalid!"),
+                            None, //Some("items(track(name,artists(name)))"),
+                            None,
+                        )
+                        .await
+                        .unwrap();
+                    let tracks = playlist.tracks.items;
+
+                    let sources = tracks.iter().map(|track| async move {
+                        let track = track.clone().track.unwrap();
+
+                        match track {
+                            PlayableItem::Track(track) => Restartable::ytdl_search(
+                                format!(
+                                    "{} - {}",
+                                    track.name,
+                                    track
+                                        .artists
+                                        .into_iter()
+                                        .map(|artist| artist.name)
+                                        .collect::<Vec<_>>()
+                                        .join(", ")
+                                ),
+                                true,
+                            ),
+                            PlayableItem::Episode(episode) => Restartable::ytdl_search(
+                                format!("{} - {}", episode.name, episode.show.name),
+                                true,
+                            ),
+                        }
+                        .await
+                    });
+
+                    futures::future::join_all(sources).await.try_into().unwrap()
+                }
+                "artist" => {
+                    let albums = spotify
+                        .artist_albums_manual(
+                            ArtistId::from_id(id).expect("The provided Spotify link is invalid!"),
+                            None,
+                            None,
+                            None,
+                            None,
+                        )
+                        .await
+                        .unwrap();
+
+                    let tracks: Vec<SimplifiedTrack> = concat(
+                        futures::future::join_all(albums.items.into_iter().map(|album| async {
+                            let album = spotify.album(album.id.unwrap()).await.unwrap();
+                            album.tracks.items
+                        }))
+                        .await,
+                    );
+
+                    let sources = tracks.iter().map(|track| async move {
+                        Restartable::ytdl_search(
+                            format!(
+                                "{} - {}",
+                                track.name,
+                                track
+                                    .artists
+                                    .clone()
+                                    .into_iter()
+                                    .map(|artist| artist.name)
+                                    .collect::<Vec<_>>()
+                                    .join(", ")
+                            ),
                             true,
-                        ),
-                    }
-                    .await
-                });
+                        )
+                        .await
+                    });
 
-                futures::future::join_all(sources).await.try_into().unwrap()
-            }
-            "artist" => {
-                let albums = spotify
-                    .artist_albums_manual(
-                        ArtistId::from_id(id).expect("The provided Spotify link is invalid!"),
-                        None,
-                        None,
-                        None,
-                        None,
-                    )
-                    .await
-                    .unwrap();
-
-                let tracks: Vec<SimplifiedTrack> = concat(
-                    futures::future::join_all(albums.items.into_iter().map(|album| async {
-                        let album = spotify.album(album.id.unwrap()).await.unwrap();
-                        album.tracks.items
-                    }))
-                    .await,
-                );
-
-                let sources = tracks.iter().map(|track| async move {
-                    Restartable::ytdl_search(
+                    futures::future::join_all(sources).await.try_into().unwrap()
+                }
+                "track" => {
+                    let track = spotify
+                        .track(TrackId::from_id(id).expect("The provided Spotify link is invalid!"))
+                        .await
+                        .unwrap();
+                    [Restartable::ytdl_search(
                         format!(
                             "{} - {}",
                             track.name,
                             track
                                 .artists
-                                .clone()
                                 .into_iter()
                                 .map(|artist| artist.name)
                                 .collect::<Vec<_>>()
@@ -194,38 +291,17 @@ pub async fn play(
                         ),
                         true,
                     )
-                    .await
-                });
-
-                futures::future::join_all(sources).await.try_into().unwrap()
+                    .await]
+                    .try_into()
+                    .unwrap()
+                }
+                _ => {
+                    return Err("The provided Spotify link is invalid!".to_string().into());
+                }
             }
-            "track" => {
-                let track = spotify
-                    .track(TrackId::from_id(id).expect("The provided Spotify link is invalid!"))
-                    .await
-                    .unwrap();
-                [Restartable::ytdl_search(
-                    format!(
-                        "{} - {}",
-                        track.name,
-                        track
-                            .artists
-                            .into_iter()
-                            .map(|artist| artist.name)
-                            .collect::<Vec<_>>()
-                            .join(", ")
-                    ),
-                    true,
-                )
-                .await]
-            }
-            _ => {
-                return Err("The provided Spotify link is invalid!".to_string().into());
-            }
-        }
-    } else {
-        [Restartable::ytdl_search(query, true).await]
-    };
+        } else {
+            [Restartable::ytdl_search(query, true).await]
+        };
 
     let mut i = 0;
 

@@ -1,0 +1,28 @@
+name: Deploy to Kubernetes
+
+env:
+  APP_NAME: redbot
+  APP_IMAGE: ${{ github.repository }}
+  REGISTRY: ghcr.io
+  GITOPS_REPO: redboxing/helm-chart
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ env.GITOPS_REPO }}
+          token: ${{ secrets.GITOPS_TOKEN }}
+      
+      - uses: imranismail/setup-kustomize@v1
+        with:
+          kustomize-version: 4.0.0
+
+      - run: kustomize edit set image ${{env.REGISTRY}}/${{env.APP_IMAGE}}:${GITHUB_SHA}
+        working-directory: apps/${{env.APP_NAME}}/overlays/test
+
+      - run: |
+          git commit -am "Gitops update to $APP_NAME"
+          git push
