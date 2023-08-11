@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN apk add alpine-sdk yt-dlp ffmpeg
+RUN apk add alpine-sdk cmake yt-dlp ffmpeg
 
 RUN cargo build --release
 
