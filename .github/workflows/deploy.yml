@@ -1,6 +1,8 @@
 name: Deploy to Kubernetes
 
-on: ["release"]
+on:
+  release:
+    types: [published]
 
 env:
   APP_NAME: redbot

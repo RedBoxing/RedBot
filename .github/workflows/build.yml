@@ -1,6 +1,8 @@
 name: Build executable
 
-on: ['release']
+on:
+  release:
+    types: [published]
 
 jobs:
   build:
@@ -44,12 +46,12 @@ jobs:
         with:
           command: ${{ matrix.platform.command }}
           target: ${{ matrix.platform.target }}
-          args: "--locked --release"
+          args: "--release"
           strip: true
       - name: Upload executable for ${{ matrix.platform.release_for }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file:  target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}
+          file: target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}
           tag: ${{ github.ref }}
           overwrite: false
