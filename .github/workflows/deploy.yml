@@ -20,13 +20,8 @@ jobs:
           repository: ${{ env.GITOPS_REPO }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: imranismail/setup-kustomize@v1
-        with:
-          kustomize-version: 4.0.0
-
-      - run: kustomize edit set image ${{env.REGISTRY}}/${{env.APP_IMAGE}}:${GITHUB_SHA}
-        working-directory: apps/${{env.APP_NAME}}/overlays/test
-
+      - uses: imranismail/setup-kustomize@v2
       - run: |
+          kustomize edit set image ${{env.REGISTRY}}/${{env.APP_IMAGE}}:${{github.ref_name}}
           git commit -am "Gitops update to $APP_NAME"
           git push
