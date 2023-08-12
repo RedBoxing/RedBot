@@ -3,6 +3,8 @@ name: Build and publish Docker image
 on:
   push:
     branches: ["rust"]
+  release:
+    types: [published]
 
 env:
   REGISTRY: ghcr.io
