@@ -19,8 +19,6 @@ use crate::commands::music::queue::queue;
 use crate::commands::music::skip::skip;
 use crate::commands::music::stop::stop;
 
-use crate::commands::miscs::javascript::javascript;
-
 use crate::types::Data;
 
 pub mod commands;
@@ -70,7 +68,6 @@ async fn main() {
                 skip(),
                 stop(),
                 queue(),
-                javascript(),
             ],
             ..Default::default()
         })
