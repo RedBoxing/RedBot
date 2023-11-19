@@ -14,6 +14,7 @@ google-youtube3 = "5.0.2"
 hyper = "0.14.27"
 hyper-rustls = { version = "0.24.1", features = ["http2"] }
 itertools = "0.11.0"
+js-sandbox = "0.2.0-rc.1"
 lazy_static = "1.4.0"
 poise = "0.5.5"
 regex = "1.9.3"

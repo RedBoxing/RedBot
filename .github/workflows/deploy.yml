@@ -8,20 +8,17 @@ env:
   APP_NAME: redbot
   APP_IMAGE: ${{ github.repository }}
   REGISTRY: ghcr.io
-  GITOPS_REPO: RedBoxing/helm-charts
+  HELM_CHARTS_REPOSITORY: RedBoxing/helm-charts
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repo
-        uses: actions/checkout@v3
+      - name: Update the helm chart
+        uses: fjogeleit/yaml-update-action@main
         with:
-          repository: ${{ env.GITOPS_REPO }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: imranismail/setup-kustomize@v2
-      - run: |
-          kustomize edit set image ${{env.REGISTRY}}/${{env.APP_IMAGE}}:${{github.ref_name}}
-          git commit -am "Gitops update to $APP_NAME"
-          git push
+          valueFile: "charts/redbot/values.yaml"
+          propertyPath: "image.tag"
+          value: ${{github.ref_name}}
+          repository: ${{ env.HELM_CHARTS_REPOSITORY }}
+          message: "Update ${{github.repository}}'s Image Version to ${{github.ref_name}}"

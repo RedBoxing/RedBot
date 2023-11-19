@@ -5,7 +5,7 @@ use crate::types::{Context, Error};
 
 /// Chat with RedBot
 #[poise::command(slash_command, prefix_command)]
-pub async fn hug(ctx: Context<'_>, message: String) -> Result<(), Error> {
+pub async fn chat(ctx: Context<'_>, message: String) -> Result<(), Error> {
     let server_url = std::env::var("CHAT_SERVER_URL").expect("Chat server is not available");
     let url = format!("{}/chat", server_url);
 

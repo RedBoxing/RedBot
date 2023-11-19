@@ -1,6 +1,6 @@
 use dotenvy::dotenv;
-use poise::async_trait;
 use poise::serenity_prelude::{self as serenity, EventHandler};
+use poise::{async_trait, PrefixFrameworkOptions};
 
 use songbird::SerenityInit;
 
@@ -18,6 +18,8 @@ use crate::commands::music::play::play;
 use crate::commands::music::queue::queue;
 use crate::commands::music::skip::skip;
 use crate::commands::music::stop::stop;
+
+use crate::commands::miscs::javascript::javascript;
 
 use crate::types::Data;
 
@@ -38,7 +40,9 @@ impl EventHandler for Handler {
 
 #[tokio::main]
 async fn main() {
-    dotenv().expect(".env file not found");
+    if cfg!(debug_assertions) {
+        dotenv().expect(".env file not found");
+    }
 
     //let http = Http::new(&std::env::var("DISCORD_TOKEN").expect("missing DISCORD_TOKEN"));
 
@@ -49,6 +53,10 @@ async fn main() {
 
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
+            prefix_options: PrefixFrameworkOptions {
+                prefix: Some("~".to_string()),
+                ..Default::default()
+            },
             commands: vec![
                 infos(),
                 hug(),
@@ -62,6 +70,7 @@ async fn main() {
                 skip(),
                 stop(),
                 queue(),
+                javascript(),
             ],
             ..Default::default()
         })

@@ -9,7 +9,7 @@ pub async fn slap(
     ctx: Context<'_>,
     #[description = "user to slap"] user: serenity::User,
 ) -> Result<(), Error> {
-    let url = reqwest::get("https://nekos.life/api/v2/img/slap")
+    let url = reqwest::get("https://nekonya.classydev.fr/api/v1/random/slap")
         .await?
         .json::<serde_json::Value>()
         .await?["url"]
@@ -32,17 +32,8 @@ pub async fn slap(
             .image(url)
             .color(Colour::MAGENTA)
             .footer(|f| {
-                println!("{:?}", option_env!("AUTHOR_ID"));
-                if let Some(user) = ctx.serenity_context().cache.user(
-                    option_env!("AUTHOR_ID")
-                        .or(Some("0"))
-                        .unwrap()
-                        .parse::<u64>()
-                        .unwrap(),
-                ) {
-                    f.icon_url(user.avatar_url().unwrap_or_default());
-                }
-                f.text("RedBot by RedBoxing")
+                f.text("Image by Nekonya")
+                    .icon_url("https://nekonya.classydev.fr/static/assets/logo-rounded.ico")
             })
         })
     })

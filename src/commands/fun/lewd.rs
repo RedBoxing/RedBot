@@ -20,7 +20,7 @@ pub async fn lewd(ctx: Context<'_>) -> Result<(), Error> {
             .into());
     }
 
-    let url = reqwest::get("https://nekos.life/api/v2/img/lewd")
+    let url = reqwest::get("https://nekonya.classydev.fr/api/v1/random/lewd")
         .await?
         .json::<serde_json::Value>()
         .await?["url"]
@@ -31,7 +31,7 @@ pub async fn lewd(ctx: Context<'_>) -> Result<(), Error> {
     ctx.send(|m| {
         m.embed(|e| {
             e.author(|a| {
-                a.name("You pervert!").icon_url(
+                a.name("Lewd <3").icon_url(
                     ctx.serenity_context()
                         .cache
                         .current_user()
@@ -42,17 +42,8 @@ pub async fn lewd(ctx: Context<'_>) -> Result<(), Error> {
             .image(url)
             .color(Colour::MAGENTA)
             .footer(|f| {
-                println!("{:?}", option_env!("AUTHOR_ID"));
-                if let Some(user) = ctx.serenity_context().cache.user(
-                    option_env!("AUTHOR_ID")
-                        .or(Some("0"))
-                        .unwrap()
-                        .parse::<u64>()
-                        .unwrap(),
-                ) {
-                    f.icon_url(user.avatar_url().unwrap_or_default());
-                }
-                f.text("RedBot by RedBoxing")
+                f.text("Image by Nekonya")
+                    .icon_url("https://nekonya.classydev.fr/static/assets/logo-rounded.ico")
             })
         })
     })
