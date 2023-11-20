@@ -14,6 +14,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Helm repository
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ env.HELM_CHARTS_REPOSITORY }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: helm-charts
       - name: Update the helm chart
         uses: fjogeleit/yaml-update-action@main
         with:
@@ -21,4 +27,5 @@ jobs:
           propertyPath: "image.tag"
           value: ${{github.ref_name}}
           repository: ${{ env.HELM_CHARTS_REPOSITORY }}
+          workDir: helm-charts
           message: "Update ${{github.repository}}'s Image Version to ${{github.ref_name}}"
