@@ -29,3 +29,4 @@ jobs:
           repository: ${{ env.HELM_CHARTS_REPOSITORY }}
           workDir: helm-charts
           message: "Update ${{github.repository}}'s Image Version to ${{github.ref_name}}"
+          token: ${{ secrets.GITHUB_TOKEN }}
